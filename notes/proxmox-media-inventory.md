@@ -63,6 +63,8 @@ Last updated: 2026-05-06 23:25 CDT
 
 | Service | Port | URL | Purpose |
 | --- | ---: | --- | --- |
+| Home Assistant | 8123 | `http://192.168.1.187:8123` | Home automation dashboard |
+| AdGuard Home | 80 | `http://192.168.1.189` | LAN DNS filtering |
 | Jellyfin | 8096 | `http://192.168.1.191:8096` | Existing media server in CT 104 |
 | Jellyseerr | 5055 | `http://192.168.1.197:5055` | Request/search UI |
 | Radarr | 7878 | `http://192.168.1.197:7878` | Movie library management |
@@ -72,6 +74,8 @@ Last updated: 2026-05-06 23:25 CDT
 | Bazarr | 6767 | `http://192.168.1.197:6767` | Subtitle management |
 
 After outbound VPN activation, Gluetun publishes the qBittorrent and Prowlarr LAN ports because those containers share Gluetun's network namespace.
+
+The repo-level source of truth for the Home Assistant Homelab dashboard is `homelab-services.yml`. The installed Home Assistant package and dashboard YAML are mirrored from `home-assistant/`.
 
 ## Integration Status
 

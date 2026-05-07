@@ -1,0 +1,114 @@
+# Managed from /root/server-admin/home-assistant/homelab_dashboard.yaml
+
+title: Homelab
+views:
+  - title: Services
+    path: homelab
+    icon: mdi:server-network
+    type: sections
+    sections:
+      - type: grid
+        title: Core
+        cards:
+          - type: tile
+            entity: binary_sensor.homelab_home_assistant
+            name: Home Assistant
+            icon: mdi:home-assistant
+            tap_action:
+              action: url
+              url_path: http://192.168.1.187:8123
+          - type: markdown
+            content: |
+              **Home Assistant**
+              VM 100 - `192.168.1.187:8123`
+              [Open](http://192.168.1.187:8123)
+
+      - type: grid
+        title: Network
+        cards:
+          - type: tile
+            entity: binary_sensor.homelab_adguard_home
+            name: AdGuard Home
+            icon: mdi:shield-check
+            tap_action:
+              action: url
+              url_path: http://192.168.1.189
+          - type: markdown
+            content: |
+              **AdGuard Home**
+              CT 102 - `192.168.1.189`
+              [Open](http://192.168.1.189)
+
+      - type: grid
+        title: Media
+        cards:
+          - type: tile
+            entity: binary_sensor.homelab_jellyfin
+            name: Jellyfin
+            icon: mdi:play-box
+            tap_action:
+              action: url
+              url_path: http://192.168.1.191:8096
+          - type: tile
+            entity: binary_sensor.homelab_jellyseerr
+            name: Jellyseerr
+            icon: mdi:movie-search
+            tap_action:
+              action: url
+              url_path: http://192.168.1.197:5055
+          - type: tile
+            entity: binary_sensor.homelab_radarr
+            name: Radarr
+            icon: mdi:movie-open
+            tap_action:
+              action: url
+              url_path: http://192.168.1.197:7878
+          - type: tile
+            entity: binary_sensor.homelab_sonarr
+            name: Sonarr
+            icon: mdi:television-classic
+            tap_action:
+              action: url
+              url_path: http://192.168.1.197:8989
+          - type: tile
+            entity: binary_sensor.homelab_prowlarr
+            name: Prowlarr
+            icon: mdi:radar
+            tap_action:
+              action: url
+              url_path: http://192.168.1.197:9696
+          - type: tile
+            entity: binary_sensor.homelab_qbittorrent
+            name: qBittorrent
+            icon: mdi:download-network
+            tap_action:
+              action: url
+              url_path: http://192.168.1.197:8080
+          - type: tile
+            entity: binary_sensor.homelab_bazarr
+            name: Bazarr
+            icon: mdi:subtitles
+            tap_action:
+              action: url
+              url_path: http://192.168.1.197:6767
+          - type: markdown
+            content: |
+              **Media stack**
+              CT 106 - `192.168.1.197`
+
+              Jellyseerr `:5055` - Radarr `:7878` - Sonarr `:8989`
+              Prowlarr `:9696` - qBittorrent `:8080` - Bazarr `:6767`
+
+      - type: grid
+        title: Remote Access
+        cards:
+          - type: tile
+            entity: binary_sensor.homelab_tailscale_subnet_router
+            name: Tailscale Subnet Router
+            icon: mdi:vpn
+          - type: markdown
+            content: |
+              **Tailscale Subnet Router**
+              CT 107 - `192.168.1.198`
+
+              Advertises `192.168.1.0/24` for private remote access.

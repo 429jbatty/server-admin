@@ -1,0 +1,130 @@
+services:
+  - id: home_assistant
+    name: Home Assistant
+    category: Core
+    owner: VM 100
+    host: homeassistant
+    ip: 192.168.1.187
+    port: 8123
+    url: http://192.168.1.187:8123
+    check_url: http://192.168.1.187:8123
+    dashboard: true
+    health_check: http
+    description: Home automation dashboard and integrations.
+
+  - id: adguard
+    name: AdGuard Home
+    category: Network
+    owner: CT 102
+    host: adguard
+    ip: 192.168.1.189
+    port: 80
+    url: http://192.168.1.189
+    check_url: http://192.168.1.189
+    dashboard: true
+    health_check: http
+    description: LAN DNS filtering and ad blocking.
+
+  - id: jellyfin
+    name: Jellyfin
+    category: Media
+    owner: CT 104
+    host: jellyfin
+    ip: 192.168.1.191
+    port: 8096
+    url: http://192.168.1.191:8096
+    check_url: http://192.168.1.191:8096
+    dashboard: true
+    health_check: http
+    description: Media streaming server.
+
+  - id: jellyseerr
+    name: Jellyseerr
+    category: Media
+    owner: CT 106
+    host: media-stack
+    ip: 192.168.1.197
+    port: 5055
+    url: http://192.168.1.197:5055
+    check_url: http://192.168.1.197:5055
+    dashboard: true
+    health_check: http
+    description: Media request and discovery UI.
+
+  - id: radarr
+    name: Radarr
+    category: Media
+    owner: CT 106
+    host: media-stack
+    ip: 192.168.1.197
+    port: 7878
+    url: http://192.168.1.197:7878
+    check_url: http://192.168.1.197:7878
+    dashboard: true
+    health_check: http
+    description: Movie library management.
+
+  - id: sonarr
+    name: Sonarr
+    category: Media
+    owner: CT 106
+    host: media-stack
+    ip: 192.168.1.197
+    port: 8989
+    url: http://192.168.1.197:8989
+    check_url: http://192.168.1.197:8989
+    dashboard: true
+    health_check: http
+    description: TV library management.
+
+  - id: prowlarr
+    name: Prowlarr
+    category: Media
+    owner: CT 106
+    host: media-stack
+    ip: 192.168.1.197
+    port: 9696
+    url: http://192.168.1.197:9696
+    check_url: http://192.168.1.197:9696
+    dashboard: true
+    health_check: http
+    description: Indexer manager.
+
+  - id: qbittorrent
+    name: qBittorrent
+    category: Media
+    owner: CT 106
+    host: media-stack
+    ip: 192.168.1.197
+    port: 8080
+    url: http://192.168.1.197:8080
+    check_url: http://192.168.1.197:8080
+    dashboard: true
+    health_check: http
+    description: Download client web UI.
+
+  - id: bazarr
+    name: Bazarr
+    category: Media
+    owner: CT 106
+    host: media-stack
+    ip: 192.168.1.197
+    port: 6767
+    url: http://192.168.1.197:6767
+    check_url: http://192.168.1.197:6767
+    dashboard: true
+    health_check: http
+    description: Subtitle management.
+
+  - id: tailscale_subnet_router
+    name: Tailscale Subnet Router
+    category: Remote Access
+    owner: CT 107
+    host: remote-access
+    ip: 192.168.1.198
+    port:
+    url:
+    check_url:
+    dashboard: true
+    health_check: ping
+    description: Tailscale route into the home LAN.

@@ -1,0 +1,104 @@
+# Managed from /root/server-admin/home-assistant/homelab_services_package.yaml
+# Provides LAN service reachability sensors for the Homelab dashboard.
+
+binary_sensor:
+  - platform: rest
+    name: "Homelab Home Assistant"
+    unique_id: homelab_home_assistant_status
+    resource: "http://192.168.1.187:8123"
+    method: GET
+    timeout: 5
+    scan_interval: 60
+    value_template: "{{ true }}"
+    device_class: connectivity
+
+  - platform: rest
+    name: "Homelab AdGuard Home"
+    unique_id: homelab_adguard_status
+    resource: "http://192.168.1.189"
+    method: GET
+    timeout: 5
+    scan_interval: 60
+    value_template: "{{ true }}"
+    device_class: connectivity
+
+  - platform: rest
+    name: "Homelab Jellyfin"
+    unique_id: homelab_jellyfin_status
+    resource: "http://192.168.1.191:8096"
+    method: GET
+    timeout: 5
+    scan_interval: 60
+    value_template: "{{ true }}"
+    device_class: connectivity
+
+  - platform: rest
+    name: "Homelab Jellyseerr"
+    unique_id: homelab_jellyseerr_status
+    resource: "http://192.168.1.197:5055"
+    method: GET
+    timeout: 5
+    scan_interval: 60
+    value_template: "{{ true }}"
+    device_class: connectivity
+
+  - platform: rest
+    name: "Homelab Radarr"
+    unique_id: homelab_radarr_status
+    resource: "http://192.168.1.197:7878"
+    method: GET
+    timeout: 5
+    scan_interval: 60
+    value_template: "{{ true }}"
+    device_class: connectivity
+
+  - platform: rest
+    name: "Homelab Sonarr"
+    unique_id: homelab_sonarr_status
+    resource: "http://192.168.1.197:8989"
+    method: GET
+    timeout: 5
+    scan_interval: 60
+    value_template: "{{ true }}"
+    device_class: connectivity
+
+  - platform: rest
+    name: "Homelab Prowlarr"
+    unique_id: homelab_prowlarr_status
+    resource: "http://192.168.1.197:9696"
+    method: GET
+    timeout: 5
+    scan_interval: 60
+    value_template: "{{ true }}"
+    device_class: connectivity
+
+  - platform: rest
+    name: "Homelab qBittorrent"
+    unique_id: homelab_qbittorrent_status
+    resource: "http://192.168.1.197:8080"
+    method: GET
+    timeout: 5
+    scan_interval: 60
+    value_template: "{{ true }}"
+    device_class: connectivity
+
+  - platform: rest
+    name: "Homelab Bazarr"
+    unique_id: homelab_bazarr_status
+    resource: "http://192.168.1.197:6767"
+    method: GET
+    timeout: 5
+    scan_interval: 60
+    value_template: "{{ true }}"
+    device_class: connectivity
+
+command_line:
+  - binary_sensor:
+      name: "Homelab Tailscale Subnet Router"
+      unique_id: homelab_tailscale_subnet_router_status
+      command: "ping -c 1 -W 2 192.168.1.198 >/dev/null 2>&1 && echo ON || echo OFF"
+      scan_interval: 60
+      command_timeout: 5
+      payload_on: "ON"
+      payload_off: "OFF"
+      device_class: connectivity

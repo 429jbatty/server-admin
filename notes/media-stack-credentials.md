@@ -36,6 +36,7 @@ Do not store real secrets in this repository.
 - URL: `http://192.168.1.197:9696`
 - API key: store outside this repo
 - Indexer credentials: store outside this repo
+- Network path after VPN activation: through Gluetun in CT `106`
 - Only configure lawful/public-domain/owned-media sources.
 
 ## qBittorrent
@@ -46,7 +47,19 @@ Do not store real secrets in this repository.
   - `radarr` -> `/data/downloads/complete/radarr`
   - `sonarr` -> `/data/downloads/complete/sonarr`
 - Incomplete downloads: `/data/downloads/incomplete`
+- Network path after VPN activation: through Gluetun in CT `106`
+- VPN forwarded port: store outside this repo and set the same value in qBittorrent
 
-## VPN or Usenet
+## Tailscale
 
-Not configured in the initial lightweight build. If added later, store provider details outside this repo and update the runbook with non-secret configuration only.
+- Subnet router: CT `107`, hostname `remote-access`
+- Advertised route: `192.168.1.0/24`
+- Tailscale account and device approval: store outside this repo
+- Disable key expiry for CT `107` in the Tailscale admin console
+
+## Commercial VPN
+
+- Runtime env file: `/opt/media-stack/vpn.env` inside CT `106`
+- Template: `media-stack/vpn.env.example`
+- Recommended provider default: AirVPN with WireGuard and a forwarded port
+- Store provider account, WireGuard private key, preshared key, assigned tunnel address, server choice, and forwarded port outside this repo

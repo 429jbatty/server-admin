@@ -1,6 +1,6 @@
 # Proxmox Media Inventory
 
-Last updated: 2026-05-06 20:20 CDT
+Last updated: 2026-05-06 23:25 CDT
 
 ## Host
 
@@ -22,6 +22,7 @@ Last updated: 2026-05-06 20:20 CDT
 | 104 | LXC | `jellyfin` | running | Active Jellyfin server |
 | 105 | LXC | `CT105` | running | Debian, static IP `192.168.1.100/24` |
 | 106 | LXC | `media-stack` | running | Docker Compose media automation stack, IP `192.168.1.197` |
+| 107 | LXC | `remote-access` | running | Tailscale subnet-router target, IP `192.168.1.198`; awaiting account auth/route approval |
 
 ## Active Jellyfin
 
@@ -45,6 +46,18 @@ Last updated: 2026-05-06 20:20 CDT
 - Storage model: temporary local host path at `/srv/media-stack`
 - CT `104` mount target: `/media`
 - CT `106` mount target: `/data`
+- `/dev/net/tun` passthrough configured for Gluetun.
+
+## Remote Access Target
+
+- Container ID: CT `107`
+- Hostname: `remote-access`
+- LAN IP: `192.168.1.198`
+- Purpose: Tailscale subnet router for remote access to the home LAN.
+- Advertised route: `192.168.1.0/24`
+- `/dev/net/tun` passthrough configured.
+- IP forwarding configured inside the container.
+- Tailscale installed; account authentication and route approval must be completed in Tailscale.
 
 ## Service Ports
 
@@ -58,6 +71,8 @@ Last updated: 2026-05-06 20:20 CDT
 | qBittorrent | 8080 | `http://192.168.1.197:8080` | Download client web UI |
 | Bazarr | 6767 | `http://192.168.1.197:6767` | Subtitle management |
 
+After outbound VPN activation, Gluetun publishes the qBittorrent and Prowlarr LAN ports because those containers share Gluetun's network namespace.
+
 ## Integration Status
 
 - Radarr root folder configured: `/data/library/movies`
@@ -68,6 +83,7 @@ Last updated: 2026-05-06 20:20 CDT
   - `sonarr` -> `/data/downloads/complete/sonarr`
 - Prowlarr configured with Radarr and Sonarr application sync
 - Internet Archive configured as a public torrent indexer and synced to Radarr/Sonarr.
+- Outbound VPN Compose changes are staged in the tracked source file and at `/opt/media-stack/docker-compose.vpn-staged.yml` inside CT `106`. Do not apply the updated Compose file in CT `106` until `/opt/media-stack/vpn.env` contains real provider values.
 - Add only lawful/public-domain/owned-media sources.
 
 ## Policy

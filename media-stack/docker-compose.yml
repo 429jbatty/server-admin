@@ -1,4 +1,23 @@
 services:
+  gluetun:
+    image: qmcgaw/gluetun:latest
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    env_file:
+      - path: /opt/media-stack/vpn.env
+        required: false
+    environment:
+      TZ: America/Chicago
+    ports:
+      - "8080:8080"
+      - "9696:9696"
+    volumes:
+      - /data/config/gluetun:/gluetun
+    restart: unless-stopped
+
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr
@@ -42,12 +61,13 @@ services:
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
+    depends_on:
+      - gluetun
+    network_mode: "service:gluetun"
     environment:
       PUID: 65534
       PGID: 65534
       TZ: America/Chicago
-    ports:
-      - "9696:9696"
     volumes:
       - /data/config/prowlarr:/config
     restart: unless-stopped
@@ -55,15 +75,14 @@ services:
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
+    depends_on:
+      - gluetun
+    network_mode: "service:gluetun"
     environment:
       PUID: 65534
       PGID: 65534
       TZ: America/Chicago
       WEBUI_PORT: 8080
-    ports:
-      - "8080:8080"
-      - "6881:6881"
-      - "6881:6881/udp"
     volumes:
       - /data/config/qbittorrent:/config
       - /data:/data

@@ -1,0 +1,39 @@
+# Managed from /root/server-admin/home-assistant/chores_dashboard.yaml
+
+title: Chores
+views:
+  - title: Litter Box
+    path: litter-box
+    icon: mdi:cat
+    type: sections
+    sections:
+      - type: grid
+        title: Litter Box
+        cards:
+          - type: tile
+            entity: binary_sensor.litter_box_overdue
+            name: Litter Box
+            icon: mdi:cat
+            color: red
+          - type: tile
+            entity: input_button.litter_box_mark_done
+            name: Mark Done
+            icon: mdi:check-circle
+            tap_action:
+              action: perform-action
+              perform_action: input_button.press
+              target:
+                entity_id: input_button.litter_box_mark_done
+          - type: entities
+            title: Status
+            show_header_toggle: false
+            entities:
+              - entity: input_datetime.litter_box_last_done
+                name: Last done
+                icon: mdi:calendar-check
+              - entity: sensor.litter_box_days_since_done
+                name: Days since done
+                icon: mdi:calendar-clock
+              - entity: binary_sensor.litter_box_overdue
+                name: More than 6 days
+                icon: mdi:alert-circle

@@ -1,5 +1,5 @@
 # Managed from /root/server-admin/home-assistant/homelab_services_package.yaml
-# Provides LAN service reachability sensors for the Homelab dashboard.
+# Provides LAN service reachability sensors and Proxmox resource metrics.
 
 binary_sensor:
   - platform: rest
@@ -102,3 +102,223 @@ command_line:
       payload_on: "ON"
       payload_off: "OFF"
       device_class: connectivity
+
+sensor:
+  - platform: rest
+    name: "Homelab Metrics Snapshot"
+    unique_id: homelab_metrics_snapshot
+    resource: "http://192.168.1.184:9108/metrics/homelab"
+    method: GET
+    timeout: 10
+    scan_interval: 60
+    value_template: "{{ value_json.updated_at | default(0) }}"
+    json_attributes:
+      - ok
+      - node
+      - guests
+      - containers
+      - errors
+
+template:
+  - sensor:
+      - name: "Homelab Proxmox CPU"
+        unique_id: homelab_proxmox_cpu_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: "{{ state_attr('sensor.homelab_metrics_snapshot', 'node').cpu_percent | default('unknown') }}"
+
+      - name: "Homelab Proxmox Memory"
+        unique_id: homelab_proxmox_memory_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: "{{ state_attr('sensor.homelab_metrics_snapshot', 'node').memory_percent | default('unknown') }}"
+
+      - name: "Homelab Proxmox Disk"
+        unique_id: homelab_proxmox_disk_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: "{{ state_attr('sensor.homelab_metrics_snapshot', 'node').disk_percent | default('unknown') }}"
+
+      - name: "Homelab Home Assistant CPU"
+        unique_id: homelab_home_assistant_cpu_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set g = (state_attr('sensor.homelab_metrics_snapshot', 'guests') or []) | selectattr('id', 'equalto', 100) | list | first %}
+          {{ g.cpu_percent | default('unknown') }}
+
+      - name: "Homelab Home Assistant Memory"
+        unique_id: homelab_home_assistant_memory_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set g = (state_attr('sensor.homelab_metrics_snapshot', 'guests') or []) | selectattr('id', 'equalto', 100) | list | first %}
+          {{ g.memory_percent | default('unknown') }}
+
+      - name: "Homelab Home Assistant Disk"
+        unique_id: homelab_home_assistant_disk_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set g = (state_attr('sensor.homelab_metrics_snapshot', 'guests') or []) | selectattr('id', 'equalto', 100) | list | first %}
+          {{ g.disk_percent | default('unknown') }}
+
+      - name: "Homelab Jellyfin CPU"
+        unique_id: homelab_jellyfin_cpu_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set g = (state_attr('sensor.homelab_metrics_snapshot', 'guests') or []) | selectattr('id', 'equalto', 104) | list | first %}
+          {{ g.cpu_percent | default('unknown') }}
+
+      - name: "Homelab Jellyfin Memory"
+        unique_id: homelab_jellyfin_memory_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set g = (state_attr('sensor.homelab_metrics_snapshot', 'guests') or []) | selectattr('id', 'equalto', 104) | list | first %}
+          {{ g.memory_percent | default('unknown') }}
+
+      - name: "Homelab Jellyfin Disk"
+        unique_id: homelab_jellyfin_disk_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set g = (state_attr('sensor.homelab_metrics_snapshot', 'guests') or []) | selectattr('id', 'equalto', 104) | list | first %}
+          {{ g.disk_percent | default('unknown') }}
+
+      - name: "Homelab Media Stack CPU"
+        unique_id: homelab_media_stack_cpu_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set g = (state_attr('sensor.homelab_metrics_snapshot', 'guests') or []) | selectattr('id', 'equalto', 106) | list | first %}
+          {{ g.cpu_percent | default('unknown') }}
+
+      - name: "Homelab Media Stack Memory"
+        unique_id: homelab_media_stack_memory_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set g = (state_attr('sensor.homelab_metrics_snapshot', 'guests') or []) | selectattr('id', 'equalto', 106) | list | first %}
+          {{ g.memory_percent | default('unknown') }}
+
+      - name: "Homelab Media Stack Disk"
+        unique_id: homelab_media_stack_disk_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set g = (state_attr('sensor.homelab_metrics_snapshot', 'guests') or []) | selectattr('id', 'equalto', 106) | list | first %}
+          {{ g.disk_percent | default('unknown') }}
+
+      - name: "Homelab Remote Access CPU"
+        unique_id: homelab_remote_access_cpu_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set g = (state_attr('sensor.homelab_metrics_snapshot', 'guests') or []) | selectattr('id', 'equalto', 107) | list | first %}
+          {{ g.cpu_percent | default('unknown') }}
+
+      - name: "Homelab Remote Access Memory"
+        unique_id: homelab_remote_access_memory_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set g = (state_attr('sensor.homelab_metrics_snapshot', 'guests') or []) | selectattr('id', 'equalto', 107) | list | first %}
+          {{ g.memory_percent | default('unknown') }}
+
+      - name: "Homelab Jellyseerr Container CPU"
+        unique_id: homelab_jellyseerr_container_cpu_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set c = (state_attr('sensor.homelab_metrics_snapshot', 'containers') or []) | selectattr('name', 'equalto', 'jellyseerr') | list | first %}
+          {{ c.cpu_percent | default('unknown') }}
+
+      - name: "Homelab Jellyseerr Container Memory"
+        unique_id: homelab_jellyseerr_container_memory_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set c = (state_attr('sensor.homelab_metrics_snapshot', 'containers') or []) | selectattr('name', 'equalto', 'jellyseerr') | list | first %}
+          {{ c.memory_percent | default('unknown') }}
+
+      - name: "Homelab Radarr Container CPU"
+        unique_id: homelab_radarr_container_cpu_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set c = (state_attr('sensor.homelab_metrics_snapshot', 'containers') or []) | selectattr('name', 'equalto', 'radarr') | list | first %}
+          {{ c.cpu_percent | default('unknown') }}
+
+      - name: "Homelab Radarr Container Memory"
+        unique_id: homelab_radarr_container_memory_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set c = (state_attr('sensor.homelab_metrics_snapshot', 'containers') or []) | selectattr('name', 'equalto', 'radarr') | list | first %}
+          {{ c.memory_percent | default('unknown') }}
+
+      - name: "Homelab Sonarr Container CPU"
+        unique_id: homelab_sonarr_container_cpu_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set c = (state_attr('sensor.homelab_metrics_snapshot', 'containers') or []) | selectattr('name', 'equalto', 'sonarr') | list | first %}
+          {{ c.cpu_percent | default('unknown') }}
+
+      - name: "Homelab Sonarr Container Memory"
+        unique_id: homelab_sonarr_container_memory_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set c = (state_attr('sensor.homelab_metrics_snapshot', 'containers') or []) | selectattr('name', 'equalto', 'sonarr') | list | first %}
+          {{ c.memory_percent | default('unknown') }}
+
+      - name: "Homelab Prowlarr Container CPU"
+        unique_id: homelab_prowlarr_container_cpu_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set c = (state_attr('sensor.homelab_metrics_snapshot', 'containers') or []) | selectattr('name', 'equalto', 'prowlarr') | list | first %}
+          {{ c.cpu_percent | default('unknown') }}
+
+      - name: "Homelab Prowlarr Container Memory"
+        unique_id: homelab_prowlarr_container_memory_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set c = (state_attr('sensor.homelab_metrics_snapshot', 'containers') or []) | selectattr('name', 'equalto', 'prowlarr') | list | first %}
+          {{ c.memory_percent | default('unknown') }}
+
+      - name: "Homelab qBittorrent Container CPU"
+        unique_id: homelab_qbittorrent_container_cpu_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set c = (state_attr('sensor.homelab_metrics_snapshot', 'containers') or []) | selectattr('name', 'equalto', 'qbittorrent') | list | first %}
+          {{ c.cpu_percent | default('unknown') }}
+
+      - name: "Homelab qBittorrent Container Memory"
+        unique_id: homelab_qbittorrent_container_memory_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set c = (state_attr('sensor.homelab_metrics_snapshot', 'containers') or []) | selectattr('name', 'equalto', 'qbittorrent') | list | first %}
+          {{ c.memory_percent | default('unknown') }}
+
+      - name: "Homelab Bazarr Container CPU"
+        unique_id: homelab_bazarr_container_cpu_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set c = (state_attr('sensor.homelab_metrics_snapshot', 'containers') or []) | selectattr('name', 'equalto', 'bazarr') | list | first %}
+          {{ c.cpu_percent | default('unknown') }}
+
+      - name: "Homelab Bazarr Container Memory"
+        unique_id: homelab_bazarr_container_memory_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >-
+          {% set c = (state_attr('sensor.homelab_metrics_snapshot', 'containers') or []) | selectattr('name', 'equalto', 'bazarr') | list | first %}
+          {{ c.memory_percent | default('unknown') }}

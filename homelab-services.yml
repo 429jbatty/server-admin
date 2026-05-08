@@ -128,3 +128,16 @@ services:
     dashboard: true
     health_check: ping
     description: Tailscale route into the home LAN.
+
+  - id: proxmox_metrics
+    name: Proxmox Metrics Exporter
+    category: Core
+    owner: Host
+    host: proxmox
+    ip: 192.168.1.184
+    port: 9108
+    url: http://192.168.1.184:9108/metrics/homelab
+    check_url: http://192.168.1.184:9108/metrics/homelab
+    dashboard: false
+    health_check: http
+    description: LAN-only JSON metrics endpoint for the Home Assistant Homelab dashboard.

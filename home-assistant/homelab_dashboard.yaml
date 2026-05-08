@@ -8,7 +8,43 @@ views:
     type: sections
     sections:
       - type: grid
-        title: Core
+        title: At A Glance
+        cards:
+          - type: entities
+            title: Core Health
+            show_header_toggle: false
+            entities:
+              - entity: binary_sensor.homelab_home_assistant
+                name: Home Assistant
+                icon: mdi:home-assistant
+              - entity: binary_sensor.homelab_adguard_home
+                name: AdGuard Home
+                icon: mdi:shield-check
+              - entity: binary_sensor.homelab_jellyfin
+                name: Jellyfin
+                icon: mdi:play-box
+              - entity: binary_sensor.homelab_tailscale_subnet_router
+                name: Tailscale Router
+                icon: mdi:vpn
+          - type: entities
+            title: Current Load
+            show_header_toggle: false
+            entities:
+              - entity: sensor.homelab_proxmox_cpu
+                name: Proxmox CPU
+                icon: mdi:chip
+              - entity: sensor.homelab_proxmox_memory
+                name: Proxmox RAM
+                icon: mdi:memory
+              - entity: sensor.homelab_home_assistant_cpu
+                name: Home Assistant CPU
+                icon: mdi:home-assistant
+              - entity: sensor.homelab_media_stack_cpu
+                name: Media Stack CPU
+                icon: mdi:server
+
+      - type: grid
+        title: Home And Network
         cards:
           - type: tile
             entity: binary_sensor.homelab_home_assistant
@@ -19,13 +55,11 @@ views:
               url_path: http://192.168.1.187:8123
           - type: markdown
             content: |
-              **Home Assistant**
-              VM 100 - `192.168.1.187:8123`
-              [Open](http://192.168.1.187:8123)
+              **Home and network**
 
-      - type: grid
-        title: Network
-        cards:
+              Home Assistant runs in VM 100 at `192.168.1.187:8123`.
+
+              AdGuard Home runs in CT 102 at `192.168.1.189`.
           - type: tile
             entity: binary_sensor.homelab_adguard_home
             name: AdGuard Home
@@ -33,14 +67,9 @@ views:
             tap_action:
               action: url
               url_path: http://192.168.1.189
-          - type: markdown
-            content: |
-              **AdGuard Home**
-              CT 102 - `192.168.1.189`
-              [Open](http://192.168.1.189)
 
       - type: grid
-        title: Media
+        title: Media Services
         cards:
           - type: tile
             entity: binary_sensor.homelab_jellyfin
@@ -100,6 +129,64 @@ views:
               Prowlarr `:9696` - qBittorrent `:8080` - Bazarr `:6767`
 
       - type: grid
+        title: Resource Health
+        cards:
+          - type: gauge
+            entity: sensor.homelab_proxmox_cpu
+            name: Proxmox CPU
+            min: 0
+            max: 100
+            severity:
+              green: 0
+              yellow: 60
+              red: 85
+          - type: gauge
+            entity: sensor.homelab_proxmox_memory
+            name: Proxmox RAM
+            min: 0
+            max: 100
+            severity:
+              green: 0
+              yellow: 70
+              red: 90
+          - type: gauge
+            entity: sensor.homelab_home_assistant_cpu
+            name: HA CPU
+            min: 0
+            max: 100
+            severity:
+              green: 0
+              yellow: 60
+              red: 85
+          - type: gauge
+            entity: sensor.homelab_home_assistant_memory
+            name: HA RAM
+            min: 0
+            max: 100
+            severity:
+              green: 0
+              yellow: 70
+              red: 90
+          - type: gauge
+            entity: sensor.homelab_jellyfin_cpu
+            name: Jellyfin CPU
+            min: 0
+            max: 100
+            severity:
+              green: 0
+              yellow: 60
+              red: 85
+          - type: gauge
+            entity: sensor.homelab_media_stack_cpu
+            name: Media CPU
+            min: 0
+            max: 100
+            severity:
+              green: 0
+              yellow: 60
+              red: 85
+
+      - type: grid
         title: Remote Access
         cards:
           - type: tile
@@ -112,3 +199,140 @@ views:
               CT 107 - `192.168.1.198`
 
               Advertises `192.168.1.0/24` for private remote access.
+
+  - title: Metrics
+    path: homelab-metrics
+    icon: mdi:chart-line
+    type: sections
+    sections:
+      - type: grid
+        title: Proxmox Host
+        cards:
+          - type: gauge
+            entity: sensor.homelab_proxmox_cpu
+            name: CPU
+            min: 0
+            max: 100
+            severity:
+              green: 0
+              yellow: 60
+              red: 85
+          - type: gauge
+            entity: sensor.homelab_proxmox_memory
+            name: RAM
+            min: 0
+            max: 100
+            severity:
+              green: 0
+              yellow: 70
+              red: 90
+          - type: gauge
+            entity: sensor.homelab_proxmox_disk
+            name: Disk
+            min: 0
+            max: 100
+            severity:
+              green: 0
+              yellow: 75
+              red: 90
+          - type: history-graph
+            title: Proxmox Trends
+            hours_to_show: 24
+            entities:
+              - sensor.homelab_proxmox_cpu
+              - sensor.homelab_proxmox_memory
+              - sensor.homelab_proxmox_disk
+
+      - type: grid
+        title: Guest Systems
+        cards:
+          - type: entities
+            title: Current Guest Load
+            show_header_toggle: false
+            entities:
+              - entity: sensor.homelab_home_assistant_cpu
+                name: Home Assistant CPU
+              - entity: sensor.homelab_home_assistant_memory
+                name: Home Assistant RAM
+              - entity: sensor.homelab_jellyfin_cpu
+                name: Jellyfin CPU
+              - entity: sensor.homelab_media_stack_cpu
+                name: Media Stack CPU
+              - entity: sensor.homelab_remote_access_cpu
+                name: Tailscale CPU
+          - type: history-graph
+            title: Home Assistant
+            hours_to_show: 24
+            entities:
+              - sensor.homelab_home_assistant_cpu
+              - sensor.homelab_home_assistant_memory
+              - sensor.homelab_home_assistant_disk
+          - type: history-graph
+            title: Jellyfin
+            hours_to_show: 24
+            entities:
+              - sensor.homelab_jellyfin_cpu
+              - sensor.homelab_jellyfin_memory
+              - sensor.homelab_jellyfin_disk
+          - type: history-graph
+            title: Media Stack
+            hours_to_show: 24
+            entities:
+              - sensor.homelab_media_stack_cpu
+              - sensor.homelab_media_stack_memory
+              - sensor.homelab_media_stack_disk
+
+      - type: grid
+        title: Remote And Source
+        cards:
+          - type: history-graph
+            title: Tailscale Router
+            hours_to_show: 24
+            entities:
+              - sensor.homelab_remote_access_cpu
+              - sensor.homelab_remote_access_memory
+          - type: entities
+            title: Metrics Source
+            entities:
+              - entity: sensor.homelab_metrics_snapshot
+                name: Last metrics poll
+
+      - type: grid
+        title: Media Containers
+        cards:
+          - type: entities
+            title: Current Container Load
+            show_header_toggle: false
+            entities:
+              - entity: sensor.homelab_jellyseerr_container_cpu
+                name: Jellyseerr CPU
+              - entity: sensor.homelab_radarr_container_cpu
+                name: Radarr CPU
+              - entity: sensor.homelab_sonarr_container_cpu
+                name: Sonarr CPU
+              - entity: sensor.homelab_prowlarr_container_cpu
+                name: Prowlarr CPU
+              - entity: sensor.homelab_qbittorrent_container_cpu
+                name: qBittorrent CPU
+              - entity: sensor.homelab_bazarr_container_cpu
+                name: Bazarr CPU
+          - type: history-graph
+            title: Container CPU
+            hours_to_show: 24
+            entities:
+              - sensor.homelab_jellyseerr_container_cpu
+              - sensor.homelab_radarr_container_cpu
+              - sensor.homelab_sonarr_container_cpu
+              - sensor.homelab_prowlarr_container_cpu
+              - sensor.homelab_qbittorrent_container_cpu
+              - sensor.homelab_bazarr_container_cpu
+          - type: history-graph
+            title: Container RAM
+            hours_to_show: 24
+            entities:
+              - sensor.homelab_jellyseerr_container_memory
+              - sensor.homelab_radarr_container_memory
+              - sensor.homelab_sonarr_container_memory
+              - sensor.homelab_prowlarr_container_memory
+              - sensor.homelab_qbittorrent_container_memory
+              - sensor.homelab_bazarr_container_memory

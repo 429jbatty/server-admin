@@ -1,0 +1,75 @@
+# Managed from /root/server-admin/home-assistant/litter_box_package.yaml
+# Tracks the cat litter box chore from a Home Assistant NFC tag scan.
+
+input_datetime:
+  litter_box_last_done:
+    name: Litter Box Last Done
+    has_date: true
+    has_time: true
+
+input_button:
+  litter_box_mark_done:
+    name: Mark Litter Box Done
+    icon: mdi:check-circle
+
+template:
+  - sensor:
+      - name: "Litter Box Days Since Done"
+        unique_id: litter_box_days_since_done
+        unit_of_measurement: "d"
+        icon: mdi:calendar-clock
+        availability: >-
+          {{ states('input_datetime.litter_box_last_done') not in ['unknown', 'unavailable', 'none', ''] }}
+        state: >-
+          {% set last = states('input_datetime.litter_box_last_done') %}
+          {% if last in ['unknown', 'unavailable', 'none', ''] %}
+            unknown
+          {% else %}
+            {{ ((now() - as_local(last | as_datetime)).total_seconds() / 86400) | round(1) }}
+          {% endif %}
+
+  - binary_sensor:
+      - name: "Litter Box Overdue"
+        unique_id: litter_box_overdue
+        device_class: problem
+        icon: mdi:alert-circle
+        availability: >-
+          {{ states('input_datetime.litter_box_last_done') not in ['unknown', 'unavailable', 'none', ''] }}
+        state: >-
+          {% set last = states('input_datetime.litter_box_last_done') %}
+          {% if last in ['unknown', 'unavailable', 'none', ''] %}
+            false
+          {% else %}
+            {{ (now() - as_local(last | as_datetime)).total_seconds() > 6 * 86400 }}
+          {% endif %}
+
+automation:
+  - alias: "Litter Box NFC Tag Scanned"
+    id: litter_box_nfc_tag_scanned
+    description: "Mark the litter box as done when the Litter Box NFC tag is scanned."
+    trigger:
+      - platform: tag
+        tag_id: e1e33f75-b73e-4384-95ab-a485764a7fe6
+    condition: []
+    action:
+      - service: input_datetime.set_datetime
+        target:
+          entity_id: input_datetime.litter_box_last_done
+        data:
+          datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    mode: single
+
+  - alias: "Litter Box Manual Mark Done"
+    id: litter_box_manual_mark_done
+    description: "Mark the litter box as done from the Chores dashboard fallback button."
+    trigger:
+      - platform: state
+        entity_id: input_button.litter_box_mark_done
+    condition: []
+    action:
+      - service: input_datetime.set_datetime
+        target:
+          entity_id: input_datetime.litter_box_last_done
+        data:
+          datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    mode: single

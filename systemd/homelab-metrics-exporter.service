@@ -1,0 +1,13 @@
+[Unit]
+Description=Homelab metrics exporter for Home Assistant
+After=network-online.target pveproxy.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /root/server-admin/scripts/homelab-metrics-exporter.py --host 0.0.0.0 --port 9108
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

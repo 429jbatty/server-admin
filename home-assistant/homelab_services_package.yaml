@@ -92,6 +92,16 @@ binary_sensor:
     value_template: "{{ true }}"
     device_class: connectivity
 
+  - platform: rest
+    name: "Albumary Public Site"
+    unique_id: albumary_public_site_status
+    resource: "https://app.albumary.net"
+    method: GET
+    timeout: 10
+    scan_interval: 300
+    value_template: "{{ true }}"
+    device_class: connectivity
+
 command_line:
   - binary_sensor:
       name: "Homelab Tailscale Subnet Router"
@@ -102,6 +112,22 @@ command_line:
       payload_on: "ON"
       payload_off: "OFF"
       device_class: connectivity
+
+  - sensor:
+      name: "Albumary Cloudflare Metrics Snapshot"
+      unique_id: albumary_cloudflare_metrics_snapshot
+      command: "python3 /config/scripts/cloudflare_albumary_metrics.py"
+      scan_interval: 300
+      command_timeout: 30
+      value_template: "{{ value_json.updated_at | default('unknown') }}"
+      json_attributes:
+        - ok
+        - error
+        - hostname
+        - window_hours
+        - totals
+        - hourly
+        - top_paths
 
 sensor:
   - platform: rest
@@ -322,3 +348,46 @@ template:
         state: >-
           {% set c = (state_attr('sensor.homelab_metrics_snapshot', 'containers') or []) | selectattr('name', 'equalto', 'bazarr') | list | first %}
           {{ c.memory_percent | default('unknown') }}
+
+      - name: "Albumary Cloudflare Requests 24h"
+        unique_id: albumary_cloudflare_requests_24h
+        state_class: measurement
+        icon: mdi:web
+        state: "{{ (state_attr('sensor.albumary_cloudflare_metrics_snapshot', 'totals') or {}).requests | default('unknown') }}"
+
+      - name: "Albumary Cloudflare Visits 24h"
+        unique_id: albumary_cloudflare_visits_24h
+        state_class: measurement
+        icon: mdi:account-eye
+        state: "{{ (state_attr('sensor.albumary_cloudflare_metrics_snapshot', 'totals') or {}).visits | default('unknown') }}"
+
+      - name: "Albumary Cloudflare Transfer 24h"
+        unique_id: albumary_cloudflare_transfer_24h
+        unit_of_measurement: "MiB"
+        state_class: measurement
+        icon: mdi:download-network-outline
+        state: >-
+          {% set bytes = (state_attr('sensor.albumary_cloudflare_metrics_snapshot', 'totals') or {}).bytes | default(none) %}
+          {{ (bytes / 1048576) | round(2) if bytes is number else 'unknown' }}
+
+      - name: "Albumary Cloudflare 4xx 24h"
+        unique_id: albumary_cloudflare_4xx_24h
+        state_class: measurement
+        icon: mdi:alert-circle-outline
+        state: "{{ (state_attr('sensor.albumary_cloudflare_metrics_snapshot', 'totals') or {}).status_4xx | default('unknown') }}"
+
+      - name: "Albumary Cloudflare 5xx 24h"
+        unique_id: albumary_cloudflare_5xx_24h
+        state_class: measurement
+        icon: mdi:server-off
+        state: "{{ (state_attr('sensor.albumary_cloudflare_metrics_snapshot', 'totals') or {}).status_5xx | default('unknown') }}"
+
+      - name: "Albumary Cloudflare Last Error"
+        unique_id: albumary_cloudflare_last_error
+        icon: mdi:cloud-alert
+        state: >-
+          {% if state_attr('sensor.albumary_cloudflare_metrics_snapshot', 'ok') %}
+            none
+          {% else %}
+            {{ state_attr('sensor.albumary_cloudflare_metrics_snapshot', 'error') | default('unknown', true) }}
+          {% endif %}

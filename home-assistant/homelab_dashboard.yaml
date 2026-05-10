@@ -5,286 +5,383 @@ views:
   - title: Overview
     path: overview
     icon: mdi:view-dashboard
+    show_icon_and_title: true
     type: sections
+    max_columns: 3
+    dense_section_placement: true
     sections:
       - type: grid
         title: Health
         cards:
-          - type: entities
-            title: Core Services
-            show_header_toggle: false
-            entities:
-              - entity: binary_sensor.homelab_home_assistant
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: entity
+                entity: binary_sensor.homelab_home_assistant
                 name: Home Assistant
                 icon: mdi:home-assistant
-              - entity: binary_sensor.homelab_adguard_home
-                name: AdGuard Home
+                content_info: name
+              - type: entity
+                entity: binary_sensor.homelab_adguard_home
+                name: AdGuard
                 icon: mdi:shield-check
-              - entity: binary_sensor.homelab_jellyfin
+                content_info: name
+              - type: entity
+                entity: binary_sensor.homelab_jellyfin
                 name: Jellyfin
                 icon: mdi:play-box
-              - entity: binary_sensor.homelab_tailscale_subnet_router
-                name: Tailscale Router
+                content_info: name
+              - type: entity
+                entity: binary_sensor.homelab_tailscale_subnet_router
+                name: Tailscale
                 icon: mdi:vpn
-              - entity: binary_sensor.albumary_public_site
-                name: app.albumary.net
+                content_info: name
+              - type: entity
+                entity: binary_sensor.albumary_public_site
+                name: Albumary
                 icon: mdi:web-check
-          - type: entities
-            title: Data Sources
-            show_header_toggle: false
-            entities:
-              - entity: sensor.homelab_metrics_snapshot
-                name: Homelab metrics poll
-                icon: mdi:server-network
-              - entity: sensor.albumary_cloudflare_metrics_snapshot
-                name: Cloudflare metrics poll
-                icon: mdi:cloud-clock
-              - entity: sensor.albumary_cloudflare_last_error
-                name: Cloudflare last error
-                icon: mdi:cloud-alert
+                content_info: name
+            alignment: start
+          - type: custom:mushroom-entity-card
+            entity: sensor.homelab_metrics_snapshot
+            name: Homelab metrics
+            icon: mdi:server-network
+            icon_color: blue
+          - type: custom:mushroom-entity-card
+            entity: sensor.albumary_cloudflare_metrics_snapshot
+            name: Cloudflare metrics
+            icon: mdi:cloud-clock
+            icon_color: cyan
+          - type: custom:mushroom-template-card
+            entity: sensor.albumary_cloudflare_last_error
+            primary: Cloudflare errors
+            secondary: "{{ states(entity) }}"
+            icon: mdi:cloud-alert
+            icon_color: "{{ 'green' if is_state(entity, 'none') else 'red' }}"
 
       - type: grid
         title: Current Load
         cards:
-          - type: gauge
-            entity: sensor.homelab_proxmox_cpu
+          - type: custom:mini-graph-card
             name: Proxmox CPU
-            min: 0
-            max: 100
-            severity:
-              green: 0
-              yellow: 60
-              red: 85
-          - type: gauge
-            entity: sensor.homelab_proxmox_memory
+            entities:
+              - entity: sensor.homelab_proxmox_cpu
+            hours_to_show: 12
+            points_per_hour: 4
+            line_width: 4
+            show:
+              fill: true
+              icon: false
+              legend: false
+              extrema: false
+            color_thresholds:
+              - value: 0
+                color: "#43a047"
+              - value: 60
+                color: "#f9a825"
+              - value: 85
+                color: "#e53935"
+          - type: custom:mini-graph-card
             name: Proxmox RAM
-            min: 0
-            max: 100
-            severity:
-              green: 0
-              yellow: 70
-              red: 90
-          - type: gauge
-            entity: sensor.homelab_home_assistant_cpu
-            name: HA CPU
-            min: 0
-            max: 100
-            severity:
-              green: 0
-              yellow: 60
-              red: 85
-          - type: gauge
-            entity: sensor.homelab_media_stack_cpu
-            name: Media CPU
-            min: 0
-            max: 100
-            severity:
-              green: 0
-              yellow: 60
-              red: 85
-
-      - type: grid
-        title: Albumary
-        cards:
-          - type: tile
-            entity: sensor.albumary_cloudflare_visits_24h
-            name: Visits
-            icon: mdi:account-eye
-          - type: tile
-            entity: sensor.albumary_cloudflare_requests_24h
-            name: Requests
-            icon: mdi:web
-          - type: tile
-            entity: sensor.albumary_cloudflare_4xx_24h
-            name: 4xx
-            icon: mdi:alert-circle-outline
-          - type: tile
-            entity: sensor.albumary_cloudflare_5xx_24h
-            name: 5xx
-            icon: mdi:server-off
+            entities:
+              - entity: sensor.homelab_proxmox_memory
+            hours_to_show: 12
+            points_per_hour: 4
+            line_width: 4
+            show:
+              fill: true
+              icon: false
+              legend: false
+              extrema: false
+            color_thresholds:
+              - value: 0
+                color: "#43a047"
+              - value: 70
+                color: "#f9a825"
+              - value: 90
+                color: "#e53935"
+          - type: custom:mini-graph-card
+            name: Proxmox Disk
+            entities:
+              - entity: sensor.homelab_proxmox_disk
+            hours_to_show: 12
+            points_per_hour: 4
+            line_width: 4
+            show:
+              fill: true
+              icon: false
+              legend: false
+              extrema: false
+            color_thresholds:
+              - value: 0
+                color: "#43a047"
+              - value: 75
+                color: "#f9a825"
+              - value: 90
+                color: "#e53935"
 
   - title: Services
     path: homelab
     icon: mdi:server-network
+    show_icon_and_title: true
     type: sections
+    max_columns: 3
+    dense_section_placement: true
     sections:
       - type: grid
-        title: Home And Network
+        title: Core And Network
         cards:
-          - type: tile
+          - type: custom:mushroom-template-card
             entity: binary_sensor.homelab_home_assistant
-            name: Home Assistant
+            primary: Home Assistant
+            secondary: VM 100 - 192.168.1.187:8123
             icon: mdi:home-assistant
+            icon_color: "{{ 'green' if is_state(entity, 'on') else 'red' }}"
             tap_action:
               action: url
               url_path: http://192.168.1.187:8123
-          - type: tile
+          - type: custom:mushroom-template-card
             entity: binary_sensor.homelab_adguard_home
-            name: AdGuard Home
+            primary: AdGuard Home
+            secondary: CT 102 - 192.168.1.189
             icon: mdi:shield-check
+            icon_color: "{{ 'green' if is_state(entity, 'on') else 'red' }}"
             tap_action:
               action: url
               url_path: http://192.168.1.189
+          - type: custom:mushroom-template-card
+            primary: Pause AdGuard
+            secondary: Disable protection for 15 minutes
+            icon: mdi:shield-pause
+            icon_color: amber
+            tap_action:
+              action: call-service
+              service: script.pause_adguard_15_min
+              confirmation:
+                text: Pause AdGuard protection for 15 minutes?
 
       - type: grid
-        title: Media Services
+        title: Watch And Request
         cards:
-          - type: tile
+          - type: custom:mushroom-template-card
             entity: binary_sensor.homelab_jellyfin
-            name: Jellyfin
+            primary: Jellyfin
+            secondary: CT 104 - 192.168.1.191:8096
             icon: mdi:play-box
+            icon_color: "{{ 'green' if is_state(entity, 'on') else 'red' }}"
             tap_action:
               action: url
               url_path: http://192.168.1.191:8096
-          - type: tile
+          - type: custom:mushroom-template-card
             entity: binary_sensor.homelab_jellyseerr
-            name: Jellyseerr
+            primary: Jellyseerr
+            secondary: CT 106 - 192.168.1.197:5055
             icon: mdi:movie-search
+            icon_color: "{{ 'green' if is_state(entity, 'on') else 'red' }}"
             tap_action:
               action: url
               url_path: http://192.168.1.197:5055
-          - type: tile
+
+      - type: grid
+        title: Media Automation
+        cards:
+          - type: custom:mushroom-template-card
             entity: binary_sensor.homelab_radarr
-            name: Radarr
+            primary: Radarr
+            secondary: CT 106 - 192.168.1.197:7878
             icon: mdi:movie-open
+            icon_color: "{{ 'green' if is_state(entity, 'on') else 'red' }}"
             tap_action:
               action: url
               url_path: http://192.168.1.197:7878
-          - type: tile
+          - type: custom:mushroom-template-card
             entity: binary_sensor.homelab_sonarr
-            name: Sonarr
+            primary: Sonarr
+            secondary: CT 106 - 192.168.1.197:8989
             icon: mdi:television-classic
+            icon_color: "{{ 'green' if is_state(entity, 'on') else 'red' }}"
             tap_action:
               action: url
               url_path: http://192.168.1.197:8989
-          - type: tile
+          - type: custom:mushroom-template-card
             entity: binary_sensor.homelab_prowlarr
-            name: Prowlarr
+            primary: Prowlarr
+            secondary: CT 106 - 192.168.1.197:9696
             icon: mdi:radar
+            icon_color: "{{ 'green' if is_state(entity, 'on') else 'red' }}"
             tap_action:
               action: url
               url_path: http://192.168.1.197:9696
-          - type: tile
-            entity: binary_sensor.homelab_qbittorrent
-            name: qBittorrent
-            icon: mdi:download-network
-            tap_action:
-              action: url
-              url_path: http://192.168.1.197:8080
-          - type: tile
+          - type: custom:mushroom-template-card
             entity: binary_sensor.homelab_bazarr
-            name: Bazarr
+            primary: Bazarr
+            secondary: CT 106 - 192.168.1.197:6767
             icon: mdi:subtitles
+            icon_color: "{{ 'green' if is_state(entity, 'on') else 'red' }}"
             tap_action:
               action: url
               url_path: http://192.168.1.197:6767
 
       - type: grid
-        title: Remote Access
+        title: Downloads
         cards:
-          - type: tile
-            entity: binary_sensor.homelab_tailscale_subnet_router
-            name: Tailscale Subnet Router
-            icon: mdi:vpn
-
-      - type: grid
-        title: Public Sites
-        cards:
-          - type: tile
-            entity: binary_sensor.albumary_public_site
-            name: app.albumary.net
-            icon: mdi:web-check
+          - type: custom:mushroom-template-card
+            entity: binary_sensor.homelab_qbittorrent
+            primary: qBittorrent
+            secondary: CT 106 - 192.168.1.197:8080
+            icon: mdi:download-network
+            icon_color: "{{ 'green' if is_state(entity, 'on') else 'red' }}"
             tap_action:
               action: url
-              url_path: https://app.albumary.net
+              url_path: http://192.168.1.197:8080
+
+      - type: grid
+        title: Remote Access
+        cards:
+          - type: custom:mushroom-template-card
+            entity: binary_sensor.homelab_tailscale_subnet_router
+            primary: Tailscale Subnet Router
+            secondary: CT 107 - 192.168.1.198
+            icon: mdi:vpn
+            icon_color: "{{ 'green' if is_state(entity, 'on') else 'red' }}"
 
   - title: Albumary
     path: albumary
     icon: mdi:web
+    show_icon_and_title: true
     type: sections
+    max_columns: 2
+    dense_section_placement: true
     sections:
       - type: grid
         title: Site Health
         cards:
-          - type: tile
+          - type: custom:mushroom-template-card
             entity: binary_sensor.albumary_public_site
-            name: app.albumary.net
+            primary: app.albumary.net
+            secondary: Public Cloudflare route
             icon: mdi:web-check
+            icon_color: "{{ 'green' if is_state(entity, 'on') else 'red' }}"
             tap_action:
               action: url
               url_path: https://app.albumary.net
-          - type: entities
-            title: Cloudflare Snapshot
-            show_header_toggle: false
-            entities:
-              - entity: sensor.albumary_cloudflare_metrics_snapshot
-                name: Last poll
-                icon: mdi:cloud-clock
-              - entity: sensor.albumary_cloudflare_last_error
-                name: Last error
-                icon: mdi:cloud-alert
+          - type: custom:mushroom-entity-card
+            entity: sensor.albumary_cloudflare_metrics_snapshot
+            name: Last Cloudflare poll
+            icon: mdi:cloud-clock
+            icon_color: cyan
+          - type: custom:mushroom-template-card
+            entity: sensor.albumary_cloudflare_last_error
+            primary: Last Cloudflare error
+            secondary: "{{ states(entity) }}"
+            icon: mdi:cloud-alert
+            icon_color: "{{ 'green' if is_state(entity, 'none') else 'red' }}"
 
       - type: grid
         title: Last 24 Hours
         cards:
-          - type: tile
+          - type: custom:mushroom-entity-card
+            entity: sensor.albumary_cloudflare_page_views_24h
+            name: Page views
+            icon: mdi:file-eye
+            icon_color: blue
+          - type: custom:mushroom-entity-card
+            entity: sensor.albumary_cloudflare_visitors_24h
+            name: Visitors
+            icon: mdi:account-eye
+            icon_color: indigo
+          - type: custom:mushroom-entity-card
             entity: sensor.albumary_cloudflare_requests_24h
             name: Requests
             icon: mdi:web
-          - type: tile
-            entity: sensor.albumary_cloudflare_visits_24h
-            name: Visits
-            icon: mdi:account-eye
-          - type: tile
+            icon_color: cyan
+          - type: custom:mushroom-entity-card
             entity: sensor.albumary_cloudflare_transfer_24h
             name: Transfer
             icon: mdi:download-network-outline
-          - type: entities
-            title: Response Errors
-            show_header_toggle: false
-            entities:
-              - entity: sensor.albumary_cloudflare_4xx_24h
-                name: 4xx responses
-              - entity: sensor.albumary_cloudflare_5xx_24h
-                name: 5xx responses
+            icon_color: teal
+          - type: custom:mushroom-entity-card
+            entity: sensor.albumary_cloudflare_4xx_24h
+            name: 4xx responses
+            icon: mdi:alert-circle-outline
+            icon_color: amber
+          - type: custom:mushroom-entity-card
+            entity: sensor.albumary_cloudflare_5xx_24h
+            name: 5xx responses
+            icon: mdi:server-off
+            icon_color: red
 
       - type: grid
         title: Trends
         cards:
-          - type: history-graph
-            title: Traffic
+          - type: custom:mini-graph-card
+            name: Traffic
             hours_to_show: 24
+            points_per_hour: 4
+            line_width: 4
             entities:
-              - sensor.albumary_cloudflare_requests_24h
-              - sensor.albumary_cloudflare_visits_24h
-              - sensor.albumary_cloudflare_transfer_24h
-          - type: history-graph
-            title: Errors
+              - entity: sensor.albumary_cloudflare_requests_24h
+                name: Requests
+                color: "#1e88e5"
+              - entity: sensor.albumary_cloudflare_page_views_24h
+                name: Page views
+                color: "#00897b"
+              - entity: sensor.albumary_cloudflare_visitors_24h
+                name: Visitors
+                color: "#5e35b1"
+            show:
+              fill: fade
+              icon: false
+              legend: false
+              extrema: false
+          - type: custom:mini-graph-card
+            name: Errors
             hours_to_show: 24
+            points_per_hour: 4
+            line_width: 4
             entities:
-              - sensor.albumary_cloudflare_4xx_24h
-              - sensor.albumary_cloudflare_5xx_24h
+              - entity: sensor.albumary_cloudflare_4xx_24h
+                name: 4xx
+                color: "#f9a825"
+              - entity: sensor.albumary_cloudflare_5xx_24h
+                name: 5xx
+                color: "#e53935"
+            show:
+              fill: fade
+              icon: false
+              legend: false
+              extrema: false
 
       - type: grid
-        title: Cloudflare Details
+        title: Top Paths
         cards:
           - type: markdown
             content: |
               {% set paths = state_attr('sensor.albumary_cloudflare_metrics_snapshot', 'top_paths') or [] %}
+              {% set web = state_attr('sensor.albumary_cloudflare_metrics_snapshot', 'web_analytics') or {} %}
+              {% set web_paths = web.top_paths | default([]) %}
               **Top paths**
 
-              {% for path in paths %}
-              `{{ path.path }}` - {{ path.requests }} requests
+              {% if web_paths %}
+                {% for path in web_paths %}
+              `{{ path.path }}` - {{ path.page_views }} page views, {{ path.visitors }} visitors
+                {% endfor %}
               {% else %}
+                {% for path in paths %}
+              `{{ path.path }}` - {{ path.requests }} HTTP requests
+                {% else %}
               No path data from Cloudflare yet.
-              {% endfor %}
+                {% endfor %}
+              {% endif %}
+
+      - type: grid
+        title: Recent Hours
+        cards:
           - type: markdown
             content: |
-              {% set hourly = state_attr('sensor.albumary_cloudflare_metrics_snapshot', 'hourly') or [] %}
-              **Recent hourly requests**
-
+              {% set web = state_attr('sensor.albumary_cloudflare_metrics_snapshot', 'web_analytics') or {} %}
+              {% set hourly = web.hourly | default([]) %}
               {% for row in hourly[:6] %}
-              {{ row.datetime_hour }} - {{ row.requests }} requests
+              {{ row.datetime_hour }} - {{ row.page_views }} page views, {{ row.visitors }} visitors
               {% else %}
               No hourly data from Cloudflare yet.
               {% endfor %}
@@ -292,136 +389,278 @@ views:
   - title: Metrics
     path: homelab-metrics
     icon: mdi:chart-line
+    show_icon_and_title: true
     type: sections
+    max_columns: 2
+    dense_section_placement: true
     sections:
       - type: grid
-        title: Proxmox Host
+        title: Service CPU
         cards:
-          - type: gauge
-            entity: sensor.homelab_proxmox_cpu
-            name: CPU
-            min: 0
-            max: 100
-            severity:
-              green: 0
-              yellow: 60
-              red: 85
-          - type: gauge
-            entity: sensor.homelab_proxmox_memory
-            name: RAM
-            min: 0
-            max: 100
-            severity:
-              green: 0
-              yellow: 70
-              red: 90
-          - type: gauge
-            entity: sensor.homelab_proxmox_disk
-            name: Disk
-            min: 0
-            max: 100
-            severity:
-              green: 0
-              yellow: 75
-              red: 90
-          - type: history-graph
-            title: Proxmox Trends
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: entity
+                entity: sensor.homelab_home_assistant_cpu
+                name: Home Assistant
+                icon: mdi:home-assistant
+                content_info: state
+              - type: entity
+                entity: sensor.homelab_jellyfin_cpu
+                name: Jellyfin
+                icon: mdi:play-box
+                content_info: state
+              - type: entity
+                entity: sensor.homelab_media_stack_cpu
+                name: Media Stack
+                icon: mdi:server
+                content_info: state
+              - type: entity
+                entity: sensor.homelab_remote_access_cpu
+                name: Tailscale
+                icon: mdi:vpn
+                content_info: state
+            alignment: start
+          - type: custom:mini-graph-card
+            name: Service CPU Trends
             hours_to_show: 24
-            entities:
-              - sensor.homelab_proxmox_cpu
-              - sensor.homelab_proxmox_memory
-              - sensor.homelab_proxmox_disk
-
-      - type: grid
-        title: Guest Systems
-        cards:
-          - type: entities
-            title: Current Guest Load
-            show_header_toggle: false
+            points_per_hour: 4
+            line_width: 3
             entities:
               - entity: sensor.homelab_home_assistant_cpu
-                name: Home Assistant CPU
-              - entity: sensor.homelab_home_assistant_memory
-                name: Home Assistant RAM
+                name: Home Assistant
+                color: "#1e88e5"
               - entity: sensor.homelab_jellyfin_cpu
-                name: Jellyfin CPU
+                name: Jellyfin
+                color: "#43a047"
               - entity: sensor.homelab_media_stack_cpu
-                name: Media Stack CPU
+                name: Media Stack
+                color: "#f9a825"
               - entity: sensor.homelab_remote_access_cpu
-                name: Tailscale CPU
-          - type: history-graph
-            title: Home Assistant
-            hours_to_show: 24
-            entities:
-              - sensor.homelab_home_assistant_cpu
-              - sensor.homelab_home_assistant_memory
-              - sensor.homelab_home_assistant_disk
-          - type: history-graph
-            title: Jellyfin
-            hours_to_show: 24
-            entities:
-              - sensor.homelab_jellyfin_cpu
-              - sensor.homelab_jellyfin_memory
-              - sensor.homelab_jellyfin_disk
-          - type: history-graph
-            title: Media Stack
-            hours_to_show: 24
-            entities:
-              - sensor.homelab_media_stack_cpu
-              - sensor.homelab_media_stack_memory
-              - sensor.homelab_media_stack_disk
+                name: Tailscale
+                color: "#8e24aa"
+            show:
+              fill: fade
+              icon: false
+              legend: false
+              extrema: false
 
       - type: grid
-        title: Remote And Source
+        title: Service RAM
         cards:
-          - type: history-graph
-            title: Tailscale Router
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: entity
+                entity: sensor.homelab_home_assistant_memory
+                name: Home Assistant
+                icon: mdi:home-assistant
+                content_info: state
+              - type: entity
+                entity: sensor.homelab_jellyfin_memory
+                name: Jellyfin
+                icon: mdi:play-box
+                content_info: state
+              - type: entity
+                entity: sensor.homelab_media_stack_memory
+                name: Media Stack
+                icon: mdi:server
+                content_info: state
+              - type: entity
+                entity: sensor.homelab_remote_access_memory
+                name: Tailscale
+                icon: mdi:vpn
+                content_info: state
+            alignment: start
+          - type: custom:mini-graph-card
+            name: Service RAM Trends
             hours_to_show: 24
+            points_per_hour: 4
+            line_width: 3
             entities:
-              - sensor.homelab_remote_access_cpu
-              - sensor.homelab_remote_access_memory
-          - type: entities
-            title: Metrics Source
-            entities:
-              - entity: sensor.homelab_metrics_snapshot
-                name: Last metrics poll
+              - entity: sensor.homelab_home_assistant_memory
+                name: Home Assistant
+                color: "#1e88e5"
+              - entity: sensor.homelab_jellyfin_memory
+                name: Jellyfin
+                color: "#43a047"
+              - entity: sensor.homelab_media_stack_memory
+                name: Media Stack
+                color: "#f9a825"
+              - entity: sensor.homelab_remote_access_memory
+                name: Tailscale
+                color: "#8e24aa"
+            show:
+              fill: fade
+              icon: false
+              legend: false
+              extrema: false
 
       - type: grid
-        title: Media Containers
+        title: Service Disk
         cards:
-          - type: entities
-            title: Current Container Load
-            show_header_toggle: false
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: entity
+                entity: sensor.homelab_home_assistant_disk
+                name: Home Assistant
+                icon: mdi:home-assistant
+                content_info: state
+              - type: entity
+                entity: sensor.homelab_jellyfin_disk
+                name: Jellyfin
+                icon: mdi:play-box
+                content_info: state
+              - type: entity
+                entity: sensor.homelab_media_stack_disk
+                name: Media Stack
+                icon: mdi:server
+                content_info: state
+            alignment: start
+          - type: custom:mini-graph-card
+            name: Service Disk Trends
+            hours_to_show: 24
+            points_per_hour: 4
+            line_width: 3
+            entities:
+              - entity: sensor.homelab_home_assistant_disk
+                name: Home Assistant
+                color: "#1e88e5"
+              - entity: sensor.homelab_jellyfin_disk
+                name: Jellyfin
+                color: "#43a047"
+              - entity: sensor.homelab_media_stack_disk
+                name: Media Stack
+                color: "#f9a825"
+            show:
+              fill: fade
+              icon: false
+              legend: false
+              extrema: false
+
+      - type: grid
+        title: Media Container CPU
+        cards:
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: entity
+                entity: sensor.homelab_jellyseerr_container_cpu
+                name: Jellyseerr
+                content_info: state
+              - type: entity
+                entity: sensor.homelab_radarr_container_cpu
+                name: Radarr
+                content_info: state
+              - type: entity
+                entity: sensor.homelab_sonarr_container_cpu
+                name: Sonarr
+                content_info: state
+              - type: entity
+                entity: sensor.homelab_prowlarr_container_cpu
+                name: Prowlarr
+                content_info: state
+              - type: entity
+                entity: sensor.homelab_qbittorrent_container_cpu
+                name: qBittorrent
+                content_info: state
+              - type: entity
+                entity: sensor.homelab_bazarr_container_cpu
+                name: Bazarr
+                content_info: state
+            alignment: start
+          - type: custom:mini-graph-card
+            name: Container CPU Trends
+            hours_to_show: 24
+            points_per_hour: 4
+            line_width: 3
             entities:
               - entity: sensor.homelab_jellyseerr_container_cpu
-                name: Jellyseerr CPU
+                name: Jellyseerr
+                color: "#1e88e5"
               - entity: sensor.homelab_radarr_container_cpu
-                name: Radarr CPU
+                name: Radarr
+                color: "#43a047"
               - entity: sensor.homelab_sonarr_container_cpu
-                name: Sonarr CPU
+                name: Sonarr
+                color: "#f9a825"
               - entity: sensor.homelab_prowlarr_container_cpu
-                name: Prowlarr CPU
+                name: Prowlarr
+                color: "#8e24aa"
               - entity: sensor.homelab_qbittorrent_container_cpu
-                name: qBittorrent CPU
+                name: qBittorrent
+                color: "#00acc1"
               - entity: sensor.homelab_bazarr_container_cpu
-                name: Bazarr CPU
-          - type: history-graph
-            title: Container CPU
+                name: Bazarr
+                color: "#e53935"
+            show:
+              fill: fade
+              icon: false
+              legend: false
+              extrema: false
+
+      - type: grid
+        title: Media Container RAM
+        cards:
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: entity
+                entity: sensor.homelab_jellyseerr_container_memory
+                name: Jellyseerr
+                content_info: state
+              - type: entity
+                entity: sensor.homelab_radarr_container_memory
+                name: Radarr
+                content_info: state
+              - type: entity
+                entity: sensor.homelab_sonarr_container_memory
+                name: Sonarr
+                content_info: state
+              - type: entity
+                entity: sensor.homelab_prowlarr_container_memory
+                name: Prowlarr
+                content_info: state
+              - type: entity
+                entity: sensor.homelab_qbittorrent_container_memory
+                name: qBittorrent
+                content_info: state
+              - type: entity
+                entity: sensor.homelab_bazarr_container_memory
+                name: Bazarr
+                content_info: state
+            alignment: start
+          - type: custom:mini-graph-card
+            name: Container RAM Trends
             hours_to_show: 24
+            points_per_hour: 4
+            line_width: 3
             entities:
-              - sensor.homelab_jellyseerr_container_cpu
-              - sensor.homelab_radarr_container_cpu
-              - sensor.homelab_sonarr_container_cpu
-              - sensor.homelab_prowlarr_container_cpu
-              - sensor.homelab_qbittorrent_container_cpu
-              - sensor.homelab_bazarr_container_cpu
-          - type: history-graph
-            title: Container RAM
-            hours_to_show: 24
-            entities:
-              - sensor.homelab_jellyseerr_container_memory
-              - sensor.homelab_radarr_container_memory
-              - sensor.homelab_sonarr_container_memory
-              - sensor.homelab_prowlarr_container_memory
-              - sensor.homelab_qbittorrent_container_memory
-              - sensor.homelab_bazarr_container_memory
+              - entity: sensor.homelab_jellyseerr_container_memory
+                name: Jellyseerr
+                color: "#1e88e5"
+              - entity: sensor.homelab_radarr_container_memory
+                name: Radarr
+                color: "#43a047"
+              - entity: sensor.homelab_sonarr_container_memory
+                name: Sonarr
+                color: "#f9a825"
+              - entity: sensor.homelab_prowlarr_container_memory
+                name: Prowlarr
+                color: "#8e24aa"
+              - entity: sensor.homelab_qbittorrent_container_memory
+                name: qBittorrent
+                color: "#00acc1"
+              - entity: sensor.homelab_bazarr_container_memory
+                name: Bazarr
+                color: "#e53935"
+            show:
+              fill: fade
+              icon: false
+              legend: false
+              extrema: false
+
+      - type: grid
+        title: Metrics Source
+        cards:
+          - type: custom:mushroom-entity-card
+            entity: sensor.homelab_metrics_snapshot
+            name: Last metrics poll
+            icon: mdi:server-network
+            icon_color: blue

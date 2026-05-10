@@ -13,11 +13,12 @@ Do not store secrets here.
 
 The dashboard is installed in Home Assistant as a YAML Lovelace dashboard named `Homelab`. Health checks are intentionally lightweight: HTTP reachability for web services and ping reachability for the Tailscale subnet router. Resource metrics come from a LAN-only Proxmox host exporter at `http://192.168.1.184:9108/metrics/homelab`; it publishes CPU, memory, disk, status, uptime, and media-stack Docker container utilization only.
 
-Albumary Cloudflare metrics are fetched by `home-assistant/cloudflare_albumary_metrics.py`, installed in Home Assistant as `/config/scripts/cloudflare_albumary_metrics.py`. Store the real values only in Home Assistant `secrets.yaml`:
+Albumary Cloudflare metrics are fetched by `home-assistant/cloudflare_albumary_metrics.py`, installed in Home Assistant as `/config/scripts/cloudflare_albumary_metrics.py`. The dashboard uses Cloudflare Web Analytics/RUM for `Page views` and `Visitors`, and keeps HTTP Traffic metrics for requests, transfer, status codes, and lightweight reachability context. Store the real values only in Home Assistant `secrets.yaml`:
 
 ```yaml
 cloudflare_api_token: "Bearer ..."
 cloudflare_zone_id: "..."
+cloudflare_account_id: "..." # optional; discovered from the zone when omitted
 cloudflare_albumary_hostname: "app.albumary.net"
 ```
 
@@ -28,4 +29,10 @@ cloudflare_api_key: "..."
 cloudflare_api_email: "you@example.com"
 cloudflare_zone_id: "..."
 cloudflare_albumary_hostname: "app.albumary.net"
+```
+
+The AdGuard pause button uses the AdGuard Home HTTP API and expects this Home Assistant secret:
+
+```yaml
+adguard_auth_header: "Basic BASE64_USERNAME_COLON_PASSWORD"
 ```

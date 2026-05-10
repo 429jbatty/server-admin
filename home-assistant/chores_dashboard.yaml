@@ -5,35 +5,34 @@ views:
   - title: Litter Box
     path: litter-box
     icon: mdi:cat
+    show_icon_and_title: true
     type: sections
+    max_columns: 1
+    dense_section_placement: true
     sections:
       - type: grid
         title: Litter Box
         cards:
-          - type: tile
-            entity: binary_sensor.litter_box_overdue
-            name: Litter Box
+          - type: custom:mushroom-template-card
+            entity: sensor.litter_box_days_since_done
+            primary: Litter Box
+            secondary: >-
+              {% if is_state('binary_sensor.litter_box_overdue', 'on') %}
+                Over 6 days - {{ states(entity) }} days
+              {% else %}
+                {{ states(entity) }} days since done
+              {% endif %}
             icon: mdi:cat
-            color: red
-          - type: tile
+            icon_color: >-
+              {{ 'red' if is_state('binary_sensor.litter_box_overdue', 'on') else 'green' }}
+          - type: custom:mushroom-template-card
             entity: input_button.litter_box_mark_done
-            name: Mark Done
+            primary: Mark Done
+            secondary: Reset timer now
             icon: mdi:check-circle
+            icon_color: green
             tap_action:
               action: perform-action
               perform_action: input_button.press
               target:
                 entity_id: input_button.litter_box_mark_done
-          - type: entities
-            title: Status
-            show_header_toggle: false
-            entities:
-              - entity: input_datetime.litter_box_last_done
-                name: Last done
-                icon: mdi:calendar-check
-              - entity: sensor.litter_box_days_since_done
-                name: Days since done
-                icon: mdi:calendar-clock
-              - entity: binary_sensor.litter_box_overdue
-                name: More than 6 days
-                icon: mdi:alert-circle

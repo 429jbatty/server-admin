@@ -1,6 +1,27 @@
 # Managed from /root/server-admin/home-assistant/homelab_services_package.yaml
 # Provides LAN service reachability sensors and Proxmox resource metrics.
 
+rest_command:
+  adguard_pause_15_min:
+    url: "http://192.168.1.189/control/protection"
+    method: POST
+    headers:
+      Authorization: !secret adguard_auth_header
+      Content-Type: "application/json"
+    payload: '{"enabled": false, "duration": 900000}'
+    content_type: "application/json"
+
+script:
+  pause_adguard_15_min:
+    alias: "Pause AdGuard for 15 minutes"
+    mode: single
+    sequence:
+      - service: rest_command.adguard_pause_15_min
+      - service: persistent_notification.create
+        data:
+          title: "AdGuard paused"
+          message: "AdGuard protection has been paused for 15 minutes."
+
 binary_sensor:
   - platform: rest
     name: "Homelab Home Assistant"
@@ -126,6 +147,7 @@ command_line:
         - hostname
         - window_hours
         - totals
+        - web_analytics
         - hourly
         - top_paths
 
@@ -360,6 +382,18 @@ template:
         state_class: measurement
         icon: mdi:account-eye
         state: "{{ (state_attr('sensor.albumary_cloudflare_metrics_snapshot', 'totals') or {}).visits | default('unknown') }}"
+
+      - name: "Albumary Cloudflare Page Views 24h"
+        unique_id: albumary_cloudflare_page_views_24h
+        state_class: measurement
+        icon: mdi:file-eye
+        state: "{{ (state_attr('sensor.albumary_cloudflare_metrics_snapshot', 'totals') or {}).page_views | default('unknown') }}"
+
+      - name: "Albumary Cloudflare Visitors 24h"
+        unique_id: albumary_cloudflare_visitors_24h
+        state_class: measurement
+        icon: mdi:account-eye
+        state: "{{ (state_attr('sensor.albumary_cloudflare_metrics_snapshot', 'totals') or {}).visitors | default('unknown') }}"
 
       - name: "Albumary Cloudflare Transfer 24h"
         unique_id: albumary_cloudflare_transfer_24h

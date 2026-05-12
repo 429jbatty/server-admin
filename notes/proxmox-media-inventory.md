@@ -74,7 +74,7 @@ Last updated: 2026-05-06 23:25 CDT
 | qBittorrent | 8080 | `http://192.168.1.197:8080` | Download client web UI |
 | Bazarr | 6767 | `http://192.168.1.197:6767` | Subtitle management |
 
-After outbound VPN activation, Gluetun publishes the qBittorrent and Prowlarr LAN ports because those containers share Gluetun's network namespace.
+After outbound VPN activation, Gluetun publishes the qBittorrent and Prowlarr Web UIs because both containers share Gluetun's network namespace. Radarr, Sonarr, Jellyseerr, Bazarr, and CT `104` Jellyfin keep their normal Docker/LAN network path.
 
 The repo-level source of truth for the Home Assistant Homelab dashboard is `homelab-services.yml`. The installed Home Assistant package and dashboard YAML are mirrored from `home-assistant/`.
 
@@ -88,7 +88,7 @@ The repo-level source of truth for the Home Assistant Homelab dashboard is `home
   - `sonarr` -> `/data/downloads/complete/sonarr`
 - Prowlarr configured with Radarr and Sonarr application sync
 - Internet Archive configured as a public torrent indexer and synced to Radarr/Sonarr.
-- Outbound VPN Compose changes are staged in the tracked source file and at `/opt/media-stack/docker-compose.vpn-staged.yml` inside CT `106`. Do not apply the updated Compose file in CT `106` until `/opt/media-stack/vpn.env` contains real provider values.
+- Outbound VPN Compose changes route qBittorrent and Prowlarr through Gluetun. Do not apply the updated Compose file in CT `106` until `/opt/media-stack/vpn.env` contains real Proton WireGuard values.
 - Add only lawful/public-domain/owned-media sources.
 
 ## Policy

@@ -87,9 +87,9 @@ The helper `scripts/configure-media-stack.py` was used to set root folders, qBit
 
 - Remote access uses Tailscale in CT `107`; it is separate from the outbound commercial VPN.
 - Outbound VPN privacy uses Gluetun in CT `106`.
-- qBittorrent and Prowlarr share Gluetun's network namespace, so their LAN ports are published by Gluetun.
-- Jellyfin, Jellyseerr, Radarr, Sonarr, and Bazarr stay on normal LAN networking.
-- Store commercial VPN settings in `/opt/media-stack/vpn.env` inside CT `106`; use `media-stack/vpn.env.example` as the non-secret template.
+- qBittorrent and Prowlarr share Gluetun's network namespace, so their Web UIs are published by Gluetun.
+- Jellyfin, Jellyseerr, Radarr, Sonarr, and Bazarr stay on normal LAN/Docker networking.
+- Store Proton WireGuard settings in `/opt/media-stack/vpn.env` inside CT `106`; use `media-stack/vpn.env.example` as the non-secret template.
 
 To activate Tailscale after installation or re-authentication:
 
@@ -108,7 +108,21 @@ pct exec 106 -- bash -lc 'cd /opt/media-stack && docker compose config'
 pct exec 106 -- bash -lc 'cd /opt/media-stack && docker compose up -d'
 ```
 
-After activation, set qBittorrent's listening port to the VPN provider's forwarded port. Do not create a router port forward for qBittorrent.
+After activation, Radarr and Sonarr should use `gluetun` port `8080` as the qBittorrent download-client host. Prowlarr application URLs for Radarr/Sonarr should keep pointing to the normal Radarr/Sonarr service addresses. Gluetun's `VPN_PORT_FORWARDING_UP_COMMAND` automatically sets qBittorrent's listening port to the Proton forwarded port shown in `/data/config/gluetun/forwarded_port`, and `VPN_PORT_FORWARDING_DOWN_COMMAND` parks qBittorrent on loopback when forwarding drops. qBittorrent must keep localhost Web UI auth bypass enabled so Gluetun can call its API from the shared network namespace. Do not create a router port forward for qBittorrent.
+
+Verification:
+
+```bash
+pct exec 106 -- bash -lc 'cd /opt/media-stack && docker compose ps'
+pct exec 106 -- bash -lc 'docker inspect --format "{{.Name}} {{.HostConfig.NetworkMode}} {{json .HostConfig.PortBindings}}" qbittorrent gluetun prowlarr'
+pct exec 106 -- bash -lc 'docker exec gluetun wget -qO- https://ifconfig.me || true'
+pct exec 106 -- bash -lc 'docker exec prowlarr curl -fsS https://ifconfig.me || true'
+pct exec 106 -- bash -lc 'cat /data/config/gluetun/forwarded_port'
+pct exec 106 -- bash -lc 'docker exec gluetun wget -qO- http://127.0.0.1:8080/api/v2/app/preferences | python3 -c "import json,sys; d=json.load(sys.stdin); print({k:d.get(k) for k in (\"listen_port\",\"current_network_interface\",\"random_port\",\"upnp\")})"'
+pct exec 106 -- bash -lc 'grep -E "^(Session\\\\Port|Connection\\\\PortRangeMin|Connection\\\\Interface)=" /data/config/qbittorrent/qBittorrent/qBittorrent.conf'
+```
+
+qBittorrent and Prowlarr should report `NetworkMode=container:<gluetun-id>` or equivalent and have no direct port bindings of their own. Gluetun should publish `8080` and `9696`. Radarr, Sonarr, Jellyseerr, Bazarr, and CT `104` Jellyfin should remain on normal networking and show the normal WAN IP, not the VPN exit IP.
 
 ## Backups
 
@@ -171,8 +185,8 @@ When a larger disk or NAS exists:
 - If Jellyfin cannot see media, verify CT `104` has `/media/library/movies` and `/media/library/tv`.
 - If Radarr/Sonarr cannot import downloads, verify CT `106` has `/data/downloads` and `/data/library`.
 - If qBittorrent login fails, check its container logs for the temporary password, then set a permanent password in the UI.
-- If qBittorrent or Prowlarr have no internet after VPN activation, check Gluetun first: `pct exec 106 -- bash -lc 'cd /opt/media-stack && docker compose logs --tail=200 gluetun'`.
-- If qBittorrent can download but has poor peer connectivity, verify the VPN provider has a forwarded port and that qBittorrent is listening on that same port.
+- If qBittorrent has no internet after VPN activation, check Gluetun first: `pct exec 106 -- bash -lc 'cd /opt/media-stack && docker compose logs --tail=200 gluetun'`.
+- If qBittorrent can download but has poor peer connectivity, verify the VPN provider has a forwarded port and that qBittorrent is listening on that same port. Check Gluetun's port-forwarding logs and compare `/data/config/gluetun/forwarded_port` with qBittorrent's `Session\Port`.
 - If remote access fails, confirm CT `107` is running, `tailscale status` is authenticated, and the `192.168.1.0/24` route is approved in Tailscale.
 - If Docker services restart repeatedly, run `docker compose logs --tail=200 <service>`.
 - If CT `106` has no IP, check Proxmox DHCP, bridge `vmbr0`, and `pct config 106`.

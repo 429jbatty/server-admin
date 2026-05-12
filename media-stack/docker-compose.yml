@@ -1,4 +1,11 @@
 services:
+  # VPN namespace for torrent-facing services.
+  #
+  # Gluetun owns the VPN tunnel and Docker publishes qBittorrent's Web UI and
+  # Prowlarr's UI through this container. qBittorrent and Prowlarr use
+  # network_mode: service:gluetun below, so they have no standalone Docker
+  # network interface or non-VPN internet egress path. Radarr, Sonarr,
+  # Jellyseerr, Bazarr, and Jellyfin stay on normal networking.
   gluetun:
     image: qmcgaw/gluetun:latest
     container_name: gluetun
@@ -8,15 +15,24 @@ services:
       - /dev/net/tun:/dev/net/tun
     env_file:
       - path: /opt/media-stack/vpn.env
-        required: false
+        required: true
     environment:
       TZ: America/Chicago
     ports:
+      # LAN Web UIs for services sharing Gluetun's network namespace. Do not
+      # publish torrent listen ports on the LAN; Proton NAT-PMP exposes the
+      # forwarded torrent port through the VPN.
       - "8080:8080"
       - "9696:9696"
     volumes:
       - /data/config/gluetun:/gluetun
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/gluetun-entrypoint", "healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
@@ -62,7 +78,8 @@ services:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
     depends_on:
-      - gluetun
+      gluetun:
+        condition: service_healthy
     network_mode: "service:gluetun"
     environment:
       PUID: 65534
@@ -77,7 +94,8 @@ services:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
     depends_on:
-      - gluetun
+      gluetun:
+        condition: service_healthy
     network_mode: "service:gluetun"
     environment:
       PUID: 65534
@@ -88,6 +106,12 @@ services:
       - /data/config/qbittorrent:/config
       - /data:/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8080 >/dev/null || exit 1"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 2m
 
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest

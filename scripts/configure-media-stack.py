@@ -114,7 +114,7 @@ def ensure_qbit(password):
 
 def qbit_fields(category, password):
     return [
-        {"name": "host", "value": "qbittorrent"},
+        {"name": "host", "value": "gluetun"},
         {"name": "port", "value": 8080},
         {"name": "useSsl", "value": False},
         {"name": "urlBase", "value": ""},

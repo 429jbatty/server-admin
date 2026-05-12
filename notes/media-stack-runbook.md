@@ -76,6 +76,8 @@ When away from home, connect the client device to Tailscale and use the same LAN
   - Magnet links allowed; `.torrent` downloads allowed
   - Sort: created, descending
 
+If Prowlarr times out against Archive.org, use HTTP/1.1 only by setting `DOTNET_SYSTEM_NET_HTTP_SOCKETSHTTPHANDLER_HTTP2SUPPORT=false` for the Prowlarr container.
+
 Use Internet Archive for public-domain and freely licensed items. Search results can be uneven because archive metadata is less structured than commercial media indexers.
 
 The source Compose file is tracked at `media-stack/docker-compose.yml` and copied into CT `106` at `/opt/media-stack/docker-compose.yml`.

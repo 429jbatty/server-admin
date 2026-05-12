@@ -68,6 +68,7 @@ services:
       PUID: 65534
       PGID: 65534
       TZ: America/Chicago
+      DOTNET_SYSTEM_NET_HTTP_SOCKETSHTTPHANDLER_HTTP2SUPPORT: "false"
     volumes:
       - /data/config/prowlarr:/config
     restart: unless-stopped

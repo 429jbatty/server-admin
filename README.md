@@ -10,6 +10,11 @@ Do not store secrets here.
 - Home Assistant dashboard source: `home-assistant/homelab_dashboard.yaml`
 - Proxmox metrics exporter source: `scripts/homelab-metrics-exporter.py`
 - Proxmox metrics exporter service: `systemd/homelab-metrics-exporter.service`
+- USB backup runbook: `notes/homelab-backup-runbook.md`
+- Host backup script source: `scripts/homelab-host-backup.sh`
+- Host backup timer source: `systemd/homelab-host-backup.timer`
+- File backup script source: `scripts/homelab-file-backup.sh`
+- File backup timer source: `systemd/homelab-file-backup.timer`
 
 The dashboard is installed in Home Assistant as a YAML Lovelace dashboard named `Homelab`. Health checks are intentionally lightweight: HTTP reachability for web services and ping reachability for the Tailscale subnet router. Resource metrics come from a LAN-only Proxmox host exporter at `http://192.168.1.184:9108/metrics/homelab`; it publishes CPU, memory, disk, status, uptime, and media-stack Docker container utilization only.
 

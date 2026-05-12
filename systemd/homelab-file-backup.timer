@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily host bind-mounted homelab data backup
+
+[Timer]
+OnCalendar=*-*-* 01:45:00
+Persistent=true
+RandomizedDelaySec=10m
+
+[Install]
+WantedBy=timers.target

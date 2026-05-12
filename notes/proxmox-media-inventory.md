@@ -1,6 +1,6 @@
 # Proxmox Media Inventory
 
-Last updated: 2026-05-06 23:25 CDT
+Last updated: 2026-05-11 23:38 CDT
 
 ## Host
 
@@ -10,6 +10,7 @@ Last updated: 2026-05-06 23:25 CDT
 - Storage:
   - `local`: dir storage at `/var/lib/vz`, about 57 GiB free at inspection time
   - `local-lvm`: LVM-thin storage, about 124 GiB free at inspection time
+  - `usb-backup`: dir storage at `/mnt/proxmox-usb-backup`, about 3.6 TiB free at setup time, used for daily guest backups
 
 ## Guests
 
@@ -46,6 +47,7 @@ Last updated: 2026-05-06 23:25 CDT
 - Storage model: temporary local host path at `/srv/media-stack`
 - CT `104` mount target: `/media`
 - CT `106` mount target: `/data`
+- `/srv/media-stack` is backed up by the host file-backup timer because Proxmox excludes host bind mounts from CT archives.
 - `/dev/net/tun` passthrough configured for Gluetun.
 
 ## Remote Access Target

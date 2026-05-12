@@ -1,0 +1,8 @@
+[Unit]
+Description=Back up host bind-mounted homelab data to USB backup drive
+Wants=mnt-proxmox\x2dusb\x2dbackup.mount
+After=mnt-proxmox\x2dusb\x2dbackup.mount
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/homelab-file-backup

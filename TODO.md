@@ -4,19 +4,23 @@ This file tracks future work for the Proxmox home server. Keep operational detai
 
 ## Backup And Restore
 
-- Add a real off-host Proxmox backup target.
-  - Good options: external USB disk, NAS share, or another machine running Proxmox Backup Server.
-  - Current Proxmox storage is local only, so local backups do not protect against host disk failure.
-- Schedule nightly backups for important guests:
-  - VM `100` Home Assistant
-  - CT `102` AdGuard Home
-  - CT `104` active Jellyfin
-  - CT `106` media stack
-  - CT `107` Tailscale subnet router
-- Use a retention policy similar to:
-  - keep 7 daily backups
-  - keep 4 weekly backups
-  - keep 3 monthly backups
+- USB backup target configured:
+  - Storage ID: `usb-backup`
+  - Mountpoint: `/mnt/proxmox-usb-backup`
+  - Runbook: `notes/homelab-backup-runbook.md`
+- Daily Proxmox backup job configured:
+  - Job ID: `homelab-usb-daily`
+  - Schedule: `02:30`
+  - Scope: all guests
+  - Retention: 7 daily, 4 weekly, 3 monthly
+- Daily host configuration backup configured:
+  - Timer: `homelab-host-backup.timer`
+  - Schedule: `01:15`
+  - Target: `/mnt/proxmox-usb-backup/host-config`
+- Daily host bind-mount file backup configured:
+  - Timer: `homelab-file-backup.timer`
+  - Schedule: `01:45`
+  - Target: `/mnt/proxmox-usb-backup/file-backups/srv-media-stack`
 - Keep Home Assistant's own backup workflow enabled, including off-box sync.
 - Test restores monthly.
   - Restore a small LXC to a new VMID.

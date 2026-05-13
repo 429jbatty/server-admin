@@ -1,0 +1,44 @@
+server:
+  port: 8080
+  database: /home/filebrowser/data/database.db
+  sources:
+    - path: /sources/media-library
+      name: Media Library
+      config:
+        defaultEnabled: true
+        defaultUserScope: /
+        private: true
+    - path: /sources/proxmox-guest-backups
+      name: Proxmox Guest Backups
+      config:
+        defaultEnabled: false
+        defaultUserScope: /
+        private: true
+    - path: /sources/media-library-backup
+      name: Latest Media Library Backup
+      config:
+        defaultEnabled: false
+        defaultUserScope: /
+        private: true
+
+auth:
+  adminUsername: admin
+  methods:
+    password:
+      enabled: true
+      minLength: 12
+
+frontend:
+  name: Homelab FileBrowser
+
+userDefaults:
+  darkMode: true
+  permissions:
+    api: false
+    admin: false
+    modify: false
+    share: false
+    realtime: false
+    delete: false
+    create: false
+    download: true

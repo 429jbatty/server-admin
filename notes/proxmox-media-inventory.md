@@ -1,6 +1,6 @@
 # Proxmox Media Inventory
 
-Last updated: 2026-05-11 23:38 CDT
+Last updated: 2026-05-12 22:53 CDT
 
 ## Host
 
@@ -43,10 +43,13 @@ Last updated: 2026-05-11 23:38 CDT
 - Container ID: CT `106`
 - Hostname: `media-stack`
 - URL base: `http://192.168.1.197`
-- Purpose: Docker Compose host for Jellyseerr, Radarr, Sonarr, Prowlarr, qBittorrent, and Bazarr
+- Purpose: Docker Compose host for Jellyseerr, Radarr, Sonarr, Prowlarr, qBittorrent, Bazarr, and FileBrowser Quantum
 - Storage model: temporary local host path at `/srv/media-stack`
 - CT `104` mount target: `/media`
 - CT `106` mount target: `/data`
+- CT `106` backup browse mounts:
+  - `/backups/guest-dumps` from `/mnt/proxmox-usb-backup/dump`, read-only
+  - `/backups/media-library-current` from `/mnt/proxmox-usb-backup/file-backups/srv-media-stack/snapshots/20260512-015501/library`, read-only
 - `/srv/media-stack` is backed up by the host file-backup timer because Proxmox excludes host bind mounts from CT archives.
 - `/dev/net/tun` passthrough configured for Gluetun.
 
@@ -74,6 +77,7 @@ Last updated: 2026-05-11 23:38 CDT
 | Sonarr | 8989 | `http://192.168.1.197:8989` | TV library management |
 | Prowlarr | 9696 | `http://192.168.1.197:9696` | Indexer manager |
 | qBittorrent | 8080 | `http://192.168.1.197:8080` | Download client web UI |
+| FileBrowser Quantum | 8090 | `http://192.168.1.197:8090` | LAN-only media file browser and admin-only backup browser |
 | Bazarr | 6767 | `http://192.168.1.197:6767` | Subtitle management |
 
 After outbound VPN activation, Gluetun publishes the qBittorrent and Prowlarr Web UIs because both containers share Gluetun's network namespace. Radarr, Sonarr, Jellyseerr, Bazarr, and CT `104` Jellyfin keep their normal Docker/LAN network path.
@@ -90,6 +94,8 @@ The repo-level source of truth for the Home Assistant Homelab dashboard is `home
   - `sonarr` -> `/data/downloads/complete/sonarr`
 - Prowlarr configured with Radarr and Sonarr application sync
 - Internet Archive configured as a public torrent indexer and synced to Radarr/Sonarr.
+- FileBrowser Quantum configured in CT `106` with the media library writable through the admin account, a read-only viewer account for the media library, and admin-only read-only backup sources. Host-config backups are intentionally excluded.
+- The FileBrowser media-library backup mount uses the resolved latest snapshot path because Proxmox does not hotplug bind mounts through the `current` symlink. Refresh this mount after a newer snapshot should be browsed.
 - Outbound VPN Compose changes route qBittorrent and Prowlarr through Gluetun. Do not apply the updated Compose file in CT `106` until `/opt/media-stack/vpn.env` contains real Proton WireGuard values.
 - Add only lawful/public-domain/owned-media sources.
 

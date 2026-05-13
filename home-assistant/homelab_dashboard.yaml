@@ -233,6 +233,15 @@ views:
             tap_action:
               action: url
               url_path: http://192.168.1.197:8080
+          - type: custom:mushroom-template-card
+            entity: binary_sensor.homelab_filebrowser_quantum
+            primary: FileBrowser Quantum
+            secondary: CT 106 - 192.168.1.197:8090
+            icon: mdi:folder-eye
+            icon_color: "{{ 'green' if is_state(entity, 'on') else 'red' }}"
+            tap_action:
+              action: url
+              url_path: http://192.168.1.197:8090
 
       - type: grid
         title: Remote Access

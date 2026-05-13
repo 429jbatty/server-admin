@@ -104,6 +104,16 @@ binary_sensor:
     device_class: connectivity
 
   - platform: rest
+    name: "Homelab FileBrowser Quantum"
+    unique_id: homelab_filebrowser_quantum_status
+    resource: "http://192.168.1.197:8090/health"
+    method: GET
+    timeout: 5
+    scan_interval: 60
+    value_template: "{{ true }}"
+    device_class: connectivity
+
+  - platform: rest
     name: "Homelab Bazarr"
     unique_id: homelab_bazarr_status
     resource: "http://192.168.1.197:6767"

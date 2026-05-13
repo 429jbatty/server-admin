@@ -1,6 +1,6 @@
 # Homelab Backup Runbook
 
-Last updated: 2026-05-11 23:38 CDT
+Last updated: 2026-05-12 22:53 CDT
 
 ## USB Backup Storage
 
@@ -40,6 +40,14 @@ Host bind-mounted data is backed up separately by `homelab-file-backup.timer` at
 ```
 
 The `current` symlink points at the latest snapshot. Old snapshots are pruned after 120 days by default.
+
+FileBrowser Quantum in CT `106` exposes only selected backup views:
+
+- Proxmox guest backup archives from `/mnt/proxmox-usb-backup/dump`, mounted read-only at `/backups/guest-dumps`.
+- The latest media-library backup, currently resolved from `/mnt/proxmox-usb-backup/file-backups/srv-media-stack/snapshots/20260512-015501/library`, mounted read-only at `/backups/media-library-current`.
+
+These sources are intended for the FileBrowser admin account only. The root-only `host-config` archives are deliberately not mounted into FileBrowser because they may contain sensitive operational material.
+Proxmox does not accept the `current` symlink as the bind-mount source, so refresh CT `106` `mp2` after a newer file-backup snapshot should be browsed.
 
 ## Useful Checks
 

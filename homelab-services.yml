@@ -103,6 +103,19 @@ services:
     health_check: http
     description: Download client web UI.
 
+  - id: filebrowser_quantum
+    name: FileBrowser Quantum
+    category: Media
+    owner: CT 106
+    host: media-stack
+    ip: 192.168.1.197
+    port: 8090
+    url: http://192.168.1.197:8090
+    check_url: http://192.168.1.197:8090/health
+    dashboard: true
+    health_check: http
+    description: LAN-only file browser for media library access and admin-only read-only backup browsing.
+
   - id: bazarr
     name: Bazarr
     category: Media

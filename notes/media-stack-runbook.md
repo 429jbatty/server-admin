@@ -5,7 +5,7 @@ This runbook covers the local lightweight media automation stack for Jellyfin.
 ## Architecture
 
 - CT `104`: active Jellyfin server at `http://192.168.1.191:8096`
-- CT `106`: Docker Compose media-services host at `192.168.1.197`
+- CT `106`: Docker Compose media-services and FileBrowser Quantum host at `192.168.1.197`
 - CT `107`: Tailscale subnet router for remote access to `192.168.1.0/24`
 - Shared host storage: `/srv/media-stack`
 - CT `104` media path: `/media`
@@ -43,7 +43,10 @@ Inside CT `106`:
 /data/library/movies
 /data/library/tv
 /data/downloads
+/backups/guest-dumps
+/backups/media-library-current
 /opt/media-stack/docker-compose.yml
+/opt/media-stack/filebrowser.env
 /opt/media-stack/vpn.env
 ```
 
@@ -55,9 +58,19 @@ Inside CT `106`:
 - Sonarr: `http://192.168.1.197:8989`
 - Prowlarr: `http://192.168.1.197:9696`
 - qBittorrent: `http://192.168.1.197:8080`
+- FileBrowser Quantum: `http://192.168.1.197:8090`
 - Bazarr: `http://192.168.1.197:6767`
 
 Use Jellyseerr as the main request/search UI. Radarr and Sonarr manage movies and TV. Prowlarr manages lawful/public-domain/owned-media sources and syncs them to Radarr/Sonarr. qBittorrent is the download client.
+
+Use FileBrowser Quantum for LAN-only file browsing. The admin account can manage users and write to the media library because `/data/library` is mounted read-write. The viewer account is non-admin and defaults to media-library read/download access only. Backup sources are mounted read-only into CT `106` and are not default-enabled for standard users:
+
+- `/backups/guest-dumps`: Proxmox guest backup archives from `/mnt/proxmox-usb-backup/dump`
+- `/backups/media-library-current`: latest media-library file-backup snapshot, currently mounted from `/mnt/proxmox-usb-backup/file-backups/srv-media-stack/snapshots/20260512-015501/library`
+
+Proxmox rejects bind mounts through the `current` symlink, so the media-library backup browse mount uses the resolved snapshot directory. To browse a newer snapshot, update CT `106` `mp2` to the new resolved `current/library` target and restart CT `106`.
+
+Do not expose FileBrowser Quantum through router port forwards. Use Tailscale for remote private access.
 
 When away from home, connect the client device to Tailscale and use the same LAN URLs above. The subnet router is CT `107` and advertises `192.168.1.0/24`; do not expose these service ports through the home router.
 
@@ -67,6 +80,7 @@ When away from home, connect the client device to Tailscale and use the same LAN
 - Sonarr root folder: `/data/library/tv`
 - Radarr and Sonarr both have qBittorrent configured as a download client.
 - Prowlarr is connected to Radarr and Sonarr for application sync.
+- FileBrowser Quantum is configured from `/data/config/filebrowser/config.yaml`, with secrets in `/opt/media-stack/filebrowser.env`.
 - Internet Archive is configured in Prowlarr and synced to Radarr/Sonarr.
 - Internet Archive settings:
   - Base URL: `https://archive.org/`
@@ -114,6 +128,7 @@ Verification:
 
 ```bash
 pct exec 106 -- bash -lc 'cd /opt/media-stack && docker compose ps'
+pct exec 106 -- bash -lc 'curl -fsS http://127.0.0.1:8090/health'
 pct exec 106 -- bash -lc 'docker inspect --format "{{.Name}} {{.HostConfig.NetworkMode}} {{json .HostConfig.PortBindings}}" qbittorrent gluetun prowlarr'
 pct exec 106 -- bash -lc 'docker exec gluetun wget -qO- https://ifconfig.me || true'
 pct exec 106 -- bash -lc 'docker exec prowlarr curl -fsS https://ifconfig.me || true'
@@ -167,6 +182,7 @@ docker compose logs --tail=100
 
 - Restore Jellyfin metadata from the latest `jellyfin-104-config.*.tgz` backup only onto CT `104`.
 - Restore `/opt/media-stack/docker-compose.yml` and `/srv/media-stack/config` for CT `106` services.
+- Restore FileBrowser Quantum from `/srv/media-stack/config/filebrowser` and recreate `/opt/media-stack/filebrowser.env` with fresh secrets if it is missing.
 - Recreate bind mounts before restarting Jellyfin or Docker Compose.
 
 ## Future Storage Migration
@@ -184,6 +200,7 @@ When a larger disk or NAS exists:
 
 - If Jellyfin cannot see media, verify CT `104` has `/media/library/movies` and `/media/library/tv`.
 - If Radarr/Sonarr cannot import downloads, verify CT `106` has `/data/downloads` and `/data/library`.
+- If FileBrowser cannot see backups, verify CT `106` has `/backups/guest-dumps` and `/backups/media-library-current`; both should be read-only.
 - If qBittorrent login fails, check its container logs for the temporary password, then set a permanent password in the UI.
 - If qBittorrent has no internet after VPN activation, check Gluetun first: `pct exec 106 -- bash -lc 'cd /opt/media-stack && docker compose logs --tail=200 gluetun'`.
 - If qBittorrent can download but has poor peer connectivity, verify the VPN provider has a forwarded port and that qBittorrent is listening on that same port. Check Gluetun's port-forwarding logs and compare `/data/config/gluetun/forwarded_port` with qBittorrent's `Session\Port`.
@@ -196,5 +213,5 @@ When a larger disk or NAS exists:
 - LAN-only by default.
 - Use Tailscale for private remote access instead of public router port forwards.
 - Route only qBittorrent and Prowlarr through the commercial VPN unless there is a specific reason to expand scope.
-- Do not expose Jellyfin, qBittorrent, Radarr, Sonarr, Prowlarr, Jellyseerr, or Bazarr publicly without a separate reverse-proxy/auth plan.
+- Do not expose Jellyfin, qBittorrent, Radarr, Sonarr, Prowlarr, Jellyseerr, FileBrowser Quantum, or Bazarr publicly without a separate reverse-proxy/auth plan.
 - Do not commit API keys, passwords, provider credentials, VPN keys, forwarded ports, or indexer credentials.

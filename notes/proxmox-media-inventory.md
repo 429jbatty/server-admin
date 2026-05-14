@@ -1,6 +1,6 @@
 # Proxmox Media Inventory
 
-Last updated: 2026-05-12 22:53 CDT
+Last updated: 2026-05-12 23:20 CDT
 
 ## Host
 
@@ -43,7 +43,7 @@ Last updated: 2026-05-12 22:53 CDT
 - Container ID: CT `106`
 - Hostname: `media-stack`
 - URL base: `http://192.168.1.197`
-- Purpose: Docker Compose host for Jellyseerr, Radarr, Sonarr, Prowlarr, qBittorrent, Bazarr, and FileBrowser Quantum
+- Purpose: Docker Compose host for Jellyseerr, Radarr, Sonarr, Prowlarr, qBittorrent, Bazarr, FileBrowser Quantum, and FlareSolverr
 - Storage model: temporary local host path at `/srv/media-stack`
 - CT `104` mount target: `/media`
 - CT `106` mount target: `/data`
@@ -80,7 +80,7 @@ Last updated: 2026-05-12 22:53 CDT
 | FileBrowser Quantum | 8090 | `http://192.168.1.197:8090` | LAN-only media file browser and admin-only backup browser |
 | Bazarr | 6767 | `http://192.168.1.197:6767` | Subtitle management |
 
-After outbound VPN activation, Gluetun publishes the qBittorrent and Prowlarr Web UIs because both containers share Gluetun's network namespace. Radarr, Sonarr, Jellyseerr, Bazarr, and CT `104` Jellyfin keep their normal Docker/LAN network path.
+After outbound VPN activation, Gluetun publishes the qBittorrent and Prowlarr Web UIs because both containers share Gluetun's network namespace. FlareSolverr also shares Gluetun's network namespace for Prowlarr-only indexer challenge handling, but it does not publish a LAN port. Radarr, Sonarr, Jellyseerr, Bazarr, and CT `104` Jellyfin keep their normal Docker/LAN network path.
 
 The repo-level source of truth for the Home Assistant Homelab dashboard is `homelab-services.yml`. The installed Home Assistant package and dashboard YAML are mirrored from `home-assistant/`.
 
@@ -94,9 +94,10 @@ The repo-level source of truth for the Home Assistant Homelab dashboard is `home
   - `sonarr` -> `/data/downloads/complete/sonarr`
 - Prowlarr configured with Radarr and Sonarr application sync
 - Internet Archive configured as a public torrent indexer and synced to Radarr/Sonarr.
+- 1337x configured as a public torrent indexer in Prowlarr with a tagged FlareSolverr proxy, then synced to Radarr/Sonarr as `1337x (Prowlarr)`.
 - FileBrowser Quantum configured in CT `106` with the media library writable through the admin account, a read-only viewer account for the media library, and admin-only read-only backup sources. Host-config backups are intentionally excluded.
 - The FileBrowser media-library backup mount uses the resolved latest snapshot path because Proxmox does not hotplug bind mounts through the `current` symlink. Refresh this mount after a newer snapshot should be browsed.
-- Outbound VPN Compose changes route qBittorrent and Prowlarr through Gluetun. Do not apply the updated Compose file in CT `106` until `/opt/media-stack/vpn.env` contains real Proton WireGuard values.
+- Outbound VPN Compose routes qBittorrent, Prowlarr, and FlareSolverr through Gluetun.
 - Add only lawful/public-domain/owned-media sources.
 
 ## Policy

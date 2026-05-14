@@ -1,0 +1,111 @@
+# Managed from /root/server-admin/home-assistant/trash_bins_package.yaml
+# Weekly trash reminder. Recycling is every other Thursday, anchored to 2026-05-14.
+
+input_datetime:
+  trash_bins_last_taken_out:
+    name: Trash Bins Last Taken Out
+    has_date: true
+    has_time: true
+
+input_button:
+  trash_bins_mark_done:
+    name: Mark Trash Bins Done
+    icon: mdi:check-circle
+
+template:
+  - sensor:
+      - name: "Trash Bins Next Pickup"
+        unique_id: trash_bins_next_pickup
+        device_class: date
+        icon: mdi:calendar
+        state: >-
+          {% set pickup = today_at('00:00') + timedelta(days=(3 - now().weekday()) % 7) %}
+          {{ pickup.date() }}
+        attributes:
+          pickup_type: >-
+            {% set pickup = today_at('00:00') + timedelta(days=(3 - now().weekday()) % 7) %}
+            {% set cycle_days = ((as_timestamp(pickup) - as_timestamp('2026-05-14 00:00:00')) / 86400) | int %}
+            {{ 'Trash and recycling' if cycle_days % 14 == 0 else 'Trash only' }}
+          reminder: >-
+            {% set pickup = today_at('00:00') + timedelta(days=(3 - now().weekday()) % 7) %}
+            {{ (pickup - timedelta(days=1) + timedelta(hours=17)).isoformat() }}
+
+      - name: "Trash Bins Pickup Type"
+        unique_id: trash_bins_pickup_type
+        icon: mdi:recycle
+        state: >-
+          {% set pickup = today_at('00:00') + timedelta(days=(3 - now().weekday()) % 7) %}
+          {% set cycle_days = ((as_timestamp(pickup) - as_timestamp('2026-05-14 00:00:00')) / 86400) | int %}
+          {{ 'Trash and recycling' if cycle_days % 14 == 0 else 'Trash only' }}
+
+      - name: "Trash Bins Status"
+        unique_id: trash_bins_status
+        icon: mdi:trash-can
+        state: >-
+          {% set pickup = today_at('00:00') + timedelta(days=(3 - now().weekday()) % 7) %}
+          {% set reminder = pickup - timedelta(days=1) + timedelta(hours=17) %}
+          {% set due_window_end = pickup + timedelta(days=1) %}
+          {% set cycle_days = ((as_timestamp(pickup) - as_timestamp('2026-05-14 00:00:00')) / 86400) | int %}
+          {% set pickup_type = 'Trash and recycling' if cycle_days % 14 == 0 else 'Trash only' %}
+          {% set last = states('input_datetime.trash_bins_last_taken_out') %}
+          {% set done = last not in ['unknown', 'unavailable', 'none', ''] and as_local(last | as_datetime) >= reminder %}
+          {% if now() >= reminder and now() < due_window_end and done %}
+            Done: {{ pickup_type }}
+          {% elif now() >= reminder and now() < due_window_end %}
+            Due now: {{ pickup_type }}
+          {% else %}
+            Next: {{ pickup_type }}
+          {% endif %}
+
+  - binary_sensor:
+      - name: "Trash Bins Due"
+        unique_id: trash_bins_due
+        device_class: problem
+        icon: mdi:alert-circle
+        state: >-
+          {% set pickup = today_at('00:00') + timedelta(days=(3 - now().weekday()) % 7) %}
+          {% set reminder = pickup - timedelta(days=1) + timedelta(hours=17) %}
+          {% set due_window_end = pickup + timedelta(days=1) %}
+          {% set last = states('input_datetime.trash_bins_last_taken_out') %}
+          {% set done = last not in ['unknown', 'unavailable', 'none', ''] and as_local(last | as_datetime) >= reminder %}
+          {{ now() >= reminder and now() < due_window_end and not done }}
+
+automation:
+  - alias: "Trash Bins Weekly Reminder"
+    id: trash_bins_weekly_reminder
+    description: "Notify every Wednesday at 5 PM with the correct trash/recycling pickup type."
+    trigger:
+      - platform: time
+        at: "17:00:00"
+    condition:
+      - condition: time
+        weekday:
+          - wed
+    action:
+      - service: notify.mobile_app_pixel
+        data:
+          title: "Trash bins"
+          message: >-
+            {% set pickup = today_at('00:00') + timedelta(days=1) %}
+            {% set cycle_days = ((as_timestamp(pickup) - as_timestamp('2026-05-14 00:00:00')) / 86400) | int %}
+            {{ 'Trash and recycling bins need to go out.' if cycle_days % 14 == 0 else 'Trash bins need to go out.' }}
+          data:
+            tag: trash-bins-reminder
+            channel: Chores
+            importance: high
+    mode: single
+
+  - alias: "Trash Bins Manual Mark Done"
+    id: trash_bins_manual_mark_done
+    description: "Mark the trash bins as taken out from the Chores dashboard."
+    trigger:
+      - platform: state
+        entity_id: input_button.trash_bins_mark_done
+    condition: []
+    action:
+      - service: input_datetime.set_datetime
+        target:
+          entity_id: input_datetime.trash_bins_last_taken_out
+        data:
+          datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    mode: single

@@ -1,0 +1,168 @@
+# Managed from /root/server-admin/home-assistant/dryer_package.yaml
+# Tracks the dryer cycle from a Home Assistant NFC tag scan.
+
+input_datetime:
+  dryer_started:
+    name: Dryer Started
+    has_date: true
+    has_time: true
+
+input_boolean:
+  dryer_running:
+    name: Dryer Running
+    icon: mdi:tumble-dryer
+
+input_button:
+  dryer_start:
+    name: Start Dryer Timer
+    icon: mdi:play-circle
+  dryer_clear:
+    name: Clear Dryer Timer
+    icon: mdi:close-circle
+
+template:
+  - sensor:
+      - name: "Dryer Hours Since Started"
+        unique_id: dryer_hours_since_started
+        unit_of_measurement: "h"
+        icon: mdi:timer-outline
+        availability: >-
+          {{ states('input_datetime.dryer_started') not in ['unknown', 'unavailable', 'none', ''] }}
+        state: >-
+          {% set started = states('input_datetime.dryer_started') %}
+          {% if is_state('input_boolean.dryer_running', 'off') %}
+            0
+          {% elif started in ['unknown', 'unavailable', 'none', ''] %}
+            unknown
+          {% else %}
+            {{ ((now() - as_local(started | as_datetime)).total_seconds() / 3600) | round(1) }}
+          {% endif %}
+
+  - binary_sensor:
+      - name: "Dryer Overdue"
+        unique_id: dryer_overdue
+        device_class: problem
+        icon: mdi:alert-circle
+        state: >-
+          {% set started = states('input_datetime.dryer_started') %}
+          {% if is_state('input_boolean.dryer_running', 'off') or started in ['unknown', 'unavailable', 'none', ''] %}
+            false
+          {% else %}
+            {{ (now() - as_local(started | as_datetime)).total_seconds() >= 2 * 3600 }}
+          {% endif %}
+
+automation:
+  - alias: "Dryer NFC Tag Scanned"
+    id: dryer_nfc_tag_scanned
+    description: "Start or restart the dryer timer when the Dryer NFC tag is scanned."
+    trigger:
+      - platform: tag
+        tag_id: a13314e3-a128-48a6-abad-64a3fe53ed52
+    condition: []
+    action:
+      - service: input_datetime.set_datetime
+        target:
+          entity_id: input_datetime.dryer_started
+        data:
+          datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.dryer_running
+    mode: single
+
+  - alias: "Dryer Manual Start"
+    id: dryer_manual_start
+    description: "Start or restart the dryer timer from the Chores dashboard fallback button."
+    trigger:
+      - platform: state
+        entity_id: input_button.dryer_start
+    condition: []
+    action:
+      - service: input_datetime.set_datetime
+        target:
+          entity_id: input_datetime.dryer_started
+        data:
+          datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.dryer_running
+    mode: single
+
+  - alias: "Dryer Clear Timer"
+    id: dryer_clear_timer
+    description: "Stop the dryer timer and suppress further reminders until the next scan or manual start."
+    trigger:
+      - platform: state
+        entity_id: input_button.dryer_clear
+    condition: []
+    action:
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.dryer_running
+    mode: single
+
+  - alias: "Dryer 2 Hour Reminder"
+    id: dryer_2_hour_reminder
+    description: "Notify when the dryer timer reaches 2 hours."
+    trigger:
+      - platform: template
+        value_template: >-
+          {% set started = states('input_datetime.dryer_started') %}
+          {{ is_state('input_boolean.dryer_running', 'on')
+             and started not in ['unknown', 'unavailable', 'none', '']
+             and (now() - as_local(started | as_datetime)).total_seconds() >= 2 * 3600 }}
+    condition: []
+    action:
+      - service: notify.mobile_app_pixel
+        data:
+          title: "Dryer ready"
+          message: "The dryer has been running for 2 hours."
+          data:
+            tag: dryer-reminder
+            channel: Dryer
+            importance: high
+    mode: single
+
+  - alias: "Dryer 4 Hour Reminder"
+    id: dryer_4_hour_reminder
+    description: "Notify when the dryer timer reaches 4 hours."
+    trigger:
+      - platform: template
+        value_template: >-
+          {% set started = states('input_datetime.dryer_started') %}
+          {{ is_state('input_boolean.dryer_running', 'on')
+             and started not in ['unknown', 'unavailable', 'none', '']
+             and (now() - as_local(started | as_datetime)).total_seconds() >= 4 * 3600 }}
+    condition: []
+    action:
+      - service: notify.mobile_app_pixel
+        data:
+          title: "Dryer still waiting"
+          message: "The dryer has been waiting for 4 hours."
+          data:
+            tag: dryer-reminder
+            channel: Dryer
+            importance: high
+    mode: single
+
+  - alias: "Dryer 24 Hour Reminder"
+    id: dryer_24_hour_reminder
+    description: "Notify when the dryer timer reaches 24 hours."
+    trigger:
+      - platform: template
+        value_template: >-
+          {% set started = states('input_datetime.dryer_started') %}
+          {{ is_state('input_boolean.dryer_running', 'on')
+             and started not in ['unknown', 'unavailable', 'none', '']
+             and (now() - as_local(started | as_datetime)).total_seconds() >= 24 * 3600 }}
+    condition: []
+    action:
+      - service: notify.mobile_app_pixel
+        data:
+          title: "Dryer needs attention"
+          message: "The dryer has been waiting for 24 hours."
+          data:
+            tag: dryer-reminder
+            channel: Dryer
+            importance: high
+    mode: single

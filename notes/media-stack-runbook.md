@@ -82,6 +82,8 @@ When away from home, connect the client device to Tailscale and use the same LAN
 - Prowlarr is connected to Radarr and Sonarr for application sync.
 - FileBrowser Quantum is configured from `/data/config/filebrowser/config.yaml`, with secrets in `/opt/media-stack/filebrowser.env`.
 - Internet Archive is configured in Prowlarr and synced to Radarr/Sonarr.
+- 1337x is configured in Prowlarr and synced to Radarr/Sonarr as `1337x (Prowlarr)`.
+- FlareSolverr is configured as a tagged Prowlarr indexer proxy for 1337x only.
 - Internet Archive settings:
   - Base URL: `https://archive.org/`
   - App profile: `Standard`
@@ -94,6 +96,18 @@ If Prowlarr times out against Archive.org, use HTTP/1.1 only by setting `DOTNET_
 
 Use Internet Archive for public-domain and freely licensed items. Search results can be uneven because archive metadata is less structured than commercial media indexers.
 
+1337x settings:
+
+- Base URL: `https://1337x.to/`
+- App profile: `Standard`
+- Minimum seeders: `1`
+- Magnet links preferred; iTorrents used as fallback
+- Sort: created, descending
+- Prowlarr tag: `flaresolverr`
+- FlareSolverr proxy URL from Prowlarr's shared Gluetun namespace: `http://127.0.0.1:8191/`
+
+Use public torrent indexers only for lawful/public-domain/owned-media workflows. Do not use Prowlarr, Radarr, Sonarr, or qBittorrent to obtain copyrighted media without authorization.
+
 The source Compose file is tracked at `media-stack/docker-compose.yml` and copied into CT `106` at `/opt/media-stack/docker-compose.yml`.
 The helper `scripts/configure-media-stack.py` was used to set root folders, qBittorrent, and Prowlarr app sync without writing API keys to the repo.
 
@@ -101,7 +115,7 @@ The helper `scripts/configure-media-stack.py` was used to set root folders, qBit
 
 - Remote access uses Tailscale in CT `107`; it is separate from the outbound commercial VPN.
 - Outbound VPN privacy uses Gluetun in CT `106`.
-- qBittorrent and Prowlarr share Gluetun's network namespace, so their Web UIs are published by Gluetun.
+- qBittorrent, Prowlarr, and FlareSolverr share Gluetun's network namespace, so qBittorrent's and Prowlarr's Web UIs are published by Gluetun while FlareSolverr stays internal.
 - Jellyfin, Jellyseerr, Radarr, Sonarr, and Bazarr stay on normal LAN/Docker networking.
 - Store Proton WireGuard settings in `/opt/media-stack/vpn.env` inside CT `106`; use `media-stack/vpn.env.example` as the non-secret template.
 
@@ -129,7 +143,8 @@ Verification:
 ```bash
 pct exec 106 -- bash -lc 'cd /opt/media-stack && docker compose ps'
 pct exec 106 -- bash -lc 'curl -fsS http://127.0.0.1:8090/health'
-pct exec 106 -- bash -lc 'docker inspect --format "{{.Name}} {{.HostConfig.NetworkMode}} {{json .HostConfig.PortBindings}}" qbittorrent gluetun prowlarr'
+pct exec 106 -- bash -lc 'docker inspect --format "{{.Name}} {{.HostConfig.NetworkMode}} {{json .HostConfig.PortBindings}}" qbittorrent gluetun prowlarr flaresolverr'
+pct exec 106 -- bash -lc 'docker exec prowlarr curl -fsS http://127.0.0.1:8191/'
 pct exec 106 -- bash -lc 'docker exec gluetun wget -qO- https://ifconfig.me || true'
 pct exec 106 -- bash -lc 'docker exec prowlarr curl -fsS https://ifconfig.me || true'
 pct exec 106 -- bash -lc 'cat /data/config/gluetun/forwarded_port'
@@ -137,7 +152,7 @@ pct exec 106 -- bash -lc 'docker exec gluetun wget -qO- http://127.0.0.1:8080/ap
 pct exec 106 -- bash -lc 'grep -E "^(Session\\\\Port|Connection\\\\PortRangeMin|Connection\\\\Interface)=" /data/config/qbittorrent/qBittorrent/qBittorrent.conf'
 ```
 
-qBittorrent and Prowlarr should report `NetworkMode=container:<gluetun-id>` or equivalent and have no direct port bindings of their own. Gluetun should publish `8080` and `9696`. Radarr, Sonarr, Jellyseerr, Bazarr, and CT `104` Jellyfin should remain on normal networking and show the normal WAN IP, not the VPN exit IP.
+qBittorrent, Prowlarr, and FlareSolverr should report `NetworkMode=container:<gluetun-id>` or equivalent and have no direct port bindings of their own. Gluetun should publish `8080` and `9696`. Radarr, Sonarr, Jellyseerr, Bazarr, and CT `104` Jellyfin should remain on normal networking and show the normal WAN IP, not the VPN exit IP.
 
 ## Backups
 

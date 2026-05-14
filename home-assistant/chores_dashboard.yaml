@@ -2,12 +2,12 @@
 
 title: Chores
 views:
-  - title: Litter Box
-    path: litter-box
-    icon: mdi:cat
+  - title: Chores
+    path: chores
+    icon: mdi:clipboard-check
     show_icon_and_title: true
     type: sections
-    max_columns: 1
+    max_columns: 2
     dense_section_placement: true
     sections:
       - type: grid
@@ -36,3 +36,122 @@ views:
               perform_action: input_button.press
               target:
                 entity_id: input_button.litter_box_mark_done
+      - type: grid
+        title: Trash Bins
+        cards:
+          - type: custom:mushroom-template-card
+            entity: sensor.trash_bins_status
+            primary: Trash Bins
+            secondary: >-
+              {{ states(entity) }} - Pickup {{ states('sensor.trash_bins_next_pickup') }}
+            icon: >-
+              {{ 'mdi:recycle' if states('sensor.trash_bins_pickup_type') | trim == 'Trash and recycling' else 'mdi:trash-can' }}
+            icon_color: >-
+              {% if is_state('binary_sensor.trash_bins_due', 'on') %}
+                red
+              {% elif (states('sensor.trash_bins_status') | trim).startswith('Done') %}
+                green
+              {% else %}
+                grey
+              {% endif %}
+          - type: custom:mushroom-template-card
+            entity: input_button.trash_bins_mark_done
+            primary: Mark Done
+            secondary: Bins are out
+            icon: mdi:check-circle
+            icon_color: green
+            tap_action:
+              action: perform-action
+              perform_action: input_button.press
+              target:
+                entity_id: input_button.trash_bins_mark_done
+      - type: grid
+        title: Dryer
+        cards:
+          - type: custom:mushroom-template-card
+            entity: sensor.dryer_hours_since_started
+            primary: Dryer
+            secondary: >-
+              {% if is_state('input_boolean.dryer_running', 'off') %}
+                Idle
+              {% elif is_state('binary_sensor.dryer_overdue', 'on') %}
+                Over 2 hours - {{ states(entity) }} hours
+              {% else %}
+                {{ states(entity) }} hours since started
+              {% endif %}
+            icon: mdi:tumble-dryer
+            icon_color: >-
+              {% if is_state('input_boolean.dryer_running', 'off') %}
+                grey
+              {% elif is_state('binary_sensor.dryer_overdue', 'on') %}
+                red
+              {% else %}
+                green
+              {% endif %}
+          - type: custom:mushroom-template-card
+            entity: input_button.dryer_start
+            primary: Start Timer
+            secondary: Scan tag fallback
+            icon: mdi:play-circle
+            icon_color: green
+            tap_action:
+              action: perform-action
+              perform_action: input_button.press
+              target:
+                entity_id: input_button.dryer_start
+          - type: custom:mushroom-template-card
+            entity: input_button.dryer_clear
+            primary: Clear
+            secondary: Stop tracking this load
+            icon: mdi:close-circle
+            icon_color: grey
+            tap_action:
+              action: perform-action
+              perform_action: input_button.press
+              target:
+                entity_id: input_button.dryer_clear
+      - type: grid
+        title: Washer
+        cards:
+          - type: custom:mushroom-template-card
+            entity: sensor.washer_hours_since_started
+            primary: Washer
+            secondary: >-
+              {% if is_state('input_boolean.washer_running', 'off') %}
+                Idle
+              {% elif is_state('binary_sensor.washer_overdue', 'on') %}
+                Over 1 hour - {{ states(entity) }} hours
+              {% else %}
+                {{ states(entity) }} hours since started
+              {% endif %}
+            icon: mdi:washing-machine
+            icon_color: >-
+              {% if is_state('input_boolean.washer_running', 'off') %}
+                grey
+              {% elif is_state('binary_sensor.washer_overdue', 'on') %}
+                red
+              {% else %}
+                green
+              {% endif %}
+          - type: custom:mushroom-template-card
+            entity: input_button.washer_start
+            primary: Start Timer
+            secondary: Scan tag fallback
+            icon: mdi:play-circle
+            icon_color: green
+            tap_action:
+              action: perform-action
+              perform_action: input_button.press
+              target:
+                entity_id: input_button.washer_start
+          - type: custom:mushroom-template-card
+            entity: input_button.washer_clear
+            primary: Clear
+            secondary: Stop tracking this load
+            icon: mdi:close-circle
+            icon_color: grey
+            tap_action:
+              action: perform-action
+              perform_action: input_button.press
+              target:
+                entity_id: input_button.washer_clear

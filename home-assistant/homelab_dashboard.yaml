@@ -404,33 +404,22 @@ views:
     dense_section_placement: true
     sections:
       - type: grid
-        title: Service CPU
+        title: VM / LXC Load
         cards:
-          - type: custom:mushroom-chips-card
-            chips:
-              - type: entity
-                entity: sensor.homelab_home_assistant_cpu
+          - type: entities
+            title: Current CPU
+            show_header_toggle: false
+            entities:
+              - entity: sensor.homelab_home_assistant_cpu
                 name: Home Assistant
-                icon: mdi:home-assistant
-                content_info: state
-              - type: entity
-                entity: sensor.homelab_jellyfin_cpu
+              - entity: sensor.homelab_jellyfin_cpu
                 name: Jellyfin
-                icon: mdi:play-box
-                content_info: state
-              - type: entity
-                entity: sensor.homelab_media_stack_cpu
+              - entity: sensor.homelab_media_stack_cpu
                 name: Media Stack
-                icon: mdi:server
-                content_info: state
-              - type: entity
-                entity: sensor.homelab_remote_access_cpu
+              - entity: sensor.homelab_remote_access_cpu
                 name: Tailscale
-                icon: mdi:vpn
-                content_info: state
-            alignment: start
           - type: custom:mini-graph-card
-            name: Service CPU Trends
+            name: CPU Trend
             hours_to_show: 24
             points_per_hour: 4
             line_width: 3
@@ -452,35 +441,21 @@ views:
               icon: false
               legend: false
               extrema: false
-
-      - type: grid
-        title: Service RAM
-        cards:
-          - type: custom:mushroom-chips-card
-            chips:
-              - type: entity
-                entity: sensor.homelab_home_assistant_memory
+              state: false
+          - type: entities
+            title: Current RAM
+            show_header_toggle: false
+            entities:
+              - entity: sensor.homelab_home_assistant_memory
                 name: Home Assistant
-                icon: mdi:home-assistant
-                content_info: state
-              - type: entity
-                entity: sensor.homelab_jellyfin_memory
+              - entity: sensor.homelab_jellyfin_memory
                 name: Jellyfin
-                icon: mdi:play-box
-                content_info: state
-              - type: entity
-                entity: sensor.homelab_media_stack_memory
+              - entity: sensor.homelab_media_stack_memory
                 name: Media Stack
-                icon: mdi:server
-                content_info: state
-              - type: entity
-                entity: sensor.homelab_remote_access_memory
+              - entity: sensor.homelab_remote_access_memory
                 name: Tailscale
-                icon: mdi:vpn
-                content_info: state
-            alignment: start
           - type: custom:mini-graph-card
-            name: Service RAM Trends
+            name: RAM Trend
             hours_to_show: 24
             points_per_hour: 4
             line_width: 3
@@ -502,30 +477,23 @@ views:
               icon: false
               legend: false
               extrema: false
+              state: false
 
       - type: grid
-        title: Service Disk
+        title: VM / LXC Disk
         cards:
-          - type: custom:mushroom-chips-card
-            chips:
-              - type: entity
-                entity: sensor.homelab_home_assistant_disk
+          - type: entities
+            title: Current Disk
+            show_header_toggle: false
+            entities:
+              - entity: sensor.homelab_home_assistant_disk
                 name: Home Assistant
-                icon: mdi:home-assistant
-                content_info: state
-              - type: entity
-                entity: sensor.homelab_jellyfin_disk
+              - entity: sensor.homelab_jellyfin_disk
                 name: Jellyfin
-                icon: mdi:play-box
-                content_info: state
-              - type: entity
-                entity: sensor.homelab_media_stack_disk
+              - entity: sensor.homelab_media_stack_disk
                 name: Media Stack
-                icon: mdi:server
-                content_info: state
-            alignment: start
           - type: custom:mini-graph-card
-            name: Service Disk Trends
+            name: Disk Trend
             hours_to_show: 24
             points_per_hour: 4
             line_width: 3
@@ -544,126 +512,61 @@ views:
               icon: false
               legend: false
               extrema: false
+              state: false
 
       - type: grid
-        title: Media Container CPU
+        title: Shared HDD
         cards:
-          - type: custom:mushroom-chips-card
-            chips:
-              - type: entity
-                entity: sensor.homelab_jellyseerr_container_cpu
-                name: Jellyseerr
-                content_info: state
-              - type: entity
-                entity: sensor.homelab_radarr_container_cpu
-                name: Radarr
-                content_info: state
-              - type: entity
-                entity: sensor.homelab_sonarr_container_cpu
-                name: Sonarr
-                content_info: state
-              - type: entity
-                entity: sensor.homelab_prowlarr_container_cpu
-                name: Prowlarr
-                content_info: state
-              - type: entity
-                entity: sensor.homelab_qbittorrent_container_cpu
-                name: qBittorrent
-                content_info: state
-              - type: entity
-                entity: sensor.homelab_bazarr_container_cpu
-                name: Bazarr
-                content_info: state
-            alignment: start
+          - type: entities
+            title: Current Storage
+            show_header_toggle: false
+            entities:
+              - entity: sensor.homelab_hdd_used
+                name: HDD Used
+              - entity: sensor.homelab_hdd_free
+                name: Free
+              - entity: sensor.homelab_hdd_media_used
+                name: Media
+              - entity: sensor.homelab_hdd_backups_used
+                name: Backups
           - type: custom:mini-graph-card
-            name: Container CPU Trends
+            name: HDD Used
+            entities:
+              - entity: sensor.homelab_hdd_used
+            hours_to_show: 24
+            points_per_hour: 4
+            line_width: 4
+            show:
+              fill: true
+              icon: false
+              legend: false
+              extrema: false
+              state: false
+            color_thresholds:
+              - value: 0
+                color: "#43a047"
+              - value: 75
+                color: "#f9a825"
+              - value: 90
+                color: "#e53935"
+          - type: custom:mini-graph-card
+            name: HDD Folder Share
+            entities:
+              - entity: sensor.homelab_hdd_media_share
+                name: Media
+                color: "#00897b"
+              - entity: sensor.homelab_hdd_backups_share
+                name: Backups
+                color: "#5e35b1"
             hours_to_show: 24
             points_per_hour: 4
             line_width: 3
-            entities:
-              - entity: sensor.homelab_jellyseerr_container_cpu
-                name: Jellyseerr
-                color: "#1e88e5"
-              - entity: sensor.homelab_radarr_container_cpu
-                name: Radarr
-                color: "#43a047"
-              - entity: sensor.homelab_sonarr_container_cpu
-                name: Sonarr
-                color: "#f9a825"
-              - entity: sensor.homelab_prowlarr_container_cpu
-                name: Prowlarr
-                color: "#8e24aa"
-              - entity: sensor.homelab_qbittorrent_container_cpu
-                name: qBittorrent
-                color: "#00acc1"
-              - entity: sensor.homelab_bazarr_container_cpu
-                name: Bazarr
-                color: "#e53935"
             show:
               fill: fade
               icon: false
               legend: false
               extrema: false
-
-      - type: grid
-        title: Media Container RAM
-        cards:
-          - type: custom:mushroom-chips-card
-            chips:
-              - type: entity
-                entity: sensor.homelab_jellyseerr_container_memory
-                name: Jellyseerr
-                content_info: state
-              - type: entity
-                entity: sensor.homelab_radarr_container_memory
-                name: Radarr
-                content_info: state
-              - type: entity
-                entity: sensor.homelab_sonarr_container_memory
-                name: Sonarr
-                content_info: state
-              - type: entity
-                entity: sensor.homelab_prowlarr_container_memory
-                name: Prowlarr
-                content_info: state
-              - type: entity
-                entity: sensor.homelab_qbittorrent_container_memory
-                name: qBittorrent
-                content_info: state
-              - type: entity
-                entity: sensor.homelab_bazarr_container_memory
-                name: Bazarr
-                content_info: state
-            alignment: start
-          - type: custom:mini-graph-card
-            name: Container RAM Trends
-            hours_to_show: 24
-            points_per_hour: 4
-            line_width: 3
-            entities:
-              - entity: sensor.homelab_jellyseerr_container_memory
-                name: Jellyseerr
-                color: "#1e88e5"
-              - entity: sensor.homelab_radarr_container_memory
-                name: Radarr
-                color: "#43a047"
-              - entity: sensor.homelab_sonarr_container_memory
-                name: Sonarr
-                color: "#f9a825"
-              - entity: sensor.homelab_prowlarr_container_memory
-                name: Prowlarr
-                color: "#8e24aa"
-              - entity: sensor.homelab_qbittorrent_container_memory
-                name: qBittorrent
-                color: "#00acc1"
-              - entity: sensor.homelab_bazarr_container_memory
-                name: Bazarr
-                color: "#e53935"
-            show:
-              fill: fade
-              icon: false
-              legend: false
-              extrema: false
+              state: false
 
       - type: grid
         title: Metrics Source

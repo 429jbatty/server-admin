@@ -175,6 +175,7 @@ sensor:
       - node
       - guests
       - containers
+      - storage
       - errors
 
 template:
@@ -196,6 +197,60 @@ template:
         unit_of_measurement: "%"
         state_class: measurement
         state: "{{ state_attr('sensor.homelab_metrics_snapshot', 'node').disk_percent | default('unknown') }}"
+
+      - name: "Homelab HDD Used"
+        unique_id: homelab_hdd_used_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        icon: mdi:harddisk
+        state: >-
+          {% set storage = state_attr('sensor.homelab_metrics_snapshot', 'storage') or {} %}
+          {{ (storage.mount | default({})).used_percent | default('unknown') }}
+
+      - name: "Homelab HDD Free"
+        unique_id: homelab_hdd_free_gib
+        unit_of_measurement: "GiB"
+        state_class: measurement
+        icon: mdi:harddisk
+        state: >-
+          {% set storage = state_attr('sensor.homelab_metrics_snapshot', 'storage') or {} %}
+          {{ (storage.mount | default({})).free_gib | default('unknown') }}
+
+      - name: "Homelab HDD Media Used"
+        unique_id: homelab_hdd_media_used_gib
+        unit_of_measurement: "GiB"
+        state_class: measurement
+        icon: mdi:movie-open
+        state: >-
+          {% set folder = ((state_attr('sensor.homelab_metrics_snapshot', 'storage') or {}).folders | default([])) | selectattr('id', 'equalto', 'media') | list | first %}
+          {{ folder.used_gib | default('unknown') }}
+
+      - name: "Homelab HDD Media Share"
+        unique_id: homelab_hdd_media_share_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        icon: mdi:movie-open
+        state: >-
+          {% set folder = ((state_attr('sensor.homelab_metrics_snapshot', 'storage') or {}).folders | default([])) | selectattr('id', 'equalto', 'media') | list | first %}
+          {{ folder.disk_percent | default('unknown') }}
+
+      - name: "Homelab HDD Backups Used"
+        unique_id: homelab_hdd_backups_used_gib
+        unit_of_measurement: "GiB"
+        state_class: measurement
+        icon: mdi:archive-clock
+        state: >-
+          {% set folder = ((state_attr('sensor.homelab_metrics_snapshot', 'storage') or {}).folders | default([])) | selectattr('id', 'equalto', 'backups') | list | first %}
+          {{ folder.used_gib | default('unknown') }}
+
+      - name: "Homelab HDD Backups Share"
+        unique_id: homelab_hdd_backups_share_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        icon: mdi:archive-clock
+        state: >-
+          {% set folder = ((state_attr('sensor.homelab_metrics_snapshot', 'storage') or {}).folders | default([])) | selectattr('id', 'equalto', 'backups') | list | first %}
+          {{ folder.disk_percent | default('unknown') }}
 
       - name: "Homelab Home Assistant CPU"
         unique_id: homelab_home_assistant_cpu_percent

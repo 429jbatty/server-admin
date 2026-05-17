@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import shutil
 import socket
 import subprocess
 import time as time_module
@@ -23,6 +25,19 @@ GUESTS = [
 MEDIA_STACK_CT = 106
 MEDIA_CONTAINERS = {"bazarr", "jellyseerr", "prowlarr", "qbittorrent", "radarr", "sonarr"}
 CPU_SAMPLE_SECONDS = 0.35
+HDD_MOUNT = "/mnt/proxmox-usb-backup"
+STORAGE_FOLDERS = [
+    {"id": "media", "name": "Media", "paths": [f"{HDD_MOUNT}/media-stack"]},
+    {
+        "id": "backups",
+        "name": "Backups",
+        "paths": [
+            f"{HDD_MOUNT}/dump",
+            f"{HDD_MOUNT}/file-backups",
+            f"{HDD_MOUNT}/host-config",
+        ],
+    },
+]
 
 
 def run_json(command: list[str]) -> dict[str, Any]:
@@ -62,6 +77,13 @@ def percent(value: Any, maximum: Any) -> float | None:
 def bytes_to_gib(value: Any) -> float | None:
     try:
         return round(float(value) / 1024 / 1024 / 1024, 1)
+    except (TypeError, ValueError):
+        return None
+
+
+def bytes_to_mib(value: Any) -> float | None:
+    try:
+        return round(float(value) / 1024 / 1024, 1)
     except (TypeError, ValueError):
         return None
 
@@ -187,6 +209,7 @@ def collect() -> dict[str, Any]:
         "node": {},
         "guests": [],
         "containers": [],
+        "storage": {},
         "errors": [],
     }
 
@@ -211,7 +234,47 @@ def collect() -> dict[str, Any]:
         payload["ok"] = False
         payload["errors"].append({"scope": "media-containers", "message": str(exc)})
 
+    try:
+        payload["storage"] = storage_metrics()
+    except Exception as exc:  # noqa: BLE001
+        payload["ok"] = False
+        payload["errors"].append({"scope": "storage", "message": str(exc)})
+
     return payload
+
+
+def storage_metrics() -> dict[str, Any]:
+    usage = shutil.disk_usage(HDD_MOUNT)
+    mount = {
+        "name": "HOMELAB_BACKUP",
+        "path": HDD_MOUNT,
+        "used_gib": bytes_to_gib(usage.used),
+        "free_gib": bytes_to_gib(usage.free),
+        "total_gib": bytes_to_gib(usage.total),
+        "used_percent": percent(usage.used, usage.total),
+    }
+
+    folders = []
+    for folder in STORAGE_FOLDERS:
+        used_bytes = sum(directory_size(path) for path in folder["paths"] if os.path.exists(path))
+        folders.append(
+            {
+                "id": folder["id"],
+                "name": folder["name"],
+                "paths": folder["paths"],
+                "used_mib": bytes_to_mib(used_bytes),
+                "used_gib": bytes_to_gib(used_bytes),
+                "disk_percent": percent(used_bytes, usage.total),
+            }
+        )
+
+    return {"mount": mount, "folders": folders}
+
+
+def directory_size(path: str) -> int:
+    output = run_text(["du", "-sb", path])
+    first_field = output.split(maxsplit=1)[0]
+    return int(first_field)
 
 
 def media_container_metrics() -> list[dict[str, Any]]:

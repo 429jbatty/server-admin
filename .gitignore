@@ -1,2 +1,8 @@
 backups/
+__pycache__/
+*/__pycache__/
 media-stack/vpn.env
+monitoring/secrets/*.env
+monitoring/secrets/*.yml
+monitoring/secrets/*password*
+monitoring/data/

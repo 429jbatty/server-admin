@@ -2,7 +2,7 @@
 set -euo pipefail
 
 BACKUP_MOUNT="/mnt/proxmox-usb-backup"
-SOURCE_DIR="/srv/media-stack/"
+SOURCE_DIR="/mnt/proxmox-usb-backup/media-stack/"
 BACKUP_NAME="srv-media-stack"
 BACKUP_ROOT="${BACKUP_MOUNT}/file-backups/${BACKUP_NAME}"
 SNAPSHOT_ROOT="${BACKUP_ROOT}/snapshots"

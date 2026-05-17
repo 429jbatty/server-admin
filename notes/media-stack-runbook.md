@@ -7,18 +7,18 @@ This runbook covers the local lightweight media automation stack for Jellyfin.
 - CT `104`: active Jellyfin server at `http://192.168.1.191:8096`
 - CT `106`: Docker Compose media-services and FileBrowser Quantum host at `192.168.1.197`
 - CT `107`: Tailscale subnet router for remote access to `192.168.1.0/24`
-- Shared host storage: `/srv/media-stack`
+- Shared host storage: `/mnt/proxmox-usb-backup/media-stack`
 - CT `104` media path: `/media`
 - CT `106` media path: `/data`
 
-The shared storage is intentionally lightweight. It is fine for setup, testing, and a small library, but a dedicated disk or NAS should replace it before building a large media collection.
+The shared media storage lives on the HDD mounted at `/mnt/proxmox-usb-backup`. This keeps the growing media library off the Proxmox internal laptop drive while preserving stable container paths.
 
 ## Paths
 
 Host:
 
 ```text
-/srv/media-stack/
+/mnt/proxmox-usb-backup/media-stack/
   config/
   downloads/
     complete/
@@ -29,6 +29,18 @@ Host:
     movies/
     tv/
 ```
+
+The HDD keeps live media and backup data in separate areas:
+
+```text
+/mnt/proxmox-usb-backup/
+  media-stack/
+  dump/
+  file-backups/
+  host-config/
+```
+
+`media-stack/` is the live app config, downloads, and library path. `dump/`, `file-backups/`, and `host-config/` are grouped as Backups in the Homelab dashboard metrics. Snapshots under `file-backups/srv-media-stack` are on the same physical HDD as the live media, so they are convenient rollback snapshots, not a separate hardware backup.
 
 Inside CT `104`:
 
@@ -81,8 +93,12 @@ When away from home, connect the client device to Tailscale and use the same LAN
 - Radarr and Sonarr both have qBittorrent configured as a download client.
 - Prowlarr is connected to Radarr and Sonarr for application sync.
 - FileBrowser Quantum is configured from `/data/config/filebrowser/config.yaml`, with secrets in `/opt/media-stack/filebrowser.env`.
+- Home Assistant Homelab metrics track the HDD total usage plus grouped Media and Backups usage from the host metrics exporter.
 - Internet Archive is configured in Prowlarr and synced to Radarr/Sonarr.
 - 1337x is configured in Prowlarr and synced to Radarr/Sonarr as `1337x (Prowlarr)`.
+- TorrentGalaxy is configured in Prowlarr and synced to Radarr/Sonarr as `TorrentGalaxy (Prowlarr)`.
+- The Pirate Bay is configured in Prowlarr and synced to Radarr/Sonarr as `The Pirate Bay (Prowlarr)`.
+- LimeTorrents is configured in Prowlarr and synced to Radarr/Sonarr as `LimeTorrents (Prowlarr)`.
 - FlareSolverr is configured as a tagged Prowlarr indexer proxy for 1337x only.
 - Internet Archive settings:
   - Base URL: `https://archive.org/`
@@ -107,6 +123,14 @@ Use Internet Archive for public-domain and freely licensed items. Search results
 - FlareSolverr proxy URL from Prowlarr's shared Gluetun namespace: `http://127.0.0.1:8191/`
 
 Use public torrent indexers only for lawful/public-domain/owned-media workflows. Do not use Prowlarr, Radarr, Sonarr, or qBittorrent to obtain copyrighted media without authorization.
+
+Additional public indexer settings:
+
+- TorrentGalaxy uses the Prowlarr `TorrentGalaxyClone` definition with base URL `https://torrentgalaxy.info/`; `torrentgalaxy.one` redirected during validation.
+- The Pirate Bay uses base URL `https://thepiratebay.org/` and API URL `apibay.org`.
+- LimeTorrents uses base URL `https://www.limetorrents.fun/`.
+- All three use app profile `Standard` and minimum seeders `1`.
+- Radarr-side Torznab entries for The Pirate Bay and LimeTorrents include broader validation categories because Radarr's empty movie-category test otherwise returns no results even though Prowlarr tests pass. Radarr still applies its normal release parsing and quality/profile filtering during actual movie searches.
 
 The source Compose file is tracked at `media-stack/docker-compose.yml` and copied into CT `106` at `/opt/media-stack/docker-compose.yml`.
 The helper `scripts/configure-media-stack.py` was used to set root folders, qBittorrent, and Prowlarr app sync without writing API keys to the repo.
@@ -196,17 +220,17 @@ docker compose logs --tail=100
 ## Restore Notes
 
 - Restore Jellyfin metadata from the latest `jellyfin-104-config.*.tgz` backup only onto CT `104`.
-- Restore `/opt/media-stack/docker-compose.yml` and `/srv/media-stack/config` for CT `106` services.
-- Restore FileBrowser Quantum from `/srv/media-stack/config/filebrowser` and recreate `/opt/media-stack/filebrowser.env` with fresh secrets if it is missing.
+- Restore `/opt/media-stack/docker-compose.yml` and `/mnt/proxmox-usb-backup/media-stack/config` for CT `106` services.
+- Restore FileBrowser Quantum from `/mnt/proxmox-usb-backup/media-stack/config/filebrowser` and recreate `/opt/media-stack/filebrowser.env` with fresh secrets if it is missing.
 - Recreate bind mounts before restarting Jellyfin or Docker Compose.
 
 ## Future Storage Migration
 
-When a larger disk or NAS exists:
+When moving from the current HDD to a larger disk or NAS:
 
 1. Stop CT `106` Docker services.
 2. Stop Jellyfin in CT `104`.
-3. Copy `/srv/media-stack` to the new storage location with ownership and permissions preserved.
+3. Copy `/mnt/proxmox-usb-backup/media-stack` to the new storage location with ownership and permissions preserved.
 4. Update CT `104` and CT `106` mount points to the new host path.
 5. Start Jellyfin and Docker services.
 6. Verify Radarr/Sonarr root folders and Jellyfin libraries still resolve.

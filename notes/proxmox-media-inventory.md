@@ -1,6 +1,6 @@
 # Proxmox Media Inventory
 
-Last updated: 2026-05-12 23:20 CDT
+Last updated: 2026-05-14 22:06 CDT
 
 ## Host
 
@@ -10,7 +10,12 @@ Last updated: 2026-05-12 23:20 CDT
 - Storage:
   - `local`: dir storage at `/var/lib/vz`, about 57 GiB free at inspection time
   - `local-lvm`: LVM-thin storage, about 124 GiB free at inspection time
-  - `usb-backup`: dir storage at `/mnt/proxmox-usb-backup`, about 3.6 TiB free at setup time, used for daily guest backups
+  - `usb-backup`: dir storage at `/mnt/proxmox-usb-backup`, about 3.6 TiB free at inspection time, used for daily guest backups and live media storage
+  - Live media stack path on HDD: `/mnt/proxmox-usb-backup/media-stack`
+  - Backup folders on HDD:
+    - `/mnt/proxmox-usb-backup/dump`
+    - `/mnt/proxmox-usb-backup/file-backups`
+    - `/mnt/proxmox-usb-backup/host-config`
 
 ## Guests
 
@@ -44,13 +49,13 @@ Last updated: 2026-05-12 23:20 CDT
 - Hostname: `media-stack`
 - URL base: `http://192.168.1.197`
 - Purpose: Docker Compose host for Jellyseerr, Radarr, Sonarr, Prowlarr, qBittorrent, Bazarr, FileBrowser Quantum, and FlareSolverr
-- Storage model: temporary local host path at `/srv/media-stack`
+- Storage model: HDD host path at `/mnt/proxmox-usb-backup/media-stack`
 - CT `104` mount target: `/media`
 - CT `106` mount target: `/data`
 - CT `106` backup browse mounts:
   - `/backups/guest-dumps` from `/mnt/proxmox-usb-backup/dump`, read-only
   - `/backups/media-library-current` from `/mnt/proxmox-usb-backup/file-backups/srv-media-stack/snapshots/20260512-015501/library`, read-only
-- `/srv/media-stack` is backed up by the host file-backup timer because Proxmox excludes host bind mounts from CT archives.
+- `/mnt/proxmox-usb-backup/media-stack` is the live media stack path. The host file-backup timer still snapshots it into `/mnt/proxmox-usb-backup/file-backups/srv-media-stack`; because this is the same physical HDD, those snapshots are useful for accidental-change rollback but are not a separate disk backup.
 - `/dev/net/tun` passthrough configured for Gluetun.
 
 ## Remote Access Target
@@ -95,9 +100,11 @@ The repo-level source of truth for the Home Assistant Homelab dashboard is `home
 - Prowlarr configured with Radarr and Sonarr application sync
 - Internet Archive configured as a public torrent indexer and synced to Radarr/Sonarr.
 - 1337x configured as a public torrent indexer in Prowlarr with a tagged FlareSolverr proxy, then synced to Radarr/Sonarr as `1337x (Prowlarr)`.
+- TorrentGalaxy, The Pirate Bay, and LimeTorrents configured as public torrent indexers in Prowlarr, then synced to Radarr/Sonarr as Prowlarr-backed Torznab indexers.
 - FileBrowser Quantum configured in CT `106` with the media library writable through the admin account, a read-only viewer account for the media library, and admin-only read-only backup sources. Host-config backups are intentionally excluded.
 - The FileBrowser media-library backup mount uses the resolved latest snapshot path because Proxmox does not hotplug bind mounts through the `current` symlink. Refresh this mount after a newer snapshot should be browsed.
 - Outbound VPN Compose routes qBittorrent, Prowlarr, and FlareSolverr through Gluetun.
+- Home Assistant Homelab metrics track HDD total usage plus grouped Media and Backups folder usage.
 - Add only lawful/public-domain/owned-media sources.
 
 ## Policy

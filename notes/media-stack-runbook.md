@@ -151,7 +151,7 @@ pct exec 107 -- tailscale up --advertise-routes=192.168.1.0/24 --accept-dns=fals
 
 Then approve the advertised route in the Tailscale admin console and disable key expiry for CT `107`.
 
-The candidate VPN Compose file is also staged in CT `106` at `/opt/media-stack/docker-compose.vpn-staged.yml`. To activate the outbound VPN after `/opt/media-stack/vpn.env` contains real provider values:
+To refresh or re-apply the outbound VPN Compose setup after `/opt/media-stack/vpn.env` contains real Proton provider values:
 
 ```bash
 cp /root/server-admin/media-stack/docker-compose.yml /tmp/docker-compose.yml

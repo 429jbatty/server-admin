@@ -61,5 +61,5 @@ Do not store real secrets in this repository.
 
 - Runtime env file: `/opt/media-stack/vpn.env` inside CT `106`
 - Template: `media-stack/vpn.env.example`
-- Recommended provider default: AirVPN with WireGuard and a forwarded port
-- Store provider account, WireGuard private key, preshared key, assigned tunnel address, server choice, and forwarded port outside this repo
+- Provider: Proton VPN with WireGuard and NAT-PMP port forwarding
+- Store provider account, WireGuard private key, peer public key, assigned tunnel address, endpoint IP, endpoint port, and forwarded port outside this repo

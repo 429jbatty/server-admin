@@ -59,6 +59,10 @@ This repo is the operational memory for a Proxmox home server. Before making cha
 
 - Check `git status --short` before edits.
 - Do not revert user changes unless explicitly asked.
+- Keep commits focused: one coherent infrastructure, documentation, script, service-catalog, or dashboard concern per commit.
+- Commit as you go after each meaningful, verified change instead of letting unrelated work pile up.
+- Use descriptive commit messages that explain the change, such as `docs: clarify agent commit workflow` or `media: update prowlarr runbook`.
+- Do not stage or commit pre-existing unrelated user changes. If the worktree is already dirty, stage only the files or hunks that belong to your current task.
 - Keep docs, inventory, and runbooks aligned with any infrastructure change.
 - Run `git diff --check` before committing.
 - Review diffs for secrets before committing or pushing.

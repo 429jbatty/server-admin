@@ -35,6 +35,9 @@ This repo is the source of truth for non-secret operational memory. Future agent
 
 ## Before Commit Or Push
 
+- Split work into focused commits as it becomes complete. Each commit should cover one coherent concern, such as a service change plus matching docs, a script update plus its runbook note, or an agent-instruction cleanup.
+- Use descriptive commit messages that make the operational intent clear.
+- If the worktree was already dirty, stage only the files or hunks that belong to the current task and leave unrelated user changes untouched.
 - Run `git diff --check`.
 - Review the diff for secrets and accidental generated noise.
 - Confirm docs agree on core ground truth:
@@ -43,7 +46,7 @@ This repo is the source of truth for non-secret operational memory. Future agent
   - Tailscale subnet router: CT `107`, `192.168.1.198`.
   - Shared media host path: `/mnt/proxmox-usb-backup/media-stack`.
   - Dashboard/service catalog source: `homelab-services.yml`.
-- Commit after meaningful infrastructure or documentation changes, then push to the private remote after reviewing for secrets.
+- Commit after meaningful infrastructure or documentation changes before moving on to unrelated work, then push to the private remote after reviewing for secrets.
 
 ## Secret Pointers
 

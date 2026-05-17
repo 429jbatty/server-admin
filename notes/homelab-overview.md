@@ -1,6 +1,6 @@
 # Homelab Overview
 
-Last verified: 2026-05-16 20:00 CDT
+Last verified: 2026-05-17 12:04 CDT
 
 This repo is the canonical documentation home for the Proxmox home server. Use it as the first stop for understanding what exists, what should be running, and which files need updates when the server changes.
 
@@ -14,12 +14,13 @@ This repo is the canonical documentation home for the Proxmox home server. Use i
 - Albumary: CT `105`, app directory `/opt/spotify_tracker`, SQLite database `/opt/spotify_tracker/data/spotify_tracker.sqlite`.
 - Media stack: CT `106`, LAN `192.168.1.197`, Docker Compose host for Jellyseerr, Radarr, Sonarr, Prowlarr, qBittorrent, FileBrowser Quantum, Bazarr, FlareSolverr, and Gluetun.
 - Remote access: CT `107`, LAN `192.168.1.198`, Tailscale subnet router for `192.168.1.0/24`.
+- Monitoring: CT `108`, LAN `192.168.1.200`, Docker Compose host for Grafana, Prometheus, Uptime Kuma, and the Proxmox exporter.
 
 Live state observed during the last verification:
 
 - VM `100` was running.
 - CT `103` was stopped.
-- CTs `104`, `105`, `106`, and `107` were running.
+- CTs `104`, `105`, `106`, `107`, and `108` were running.
 
 ## Storage And Paths
 
@@ -55,6 +56,8 @@ See `notes/homelab-backup-runbook.md` for backup schedules, manual commands, res
 `homelab-services.yml` is the machine-readable service catalog for dashboard-visible services and health checks. The Home Assistant package and Lovelace dashboard sources live under `home-assistant/` and are mirrored from that service catalog.
 
 When a service owner, LAN IP, port, URL, health check, category, or dashboard visibility changes, update `homelab-services.yml` first, then update the generated or mirrored Home Assistant files and any affected runbook.
+
+Grafana is the technical monitoring dashboard and lives outside the Home Assistant control dashboard. See `notes/monitoring-runbook.md` for the monitoring stack, Prometheus scrape targets, Grafana dashboard source, and Uptime Kuma monitors.
 
 ## Secret Boundary
 

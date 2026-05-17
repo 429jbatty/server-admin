@@ -154,3 +154,55 @@ services:
     dashboard: false
     health_check: http
     description: LAN-only JSON metrics endpoint for the Home Assistant Homelab dashboard.
+
+  - id: proxmox_node_exporter
+    name: Proxmox node_exporter
+    category: Monitoring
+    owner: Host
+    host: proxmox
+    ip: 192.168.1.184
+    port: 9100
+    url: http://192.168.1.184:9100/metrics
+    check_url: http://192.168.1.184:9100/metrics
+    dashboard: false
+    health_check: http
+    description: LAN-only Prometheus host metrics endpoint for Grafana technical monitoring.
+
+  - id: grafana
+    name: Grafana
+    category: Monitoring
+    owner: CT 108
+    host: monitoring
+    ip: 192.168.1.200
+    port: 3000
+    url: http://192.168.1.200:3000
+    check_url: http://192.168.1.200:3000/api/health
+    dashboard: false
+    health_check: http
+    description: Technical monitoring dashboard for host health, trends, storage, and VM/LXC visibility.
+
+  - id: prometheus
+    name: Prometheus
+    category: Monitoring
+    owner: CT 108
+    host: monitoring
+    ip: 192.168.1.200
+    port: 9090
+    url: http://192.168.1.200:9090
+    check_url: http://192.168.1.200:9090/-/ready
+    dashboard: false
+    health_check: http
+    description: Metrics collection and query engine for the Grafana monitoring stack.
+
+  - id: uptime_kuma
+    name: Uptime Kuma
+    category: Monitoring
+    owner: CT 108
+    host: monitoring
+    ip: 192.168.1.200
+    port: 3001
+    url: http://192.168.1.200:3001
+    check_url: http://192.168.1.200:3001
+    dashboard: false
+    health_check: http
+    description: LAN-only service uptime monitor for core homelab services and the public Albumary route.

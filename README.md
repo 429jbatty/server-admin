@@ -25,6 +25,7 @@ Do not store secrets here. Use placeholders, `.example` files, and pointer docs 
 - Host and service scripts: `scripts/`
 - Systemd unit and timer sources: `systemd/`
 - Agent-local workflow notes: `skills/`
+- Monitoring stack source: `monitoring/`
 
 Keep `homelab-services.yml` as the machine-readable service catalog. Future service additions or LAN IP/port changes should start there, then flow into the Home Assistant package/dashboard files and any affected runbook. Avoid copying the full service table into Markdown unless the duplicate is intentionally maintained.
 
@@ -78,3 +79,22 @@ The AdGuard pause button uses the AdGuard Home HTTP API and expects this Home As
 ```yaml
 adguard_auth_header: "Basic BASE64_USERNAME_COLON_PASSWORD"
 ```
+
+## Technical Monitoring
+
+- Monitoring runbook: `notes/monitoring-runbook.md`
+- Monitoring Compose source: `monitoring/docker-compose.yml`
+- Prometheus scrape config source: `monitoring/prometheus/prometheus.yml`
+- Grafana dashboard source: `monitoring/grafana/dashboards/homelab-overview.json`
+- Uptime Kuma bootstrap source: `scripts/bootstrap-uptime-kuma.py`
+
+The dedicated monitoring stack runs in CT `108` at `192.168.1.200`. Grafana is the technical monitoring dashboard for server health, trends, storage, VM/LXC visibility, and alert-oriented views. Home Assistant remains the control dashboard for smart-home devices.
+
+Runtime services are LAN-only:
+
+- Grafana: `http://192.168.1.200:3000`
+- Prometheus: `http://192.168.1.200:9090`
+- Uptime Kuma: `http://192.168.1.200:3001`
+- Host node_exporter: `http://192.168.1.184:9100/metrics`
+
+Secret-bearing monitoring files live only inside CT `108` under `/opt/monitoring/secrets/`. The repo tracks only `.example` templates.

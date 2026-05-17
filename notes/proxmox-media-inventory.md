@@ -1,6 +1,6 @@
 # Proxmox Media Inventory
 
-Last updated: 2026-05-16 20:00 CDT
+Last updated: 2026-05-17 12:04 CDT
 
 ## Host
 
@@ -29,6 +29,7 @@ Last updated: 2026-05-16 20:00 CDT
 | 105 | LXC | `CT105` | running | Debian, static IP `192.168.1.100/24` |
 | 106 | LXC | `media-stack` | running | Docker Compose media automation stack, IP `192.168.1.197` |
 | 107 | LXC | `remote-access` | running | Tailscale subnet-router target, IP `192.168.1.198`; awaiting account auth/route approval |
+| 108 | LXC | `monitoring` | running | Grafana, Prometheus, Uptime Kuma, and Proxmox exporter, IP `192.168.1.200` |
 
 ## Active Jellyfin
 
@@ -69,12 +70,29 @@ Last updated: 2026-05-16 20:00 CDT
 - IP forwarding configured inside the container.
 - Tailscale installed; account authentication and route approval must be completed in Tailscale.
 
+## Monitoring Target
+
+- Container ID: CT `108`
+- Hostname: `monitoring`
+- LAN IP: `192.168.1.200`
+- Purpose: Grafana-based technical monitoring stack for Proxmox host health, storage trends, VM/LXC visibility, and service uptime.
+- Runtime path: `/opt/monitoring`
+- Repo source: `monitoring/`
+- Services:
+  - Grafana: `http://192.168.1.200:3000`
+  - Prometheus: `http://192.168.1.200:9090`
+  - Uptime Kuma: `http://192.168.1.200:3001`
+  - Proxmox exporter: internal Docker service `pve-exporter:9221`
+- Host `node_exporter` runs on the Proxmox host at `http://192.168.1.184:9100/metrics`.
+- The Proxmox exporter uses a limited `PVEAuditor` API token stored only in CT `108` at `/opt/monitoring/secrets/pve.yml`.
+
 ## Service Ports
 
 | Service | Port | URL | Purpose |
 | --- | ---: | --- | --- |
 | Home Assistant | 8123 | `http://192.168.1.187:8123` | Home automation dashboard |
 | Proxmox Metrics Exporter | 9108 | `http://192.168.1.184:9108/metrics/homelab` | LAN-only host/guest resource metrics for Home Assistant |
+| Proxmox node_exporter | 9100 | `http://192.168.1.184:9100/metrics` | LAN-only Prometheus host metrics for Grafana |
 | AdGuard Home | 80 | `http://192.168.1.189` | LAN DNS filtering |
 | Jellyfin | 8096 | `http://192.168.1.191:8096` | Existing media server in CT 104 |
 | Jellyseerr | 5055 | `http://192.168.1.197:5055` | Request/search UI |
@@ -84,6 +102,9 @@ Last updated: 2026-05-16 20:00 CDT
 | qBittorrent | 8080 | `http://192.168.1.197:8080` | Download client web UI |
 | FileBrowser Quantum | 8090 | `http://192.168.1.197:8090` | LAN-only media file browser and admin-only backup browser |
 | Bazarr | 6767 | `http://192.168.1.197:6767` | Subtitle management |
+| Grafana | 3000 | `http://192.168.1.200:3000` | Technical monitoring dashboard |
+| Prometheus | 9090 | `http://192.168.1.200:9090` | Metrics collection and query engine |
+| Uptime Kuma | 3001 | `http://192.168.1.200:3001` | Service uptime monitors |
 
 After outbound VPN activation, Gluetun publishes the qBittorrent and Prowlarr Web UIs because both containers share Gluetun's network namespace. FlareSolverr also shares Gluetun's network namespace for Prowlarr-only indexer challenge handling, but it does not publish a LAN port. Radarr, Sonarr, Jellyseerr, Bazarr, and CT `104` Jellyfin keep their normal Docker/LAN network path.
 

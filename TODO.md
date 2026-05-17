@@ -37,6 +37,7 @@ This file tracks future work for the Proxmox home server. Keep operational detai
   - Jellyfin
   - media stack services
   - Tailscale subnet router
+  - monitoring stack
 
 ## Proxmox Backup Server
 

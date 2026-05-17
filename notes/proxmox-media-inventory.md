@@ -1,6 +1,6 @@
 # Proxmox Media Inventory
 
-Last updated: 2026-05-14 22:06 CDT
+Last updated: 2026-05-16 20:00 CDT
 
 ## Host
 
@@ -24,7 +24,7 @@ Last updated: 2026-05-14 22:06 CDT
 | 100 | VM | `homeassistant` | running | Home Assistant OS VM |
 | 101 | LXC | `CT101` | stopped | Debian, static IP `192.168.1.50/24` |
 | 102 | LXC | `adguard` | running | AdGuard community-script LXC |
-| 103 | LXC | `jellyfin` | running | Stale candidate; Debian 12, `eth0` down, Jellyfin inactive |
+| 103 | LXC | `jellyfin` | stopped | Stale candidate; Debian 12, `eth0` down, Jellyfin inactive |
 | 104 | LXC | `jellyfin` | running | Active Jellyfin server |
 | 105 | LXC | `CT105` | running | Debian, static IP `192.168.1.100/24` |
 | 106 | LXC | `media-stack` | running | Docker Compose media automation stack, IP `192.168.1.197` |

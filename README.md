@@ -1,7 +1,40 @@
 # Home server admin workspace
 
-This repo is for Codex-assisted server setup and documentation.
-Do not store secrets here.
+This repo is the operational memory for the Proxmox home server. It keeps the Git-backed source of truth for human notes, AI-agent instructions, service inventory, desired non-secret configuration, runbooks, scripts, systemd units, and Home Assistant dashboard sources.
+
+Do not store secrets here. Use placeholders, `.example` files, and pointer docs for secret-bearing configuration.
+
+## Start Here
+
+- Human overview: `notes/homelab-overview.md`
+- Agent instructions: `AGENTS.md`
+- Documentation maintenance contract: `notes/documentation-maintenance.md`
+- Future-work queue: `TODO.md`
+- Proxmox guest and service inventory: `notes/proxmox-media-inventory.md`
+- Media stack runbook: `notes/media-stack-runbook.md`
+- Backup and restore runbook: `notes/homelab-backup-runbook.md`
+- Secret pointer checklist: `notes/media-stack-credentials.md`
+
+## Source Of Truth
+
+- Service catalog and dashboard inventory: `homelab-services.yml`
+- Proxmox/media inventory and live storage notes: `notes/proxmox-media-inventory.md`
+- Operational runbooks: `notes/*-runbook.md`
+- Desired non-secret media stack config: `media-stack/`
+- Home Assistant dashboard/package sources: `home-assistant/`
+- Host and service scripts: `scripts/`
+- Systemd unit and timer sources: `systemd/`
+- Agent-local workflow notes: `skills/`
+
+Keep `homelab-services.yml` as the machine-readable service catalog. Future service additions or LAN IP/port changes should start there, then flow into the Home Assistant package/dashboard files and any affected runbook. Avoid copying the full service table into Markdown unless the duplicate is intentionally maintained.
+
+## Change Workflow
+
+- Run `git status --short` before edits.
+- Read the relevant overview, inventory, and runbook before changing infrastructure.
+- Compare docs against live read-only checks before changing Proxmox guests, mounts, ports, Docker Compose, VPN routing, backups, or dashboard wiring.
+- Keep docs, inventory, scripts, systemd units, and dashboard sources aligned in the same change.
+- Run `git diff --check` and review diffs for secrets before committing or pushing.
 
 ## Homelab Dashboard
 

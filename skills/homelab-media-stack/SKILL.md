@@ -12,7 +12,7 @@ Use this skill for changes to the Proxmox media automation setup in `/root/serve
 - Active Jellyfin is CT `104`, Ubuntu 24.04, URL `http://192.168.1.191:8096`.
 - CT `103` is a stale Jellyfin candidate. Do not delete, repurpose, or rely on it unless the user explicitly asks.
 - Media services live in CT `106`, hostname `media-stack`.
-- Shared host path is `/srv/media-stack`.
+- Shared host path is `/mnt/proxmox-usb-backup/media-stack`.
 - CT `104` sees shared media at `/media`.
 - CT `106` sees shared media at `/data`.
 - Repo docs live under `notes/`.

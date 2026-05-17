@@ -1,6 +1,6 @@
 # Homelab Backup Runbook
 
-Last updated: 2026-05-12 22:53 CDT
+Last updated: 2026-05-16 20:00 CDT
 
 ## USB Backup Storage
 
@@ -23,7 +23,7 @@ Retention:
 - 4 weekly backups
 - 3 monthly backups
 
-The job uses `--all 1`, so it covers the current VM and LXC set, including stopped guests. Proxmox guest backups exclude host bind mounts such as `/srv/media-stack`, so shared media-stack data is covered by the separate file-backup timer below.
+The job uses `--all 1`, so it covers the current VM and LXC set, including stopped guests. Proxmox guest backups exclude host bind mounts such as `/mnt/proxmox-usb-backup/media-stack`, so shared media-stack data is covered by the separate file-backup timer below.
 
 Host configuration is backed up separately by `homelab-host-backup.timer` at `01:15` daily. It writes root-only archives under:
 
@@ -33,13 +33,13 @@ Host configuration is backed up separately by `homelab-host-backup.timer` at `01
 
 Those archives include Proxmox host configuration, network/fstab/systemd configuration, cron configuration, and this repo. They may contain sensitive operational material because they are real host backups; do not copy them into Git.
 
-Host bind-mounted data is backed up separately by `homelab-file-backup.timer` at `01:45` daily. It creates rsync hardlink snapshots for `/srv/media-stack` under:
+Host bind-mounted data is backed up separately by `homelab-file-backup.timer` at `01:45` daily. It creates rsync hardlink snapshots for `/mnt/proxmox-usb-backup/media-stack` under:
 
 ```text
 /mnt/proxmox-usb-backup/file-backups/srv-media-stack/
 ```
 
-The `current` symlink points at the latest snapshot. Old snapshots are pruned after 120 days by default.
+The `srv-media-stack` backup directory name is historical. The current source path is `/mnt/proxmox-usb-backup/media-stack`. The `current` symlink points at the latest snapshot. Old snapshots are pruned after 120 days by default.
 
 Albumary's SQLite database is backed up separately by `albumary-sqlite-backup.timer` at `02:05` daily, before the full Proxmox guest backup. Albumary runs in CT `105`, and the active database is:
 

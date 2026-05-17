@@ -21,6 +21,11 @@ This file tracks future work for the Proxmox home server. Keep operational detai
   - Timer: `homelab-file-backup.timer`
   - Schedule: `01:45`
   - Target: `/mnt/proxmox-usb-backup/file-backups/srv-media-stack`
+- Daily Albumary SQLite backup configured:
+  - Timer: `albumary-sqlite-backup.timer`
+  - Schedule: `02:05`
+  - Source: CT `105`, `/opt/spotify_tracker/data/spotify_tracker.sqlite`
+  - Target: `/mnt/proxmox-usb-backup/albumary-sqlite`
 - Keep Home Assistant's own backup workflow enabled, including off-box sync.
 - Test restores monthly.
   - Restore a small LXC to a new VMID.

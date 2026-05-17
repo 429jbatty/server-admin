@@ -41,6 +41,20 @@ Host bind-mounted data is backed up separately by `homelab-file-backup.timer` at
 
 The `current` symlink points at the latest snapshot. Old snapshots are pruned after 120 days by default.
 
+Albumary's SQLite database is backed up separately by `albumary-sqlite-backup.timer` at `02:05` daily, before the full Proxmox guest backup. Albumary runs in CT `105`, and the active database is:
+
+```text
+/opt/spotify_tracker/data/spotify_tracker.sqlite
+```
+
+The backup script uses SQLite's `.backup` command inside CT `105`, verifies the copy with `PRAGMA integrity_check`, pulls the copy to the host, verifies it again, then writes compressed database-only backups under:
+
+```text
+/mnt/proxmox-usb-backup/albumary-sqlite/
+```
+
+Albumary database-only backups are kept for 30 days by default. These backups make single-service recovery easier, but they live on the same USB disk as the Proxmox guest backups and are not a separate off-machine disaster backup.
+
 FileBrowser Quantum in CT `106` exposes only selected backup views:
 
 - Proxmox guest backup archives from `/mnt/proxmox-usb-backup/dump`, mounted read-only at `/backups/guest-dumps`.
@@ -57,11 +71,14 @@ pvesm status
 pvesh get /cluster/backup --output-format yaml
 systemctl list-timers homelab-host-backup.timer
 systemctl list-timers homelab-file-backup.timer
+systemctl list-timers albumary-sqlite-backup.timer
 systemctl status homelab-host-backup.service
 systemctl status homelab-file-backup.service
+systemctl status albumary-sqlite-backup.service
 ls -lh /mnt/proxmox-usb-backup/dump
 ls -lh /mnt/proxmox-usb-backup/host-config
 ls -lh /mnt/proxmox-usb-backup/file-backups/srv-media-stack
+ls -lh /mnt/proxmox-usb-backup/albumary-sqlite
 ```
 
 ## Manual Backup Commands
@@ -78,6 +95,12 @@ Run the host bind-mounted data backup immediately:
 systemctl start homelab-file-backup.service
 ```
 
+Run the Albumary database-only backup immediately:
+
+```bash
+systemctl start albumary-sqlite-backup.service
+```
+
 Run the Proxmox guest backup job immediately:
 
 ```bash
@@ -89,5 +112,6 @@ vzdump --all 1 --storage usb-backup --mode snapshot --compress zstd --prune-back
 - Restore VM/LXC guests from the Proxmox UI or `qmrestore`/`pct restore` using archives in `/mnt/proxmox-usb-backup/dump`.
 - Restore host configuration selectively from the latest `host-config/proxmox-host-config.*.tar.zst` archive.
 - Restore shared media-stack data from `file-backups/srv-media-stack/current`.
+- Restore Albumary's database by decompressing a selected `albumary-sqlite.*.sqlite.gz` backup, stopping `spotify-tracker-api.service` in CT `105`, replacing `/opt/spotify_tracker/data/spotify_tracker.sqlite`, fixing ownership to `jacob:jacob`, then starting the service again.
 - Recreate the USB mount and `usb-backup` storage before relying on scheduled backups after a host rebuild.
 - Do not restore `/etc/pve/priv` material onto a different trust boundary without understanding the security impact.

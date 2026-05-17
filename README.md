@@ -15,10 +15,14 @@ Do not store secrets here.
 - Host backup timer source: `systemd/homelab-host-backup.timer`
 - File backup script source: `scripts/homelab-file-backup.sh`
 - File backup timer source: `systemd/homelab-file-backup.timer`
+- Albumary SQLite backup script source: `scripts/albumary-sqlite-backup.sh`
+- Albumary SQLite backup timer source: `systemd/albumary-sqlite-backup.timer`
 
 The dashboard is installed in Home Assistant as a YAML Lovelace dashboard named `Homelab`. Health checks are intentionally lightweight: HTTP reachability for web services and ping reachability for the Tailscale subnet router. Resource metrics come from a LAN-only Proxmox host exporter at `http://192.168.1.184:9108/metrics/homelab`; it publishes CPU, memory, disk, status, uptime, and media-stack Docker container utilization only.
 
 Albumary Cloudflare metrics are fetched by `home-assistant/cloudflare_albumary_metrics.py`, installed in Home Assistant as `/config/scripts/cloudflare_albumary_metrics.py`. The dashboard uses Cloudflare Web Analytics/RUM for `Page views` and `Visitors`, and keeps HTTP Traffic metrics for requests, transfer, status codes, and lightweight reachability context. Store the real values only in Home Assistant `secrets.yaml`:
+
+Albumary currently runs in CT `105` from `/opt/spotify_tracker`, with its SQLite database at `/opt/spotify_tracker/data/spotify_tracker.sqlite`. The daily `albumary-sqlite-backup.timer` creates a database-only backup under `/mnt/proxmox-usb-backup/albumary-sqlite/` before the full Proxmox guest backup.
 
 ```yaml
 cloudflare_api_token: "Bearer ..."

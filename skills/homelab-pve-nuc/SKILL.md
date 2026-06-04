@@ -52,6 +52,7 @@ ssh pve-nuc pvesm status
 
 - SSH requires host network access from this environment. If a sandboxed attempt fails due network restrictions, rerun with the required escalation; do not reinterpret that failure as a NUC failure.
 - Prefer one clear remote command per invocation. Use a remote shell only when the command genuinely requires pipes, expansion, or directory changes.
+- Avoid nested `ssh pve-nuc bash -lc "..."` quoting when a simple SSH command or stdin pipe can perform the operation. Nested quoting was reparsed unexpectedly during the HDD fstab setup even though the append portion still succeeded.
 - Never assume `/root/server-admin` already exists on the NUC; verify it.
 
 ## Safe Read-Only Baseline

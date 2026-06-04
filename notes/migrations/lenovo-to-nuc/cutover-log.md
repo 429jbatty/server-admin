@@ -72,3 +72,10 @@ Phase: Phase 4 Lenovo storage and device cutover
 What was checked or changed: Quiesced Lenovo workloads and schedules that use the USB HDD or cutover devices, then safely unmounted the HDD.
 Evidence: Disabled Proxmox backup job `homelab-usb-daily`; disabled and stopped the host backup timers and Lenovo metrics exporter. VM `100`, CT `104`, and CT `106` shut down cleanly. No `vzdump`, `tar`, `zstd`, or `rsync` backup process was active. After `sync` and `umount /mnt/proxmox-usb-backup`, `findmnt` returned no mount, `lsblk -f` showed filesystem UUID `9218d3f8-9449-4221-9dd8-36b5b7884152` with no mountpoint, and Proxmox marked `usb-backup` inactive because its guarded mountpoint is absent.
 Next safe action: Physically move the Seagate USB HDD and SONOFF Zigbee coordinator from the Lenovo to the NUC, then run the reviewed NUC read-only device discovery checks before mounting or configuring anything.
+
+Date: 2026-06-03
+Actor: Agent
+Phase: Phase 4 NUC storage and device setup
+What was checked or changed: Discovered the moved devices, mounted the existing USB HDD by UUID, and registered it as guarded Proxmox storage `usb-backup`.
+Evidence: The NUC sees the Seagate HDD as `/dev/sda1`, ext4 label `HOMELAB_BACKUP`, UUID `9218d3f8-9449-4221-9dd8-36b5b7884152`. It is mounted at `/mnt/proxmox-usb-backup` as `rw,noatime` with about 3.4 TiB free; all expected backup and media directories exist. `/etc/fstab` contains exactly one proven UUID-based mount entry. Proxmox reports `usb-backup` active with `is_mountpoint 1` and can enumerate existing backups for VM `100` and CTs `101` through `108`. The SONOFF coordinator is visible as USB ID `10c4:ea60` and stable path `/dev/serial/by-id/usb-SONOFF_SONOFF_Dongle_Lite_MG21_2c1766ef5fa2ef11baaf8a6661ce3355-if00-port0`. NUC device paths are `/dev/dri/card0`, `/dev/dri/renderD128`, and `/dev/net/tun`; `vmbr0` remains bridged to `nic0`.
+Next safe action: Complete final read-only Phase 4 checks, sync the latest repo checkpoint to the NUC, then begin Phase 5 restores without starting a restored guest until its Lenovo counterpart is stopped.

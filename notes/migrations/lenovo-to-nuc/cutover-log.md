@@ -65,3 +65,10 @@ Phase: Phase 3 NUC base install completion
 What was checked or changed: Synced the latest migration checkpoint to the NUC and completed final read-only Phase 3 reachability, capacity, service-health, and repo checks.
 Evidence: The Proxmox API at `https://192.168.1.185:8006` returned expected unauthenticated HTTP `401`, confirming reachability. The NUC resolves as `pve-nuc.home` at `192.168.1.185`; `pveproxy`, `pvedaemon`, and `pvestatd` are active. It has an Intel i7-10710U with 12 logical CPUs, 15 GiB RAM, about 84 GiB free on the root filesystem, and an empty approximately 349 GiB `local-lvm` thin pool. `/root/server-admin` is clean at commit `9d9d0ce`. Phase 3 is complete with the NUC intentionally retaining its staging identity and with `usb-backup` deferred until the HDD is mounted during Phase 4.
 Next safe action: Prepare for Phase 4 by safely stopping Lenovo services and guests that use the USB HDD, unmounting the HDD, physically moving the HDD and required USB devices to the NUC, and then running reviewed NUC device checks before configuring storage or restoring guests.
+
+Date: 2026-06-03
+Actor: Agent
+Phase: Phase 4 Lenovo storage and device cutover
+What was checked or changed: Quiesced Lenovo workloads and schedules that use the USB HDD or cutover devices, then safely unmounted the HDD.
+Evidence: Disabled Proxmox backup job `homelab-usb-daily`; disabled and stopped the host backup timers and Lenovo metrics exporter. VM `100`, CT `104`, and CT `106` shut down cleanly. No `vzdump`, `tar`, `zstd`, or `rsync` backup process was active. After `sync` and `umount /mnt/proxmox-usb-backup`, `findmnt` returned no mount, `lsblk -f` showed filesystem UUID `9218d3f8-9449-4221-9dd8-36b5b7884152` with no mountpoint, and Proxmox marked `usb-backup` inactive because its guarded mountpoint is absent.
+Next safe action: Physically move the Seagate USB HDD and SONOFF Zigbee coordinator from the Lenovo to the NUC, then run the reviewed NUC read-only device discovery checks before mounting or configuring anything.

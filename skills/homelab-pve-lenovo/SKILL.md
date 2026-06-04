@@ -86,6 +86,7 @@ qm config <vmid>
 - Thin-pool virtual-size warnings are not by themselves proof of failure. Check actual `data_percent`, metadata usage, free VG space, and task logs.
 - Distinguish normal read-only mounting of guest snapshot filesystems during `vzdump` from the backup HDD mount becoming read-only.
 - Use the host kernel journal and host-namespace mount view before diagnosing USB or ext4 failure.
+- After a filesystem is unmounted, do not use `fuser -vm <former-mountpoint>` to decide whether the removed filesystem is busy. The former mountpoint becomes a directory on `/`, so `fuser` may report root-filesystem users. Verify unmount with `findmnt`, `lsblk -f`, and Proxmox storage status instead.
 - Never format, repartition, or erase the backup HDD.
 - Never commit raw inventory, backup archives, secrets, databases, private keys, or `/etc/pve/priv/*`.
 

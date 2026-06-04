@@ -39,6 +39,14 @@ This file tracks future work for the Proxmox home server. Keep operational detai
   - Tailscale subnet router
   - monitoring stack
 
+## Post-Migration Confidence Checks
+
+- Confirm Zigbee devices remain available in the Home Assistant UI.
+- Start a Jellyfin playback session and confirm hardware transcoding when applicable.
+- Confirm a remote Tailscale client can reach a LAN service through CT `107`.
+- Confirm LAN clients are actively using AdGuard Home for DNS.
+- After an appropriate confidence period, decide whether to power off, retain, or repurpose the retired Lenovo source at `192.168.1.186`.
+
 ## Proxmox Backup Server
 
 - Consider adding Proxmox Backup Server on separate storage.

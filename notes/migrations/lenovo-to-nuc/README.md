@@ -2,6 +2,8 @@
 
 This directory is the permanent runbook for moving the homelab from the Lenovo Proxmox host to the Intel NUC. It is designed for piecemeal work across human and agent sessions.
 
+Status: completed on 2026-06-04. The NUC is the active production host; retain these docs as migration history and rollback context.
+
 The docs are the safety contract and checklist. They are not the live status source of truth. Before acting, verify the live state with read-only checks.
 
 ## Agent Start Protocol

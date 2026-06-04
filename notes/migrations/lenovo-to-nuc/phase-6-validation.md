@@ -2,6 +2,8 @@
 
 Goal: confirm the NUC migration is functionally complete and identify any docs that must be updated because ground truth changed.
 
+Status: automated validation completed on 2026-06-04. Remaining human confidence checks are tracked in `../../../TODO.md`.
+
 ## Agent Rules
 
 - Use live checks, not memory.

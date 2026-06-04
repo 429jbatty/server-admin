@@ -142,3 +142,10 @@ Phase: Phase 5 guest restore - CT 108 monitoring
 What was checked or changed: Restored CT `108` to the NUC while stopped, then handed monitoring-stack ownership from Lenovo to NUC.
 Evidence: The recovered archive `/mnt/proxmox-usb-backup/dump/vzdump-lxc-108-2026_06_03-22_52_11.tar.zst` passed `zstd -t`. The restored NUC config matched the Lenovo source config and remained stopped until Lenovo CT `108` was shut down and set to `onboot=0`. NUC CT `108` is running at `192.168.1.200`; Grafana, Prometheus, the PVE exporter, and Uptime Kuma containers are running; Grafana health, Prometheus readiness, and Uptime Kuma returned expected responses. Prometheus reports its configured `prometheus`, `node-exporter`, and `pve` targets as up, but the host targets still point to the Lenovo production identity `192.168.1.184` until the separately approved host-identity cutover.
 Next safe action: Restore stopped reference CT `101`, then restore stale CT `103` as stopped reference state without relying on it for Jellyfin.
+
+Date: 2026-06-04
+Actor: Agent
+Phase: Phase 5 guest restore completion
+What was checked or changed: Restored CT `101` and stale CT `103` to the NUC as stopped reference containers, completing the planned guest restore scope.
+Evidence: The selected June 3 archives for CT `101` and CT `103` passed `zstd -t`; both Lenovo sources were already stopped; both restored NUC configurations match their sources; and both NUC containers remain stopped. The NUC now contains VM `100` and CTs `101` through `108`. VM `100` and CTs `102`, `104`, `105`, `106`, `107`, and `108` are running; CTs `101` and `103` are stopped. `local`, `local-lvm`, and `usb-backup` are active, with `local-lvm` about 9.4% used.
+Next safe action: Begin Phase 6 read-only service validation while the NUC remains on staging identity `pve-nuc` / `192.168.1.185`, then request explicit approval before the production host-identity cutover.

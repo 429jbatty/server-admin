@@ -93,6 +93,8 @@ When away from home, connect the client device to Tailscale and use the same LAN
 - Radarr root folder: `/data/library/movies`
 - Sonarr root folder: `/data/library/tv`
 - Radarr and Sonarr both have qBittorrent configured as a download client.
+- qBittorrent has no global download or upload speed limits. CT `106` retains its
+  existing 2-core and 2 GiB RAM resource limits.
 - Prowlarr is connected to Radarr and Sonarr for application sync.
 - FileBrowser Quantum is configured from `/data/config/filebrowser/config.yaml`, with secrets in `/opt/media-stack/filebrowser.env`.
 - Home Assistant Homelab metrics track the HDD total usage plus grouped Media and Backups usage from the host metrics exporter.

@@ -15,6 +15,8 @@ Use this skill for changes to the Proxmox media automation setup in `/root/serve
 - Shared host path is `/mnt/proxmox-usb-backup/media-stack`.
 - CT `104` sees shared media at `/media`.
 - CT `106` sees shared media at `/data`.
+- qBittorrent has no global download or upload speed limits; CT `106` retains
+  its 2-core and 2 GiB RAM resource limits.
 - Repo docs live under `notes/`.
 
 ## Safety Rules

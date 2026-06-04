@@ -121,6 +121,8 @@ The repo-level source of truth for the Home Assistant Homelab dashboard is `home
 - qBittorrent categories configured:
   - `radarr` -> `/data/downloads/complete/radarr`
   - `sonarr` -> `/data/downloads/complete/sonarr`
+- qBittorrent has no global download or upload speed limits. CT `106` retains
+  its 2-core and 2 GiB RAM resource limits.
 - Prowlarr configured with Radarr and Sonarr application sync
 - Internet Archive configured as a public torrent indexer and synced to Radarr/Sonarr.
 - 1337x configured as a public torrent indexer in Prowlarr with a tagged FlareSolverr proxy, then synced to Radarr/Sonarr as `1337x (Prowlarr)`.

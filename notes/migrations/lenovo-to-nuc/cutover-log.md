@@ -107,3 +107,10 @@ Phase: Phase 5 guest restore - CT 107 Tailscale
 What was checked or changed: Restored CT `107` to the NUC while stopped, then handed Tailscale subnet-router ownership from Lenovo to NUC.
 Evidence: The selected archive `/mnt/proxmox-usb-backup/dump/vzdump-lxc-107-2026_06_03-02_36_21.tar.zst` passed `zstd -t`. Restored CT `107` preserved its original MAC, DHCP configuration, and `/dev/net/tun` passthrough. Lenovo CT `107` was shut down and set to `onboot=0` before the NUC copy started. NUC CT `107` is running at `192.168.1.198`, has `net.ipv4.ip_forward = 1`, and retained Tailscale identity `100.103.90.53`.
 Next safe action: Restore CT `104` Jellyfin while stopped, change its restored Lenovo-era `/dev/dri/card1` passthrough to the NUC `/dev/dri/card0` path, then start and validate Jellyfin and media mounts.
+
+Date: 2026-06-03
+Actor: User
+Phase: Migration workflow
+What was checked or changed: Changed the NUC command-approval rule for the remainder of the migration.
+Evidence: Expected NUC commands that directly implement or verify the documented migration may run without per-batch approval. Agents must still ask before unexpected, destructive, identity-changing, formatting, repartitioning, erasing, or materially out-of-scope NUC actions.
+Next safe action: Continue Phase 5 guest restores using the updated command-approval rule.

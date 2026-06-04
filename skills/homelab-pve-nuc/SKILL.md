@@ -7,14 +7,13 @@ description: Interact safely with the Intel NUC Proxmox staging and target host 
 
 Use this skill for any work that targets the Intel NUC rather than the existing Lenovo Proxmox host.
 
-## Non-Negotiable Command Review
+## Command Approval Rule
 
-- Before running any command on the NUC, show the user the exact NUC command or small command batch and wait for explicit approval.
-- Treat approval as applying only to the reviewed commands or clearly stated operation.
-- Do not silently add write commands to an approved read-only batch.
-- Clearly label commands as running on `pve-nuc`; never let a local Lenovo command look like a NUC command.
-
-This review requirement overrides the normal preference to act autonomously.
+- Run expected NUC commands that directly implement or verify the documented Lenovo-to-NUC migration without requesting per-batch approval.
+- Keep the user informed before meaningful migration changes and clearly label work that targets `pve-nuc`.
+- Ask before a NUC command that the user would not normally expect as part of the documented migration.
+- Always ask before formatting, repartitioning, erasing data, changing the NUC from its staging identity to the production host identity, or taking an unexpected destructive or materially out-of-scope action.
+- Never let a local Lenovo command look like a NUC command.
 
 ## Access And Last-Known State
 
@@ -34,10 +33,10 @@ These are orientation facts, not current truth. Reverify before acting.
 
 1. Read `/root/server-admin/notes/migrations/lenovo-to-nuc/README.md` and the relevant phase doc on the Lenovo/repo side.
 2. Ask what the user changed manually since the last session.
-3. Present the exact read-only NUC checks for approval.
-4. Run approved checks through `ssh pve-nuc`.
+3. Run expected read-only NUC checks through `ssh pve-nuc`.
+4. Summarize the results and any mismatches.
 5. Compare live state with docs and summarize mismatches before changes.
-6. Present each write/change batch for separate approval.
+6. Run expected documented migration changes; ask before unexpected or high-impact actions.
 7. Update the migration cutover log after verified work.
 
 ## SSH Conventions
@@ -91,11 +90,12 @@ ssh pve-nuc ls -la /dev/net/tun
 
 For each requested NUC change:
 
-1. Show the exact command and impact.
-2. Wait for approval.
+1. Confirm it is an expected part of the documented migration.
+2. Tell the user what meaningful change is being made.
 3. Run it through `ssh pve-nuc`.
-4. Run approved read-only verification.
+4. Run read-only verification.
 5. Report actual state and mismatches.
-6. Update `/root/server-admin/notes/migrations/lenovo-to-nuc/cutover-log.md`.
+6. Ask before any unexpected, destructive, identity-changing, or materially out-of-scope action.
+7. Update `/root/server-admin/notes/migrations/lenovo-to-nuc/cutover-log.md`.
 
 Never store secrets from restored guests or host configuration in Git or chat.

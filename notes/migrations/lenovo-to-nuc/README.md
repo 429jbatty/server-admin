@@ -17,6 +17,13 @@ Every agent session must begin here:
 
 Live state wins only after read-only verification. Do not rely on memory from earlier sessions.
 
+## NUC Command Approval
+
+- Agents may run expected NUC commands that directly implement or verify this documented migration without requesting approval for each batch.
+- Keep the user informed before meaningful NUC changes.
+- Ask before commands that would not normally be expected for the documented migration.
+- Always ask before formatting, repartitioning, erasing data, changing the NUC from its staging identity to the production host identity, or taking an unexpected destructive or materially out-of-scope action.
+
 ## Migration Order
 
 1. [Phase 1: Inventory](phase-1-inventory.md)

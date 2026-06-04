@@ -1,23 +1,23 @@
 ---
 name: homelab-pve-lenovo
-description: Interact safely with the existing Lenovo Proxmox production and migration-source host from `/root/server-admin`. Use when inspecting or changing the Lenovo host, running Proxmox, LVM, storage, backup, or migration-preparation work.
+description: Interact safely with the retired Lenovo Proxmox migration-source host from `/root/server-admin`. Use when inspecting or changing the Lenovo host without confusing it with the active NUC.
 ---
 
 # Homelab PVE Lenovo
 
-Use this skill for work on the existing Lenovo Proxmox host, especially while it remains the production migration source.
+Use this skill for work on the retired Lenovo Proxmox migration source.
 
 ## Identity And Role
 
 - Repo path: `/root/server-admin`
 - Last-known hostname: `proxmox`
-- Last-known LAN address: `192.168.1.184`
-- Role during migration: live production/source host
-- Backup HDD mountpoint: `/mnt/proxmox-usb-backup`
+- Last-known LAN address: `192.168.1.186`
+- Role after migration: retired source/rollback host; all guests stopped and backup automation disabled
+- Backup HDD: moved to the NUC; Lenovo `usb-backup` is expected to be inactive
 - Backup HDD filesystem UUID: `9218d3f8-9449-4221-9dd8-36b5b7884152`
 - Proxmox backup storage ID: `usb-backup`
 
-Reverify live state before acting. After cutover, do not assume this host is still authoritative.
+Reverify live state before acting. This host is not authoritative for active guest or service state.
 
 ## Start Protocol
 
@@ -78,9 +78,9 @@ qm config <vmid>
 
 ## Lenovo-Specific Guardrails
 
-- Treat the host as production until the user explicitly confirms cutover.
-- Keep the Lenovo available until backups and NUC validation are complete.
-- Never unplug or unmount the USB HDD while backup jobs, guest access, or media services are using it.
+- Treat the host as a retired rollback source, not production.
+- Do not start restored source guests while their active NUC counterparts are running.
+- Do not reattach or activate the USB HDD on the Lenovo while the NUC is using it.
 - Before deleting failed backup artifacts, verify no `vzdump`, `tar`, or `zstd` process is active and no relevant Proxmox snapshot remains.
 - A failed `vzdump` can leave a snapshot named `vzdump` and a `.tmp` directory. Inspect first; clean only the verified leftovers.
 - Thin-pool virtual-size warnings are not by themselves proof of failure. Check actual `data_percent`, metadata usage, free VG space, and task logs.

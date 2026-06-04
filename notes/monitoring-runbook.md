@@ -2,6 +2,8 @@
 
 This runbook covers the dedicated Grafana-based technical monitoring stack for the Proxmox homelab.
 
+The active host is NUC node `pve-nuc`. From the retired Lenovo workspace, run Proxmox commands through `ssh pve-nuc`.
+
 ## Architecture
 
 - CT `108`: `monitoring`, an unprivileged Ubuntu 24.04 LXC on `local-lvm`, LAN `192.168.1.200`.
@@ -13,7 +15,7 @@ This runbook covers the dedicated Grafana-based technical monitoring stack for t
   - Uptime Kuma: `http://192.168.1.200:3001`
   - Proxmox PVE exporter: internal Docker service `pve-exporter:9221`
 - Proxmox host exporter:
-  - `node_exporter` runs on the Proxmox host at `http://192.168.1.184:9100/metrics`.
+  - `node_exporter` runs on active NUC node `pve-nuc` at `http://192.168.1.184:9100/metrics`.
   - The existing Home Assistant JSON exporter remains at `http://192.168.1.184:9108/metrics/homelab`.
 
 Grafana is for technical monitoring, trends, VM/LXC visibility, and alert-oriented views. Home Assistant remains the control dashboard for smart-home devices and high-level service health.

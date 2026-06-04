@@ -17,6 +17,8 @@ Do not store secrets here. Use placeholders, `.example` files, and pointer docs 
 
 ## Source Of Truth
 
+- Active Proxmox host: NUC node `pve-nuc` at `192.168.1.184`
+- Retired migration source: Lenovo node `proxmox` at `192.168.1.186`
 - Service catalog and dashboard inventory: `homelab-services.yml`
 - Proxmox/media inventory and live storage notes: `notes/proxmox-media-inventory.md`
 - Operational runbooks: `notes/*-runbook.md`

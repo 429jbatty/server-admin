@@ -8,7 +8,7 @@ This file tracks known migration risks and the required mitigation. It is not a 
 | --- | --- | --- |
 | USB HDD mount failure | The same disk contains guest backups, host backups, live media-stack data, and media-stack config. | Mount by UUID `9218d3f8-9449-4221-9dd8-36b5b7884152`; keep `usb-backup` guarded by `is_mountpoint 1`; verify before restores. |
 | Live media and backup data share one disk | File-backup snapshots are useful rollback points but not a separate hardware backup. | Treat USB HDD as critical; do not format it; keep Home Assistant off-box backup enabled; consider later separate backup storage. |
-| Host IP takeover | The NUC and Lenovo cannot both safely own `192.168.1.184` at the same time. | Use a staging IP until cutover or shut down/disconnect the Lenovo before the NUC takes over the final identity. |
+| Host IP takeover | The NUC and Lenovo cannot both safely own `192.168.1.184` at the same time. | Cutover completed: NUC owns `192.168.1.184`; Lenovo retirement address is `192.168.1.186`. Reverify both before future network changes. |
 | Proxmox node rename after restores | Proxmox uses the hostname as the node name and officially recommends renaming only an empty node; the NUC now owns all restored guest configs under node `pve-nuc`. | Prefer keeping node name `pve-nuc` and moving only production IP `192.168.1.184`. Treat a rename to `proxmox` as a separate offline operation with explicit approval and rollback planning. |
 | NUC NIC name differs | Lenovo bridge used a USB Ethernet interface name that will not match the NUC. | Verify `ip link` and update `vmbr0` bridge port for the NUC interface. |
 | Zigbee USB passthrough | Home Assistant depends on SONOFF `10c4:ea60` if ZHA is in use. | Verify `lsusb` and `qm config 100`; confirm `/dev/ttyUSB0` inside Home Assistant after restore. |
@@ -19,7 +19,7 @@ This file tracks known migration risks and the required mitigation. It is not a 
 | CT `103` is stale | It has the same hostname role as Jellyfin but is not the active service. | Restore only as reference if desired; do not rely on it for active Jellyfin. |
 | FileBrowser backup mount uses resolved snapshot | Proxmox does not hotplug bind mounts through the `current` symlink. | Re-resolve the latest snapshot path before restoring CT `106` backup browse mount. |
 | Monitoring token restoration | CT `108` Proxmox exporter uses a token stored only inside the CT. | Prefer restoring CT `108`; if recreated, rotate/recreate a read-only PVE token and store it only in CT secrets. |
-| Monitoring still targets production host identity | While the NUC remains staged as `192.168.1.185`, CT `108` host metrics at `192.168.1.184` describe the Lenovo rather than the NUC. | Keep this mismatch explicit during staging; verify host and PVE metrics immediately after the separately approved production-identity cutover. |
+| Monitoring API identity is host-local | CT `108` requires a read-only PVE API user and token on the active Proxmox host. | NUC-local `prometheus@pve!monitoring` was recreated with `PVEAuditor`; keep its token value only in CT `108` secrets and verify `pve_guest_info` after host rebuilds. |
 
 ## Do Not Touch Without Asking
 

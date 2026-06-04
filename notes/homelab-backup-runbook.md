@@ -1,6 +1,8 @@
 # Homelab Backup Runbook
 
-Last updated: 2026-05-16 20:00 CDT
+Last updated: 2026-06-04 10:30 CDT
+
+The active host is NUC node `pve-nuc`. From the retired Lenovo workspace, run active-host commands through `ssh pve-nuc`.
 
 ## USB Backup Storage
 
@@ -16,6 +18,8 @@ The `/etc/fstab` entry uses `nofail` so the host can boot if the USB disk is unp
 ## Scheduled Backups
 
 Proxmox job `homelab-usb-daily` runs daily at `02:30` and backs up all guests to `usb-backup` using snapshot mode and zstd compression.
+
+The job and all host backup timers are active on NUC node `pve-nuc` at `192.168.1.184`. The retired Lenovo source at `192.168.1.186` has its guest backup job and host backup timers disabled.
 
 Retention:
 
@@ -58,7 +62,7 @@ Albumary database-only backups are kept for 30 days by default. These backups ma
 FileBrowser Quantum in CT `106` exposes only selected backup views:
 
 - Proxmox guest backup archives from `/mnt/proxmox-usb-backup/dump`, mounted read-only at `/backups/guest-dumps`.
-- The latest media-library backup, currently resolved from `/mnt/proxmox-usb-backup/file-backups/srv-media-stack/snapshots/20260512-015501/library`, mounted read-only at `/backups/media-library-current`.
+- The media-library backup currently exposed to FileBrowser is resolved from `/mnt/proxmox-usb-backup/file-backups/srv-media-stack/snapshots/20260603-015205/library`, mounted read-only at `/backups/media-library-current`.
 
 These sources are intended for the FileBrowser admin account only. The root-only `host-config` archives are deliberately not mounted into FileBrowser because they may contain sensitive operational material.
 Proxmox does not accept the `current` symlink as the bind-mount source, so refresh CT `106` `mp2` after a newer file-backup snapshot should be browsed.

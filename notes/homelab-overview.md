@@ -1,12 +1,13 @@
 # Homelab Overview
 
-Last verified: 2026-05-17 12:04 CDT
+Last verified: 2026-06-04 10:30 CDT
 
 This repo is the canonical documentation home for the Proxmox home server. Use it as the first stop for understanding what exists, what should be running, and which files need updates when the server changes.
 
 ## Architecture
 
-- Proxmox host: `proxmox`, repo path `/root/server-admin`.
+- Active Proxmox host: Intel NUC node `pve-nuc`, LAN `192.168.1.184`, repo path `/root/server-admin`.
+- Retired migration source: Lenovo node `proxmox`, LAN `192.168.1.186`; all guests are stopped and backup automation is disabled.
 - Home Assistant: VM `100`, LAN `192.168.1.187:8123`.
 - AdGuard Home: CT `102`, LAN `192.168.1.189`.
 - Stale Jellyfin candidate: CT `103`; do not rely on it unless explicitly asked.
@@ -18,9 +19,9 @@ This repo is the canonical documentation home for the Proxmox home server. Use i
 
 Live state observed during the last verification:
 
-- VM `100` was running.
-- CT `103` was stopped.
-- CTs `104`, `105`, `106`, `107`, and `108` were running.
+- VM `100` is running.
+- CTs `102`, `104`, `105`, `106`, `107`, and `108` are running.
+- Reference CT `101` and stale CT `103` are stopped.
 
 ## Storage And Paths
 

@@ -15,6 +15,9 @@ This repo is the operational memory for a Proxmox home server. Before making cha
 
 ## Current Ground Truth
 
+- Active Proxmox host: Intel NUC node `pve-nuc`, LAN `192.168.1.184`
+- Retired migration source: Lenovo node `proxmox`, LAN `192.168.1.186`; all guests stopped and backup automation disabled
+- This workspace currently runs on the retired Lenovo. Use `ssh pve-nuc` for active Proxmox state and changes.
 - Proxmox host repo path: `/root/server-admin`
 - Home Assistant: VM `100`, LAN `192.168.1.187:8123`
 - AdGuard Home: CT `102`, LAN `192.168.1.189`
@@ -69,11 +72,11 @@ This repo is the operational memory for a Proxmox home server. Before making cha
 
 ## Useful Read-Only Checks
 
-- `pct list`
-- `qm list`
-- `pct config 104`
-- `pct config 106`
-- `pct config 107`
-- `pct exec 104 -- systemctl is-active jellyfin`
-- `pct exec 106 -- bash -lc 'cd /opt/media-stack && docker compose ps'`
-- `qm guest exec 100 -- ha core check`
+- `ssh pve-nuc pct list`
+- `ssh pve-nuc qm list`
+- `ssh pve-nuc pct config 104`
+- `ssh pve-nuc pct config 106`
+- `ssh pve-nuc pct config 107`
+- `ssh pve-nuc pct exec 104 -- systemctl is-active jellyfin`
+- `ssh pve-nuc pct exec 106 -- bash -lc 'cd /opt/media-stack && docker compose ps'`
+- `ssh pve-nuc qm guest exec 100 -- ha core check`

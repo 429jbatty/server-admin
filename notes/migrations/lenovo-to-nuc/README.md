@@ -49,13 +49,17 @@ Supporting docs:
 - Keep media automation services in CT `106`.
 - Preserve the no-secrets boundary by documenting secret locations, not values.
 
-## Default Migration Assumptions
+## Final Host State
 
-- The NUC will take over the existing Proxmox LAN identity unless the user changes the plan:
-  - Hostname: `proxmox`
+- Active Proxmox host:
+  - Node name: `pve-nuc`
   - Host IP: `192.168.1.184/24`
   - Gateway: `192.168.1.254`
   - Bridge: `vmbr0`
+- Retired migration source:
+  - Node name: `proxmox`
+  - Host IP: `192.168.1.186/24`
+  - All guests stopped; backup automation disabled
 - The first migration pass keeps the existing USB HDD as the live media and backup disk.
 - The USB HDD mountpoint remains `/mnt/proxmox-usb-backup`.
 - The Proxmox storage ID remains `usb-backup`.

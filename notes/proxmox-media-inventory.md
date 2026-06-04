@@ -1,16 +1,19 @@
 # Proxmox Media Inventory
 
-Last updated: 2026-05-17 12:04 CDT
+Last updated: 2026-06-04 10:30 CDT
 
 ## Host
 
-- Hostname: `proxmox`
-- CPU: Intel Core i5-10210U, 8 logical CPUs
-- RAM: 7.5 GiB total
+- Active node: `pve-nuc`
+- LAN address: `192.168.1.184/24`
+- Hardware: Intel NUC10i7FNK
+- CPU: Intel Core i7-10710U, 12 logical CPUs
+- RAM: about 15 GiB total
+- Retired source: Lenovo node `proxmox`, LAN `192.168.1.186`; all guests stopped and backup automation disabled
 - Storage:
-  - `local`: dir storage at `/var/lib/vz`, about 57 GiB free at inspection time
-  - `local-lvm`: LVM-thin storage, about 124 GiB free at inspection time
-  - `usb-backup`: dir storage at `/mnt/proxmox-usb-backup`, about 3.6 TiB free at inspection time, used for daily guest backups and live media storage
+  - `local`: dir storage at `/var/lib/vz`, about 83 GiB free at inspection time
+  - `local-lvm`: LVM-thin storage, about 316 GiB free at inspection time
+  - `usb-backup`: dir storage at `/mnt/proxmox-usb-backup`, about 3.5 TiB free at inspection time, used for daily guest backups and live media storage
   - Live media stack path on HDD: `/mnt/proxmox-usb-backup/media-stack`
   - Backup folders on HDD:
     - `/mnt/proxmox-usb-backup/dump`
@@ -40,7 +43,7 @@ Last updated: 2026-05-17 12:04 CDT
 - Service: `jellyfin.service`, enabled and active at inspection time
 - Hardware devices configured:
   - `/dev/dri/renderD128`
-  - `/dev/dri/card1`
+  - `/dev/dri/card0`
 - Root disk: 16 GiB on `local-lvm`
 - Existing Jellyfin data was small at inspection time, about 1 MiB under `/var/lib/jellyfin`.
 
@@ -55,7 +58,7 @@ Last updated: 2026-05-17 12:04 CDT
 - CT `106` mount target: `/data`
 - CT `106` backup browse mounts:
   - `/backups/guest-dumps` from `/mnt/proxmox-usb-backup/dump`, read-only
-  - `/backups/media-library-current` from `/mnt/proxmox-usb-backup/file-backups/srv-media-stack/snapshots/20260512-015501/library`, read-only
+  - `/backups/media-library-current` from `/mnt/proxmox-usb-backup/file-backups/srv-media-stack/snapshots/20260603-015205/library`, read-only
 - `/mnt/proxmox-usb-backup/media-stack` is the live media stack path. The host file-backup timer still snapshots it into `/mnt/proxmox-usb-backup/file-backups/srv-media-stack`; because this is the same physical HDD, those snapshots are useful for accidental-change rollback but are not a separate disk backup.
 - `/dev/net/tun` passthrough configured for Gluetun.
 
@@ -68,7 +71,7 @@ Last updated: 2026-05-17 12:04 CDT
 - Advertised route: `192.168.1.0/24`
 - `/dev/net/tun` passthrough configured.
 - IP forwarding configured inside the container.
-- Tailscale installed; account authentication and route approval must be completed in Tailscale.
+- Tailscale is authenticated with identity `100.103.90.53`; verify route approval from a remote client when troubleshooting.
 
 ## Monitoring Target
 

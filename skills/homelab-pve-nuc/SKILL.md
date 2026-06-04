@@ -1,31 +1,30 @@
 ---
 name: homelab-pve-nuc
-description: Interact safely with the Intel NUC Proxmox staging and target host through `ssh pve-nuc`. Use when inspecting, configuring, migrating to, restoring guests on, or troubleshooting the NUC, especially during the Lenovo-to-NUC migration.
+description: Interact safely with the active Intel NUC Proxmox host through `ssh pve-nuc`. Use when inspecting, configuring, restoring guests on, or troubleshooting the primary homelab host.
 ---
 
 # Homelab PVE NUC
 
-Use this skill for any work that targets the Intel NUC rather than the existing Lenovo Proxmox host.
+Use this skill for work on the active Intel NUC Proxmox host rather than the retired Lenovo migration source.
 
 ## Command Approval Rule
 
 - Run expected NUC commands that directly implement or verify the documented Lenovo-to-NUC migration without requesting per-batch approval.
 - Keep the user informed before meaningful migration changes and clearly label work that targets `pve-nuc`.
 - Ask before a NUC command that the user would not normally expect as part of the documented migration.
-- Always ask before formatting, repartitioning, erasing data, changing the NUC from its staging identity to the production host identity, or taking an unexpected destructive or materially out-of-scope action.
+- Always ask before formatting, repartitioning, erasing data, changing the NUC's production network identity, or taking an unexpected destructive or materially out-of-scope action.
 - Never let a local Lenovo command look like a NUC command.
 
 ## Access And Last-Known State
 
 - SSH alias: `pve-nuc`
-- Last-known staging hostname: `pve-nuc`
-- Last-known staging LAN address: `192.168.1.185/24`
+- Last-known hostname and Proxmox node: `pve-nuc`
+- Last-known production LAN address: `192.168.1.184/24`
 - Last-known bridge: `vmbr0`, with bridge port `nic0`
 - Last verified: Proxmox VE `9.2.3`, Debian 13, kernel `7.0.6-2-pve`
-- Last verified storage: `local` and `local-lvm` only
-- Last verified guests: none
-- Last verified devices: `/dev/dri/card0`, `/dev/dri/renderD128`, and `/dev/net/tun`
-- Last verified absent devices: USB backup HDD and SONOFF Zigbee coordinator
+- Last verified storage: active `local`, `local-lvm`, and guarded `usb-backup`
+- Last verified guests: VM `100` and CTs `101` through `108`; CTs `101` and `103` stopped, all others running
+- Last verified devices: USB backup HDD, SONOFF coordinator, `/dev/dri/card0`, `/dev/dri/renderD128`, and `/dev/net/tun`
 
 These are orientation facts, not current truth. Reverify before acting.
 
@@ -76,8 +75,8 @@ ssh pve-nuc ls -la /dev/net/tun
 
 ## NUC-Specific Guardrails
 
-- Keep the NUC staging identity `pve-nuc` / `192.168.1.185` until the user explicitly confirms the cutover identity change.
-- Do not assign the Lenovo production identity `proxmox` / `192.168.1.184` while the Lenovo is still using it.
+- The NUC is the production host at `pve-nuc` / `192.168.1.184`.
+- The retired Lenovo remains `proxmox` / `192.168.1.186`; never move it back to `.184` without a separately planned cutover.
 - Do not format, repartition, initialize, or erase the USB HDD.
 - Before adding `usb-backup`, verify the HDD by filesystem UUID and mount it at `/mnt/proxmox-usb-backup`.
 - Configure `usb-backup` with `is_mountpoint 1`; never point it at an unmounted directory.

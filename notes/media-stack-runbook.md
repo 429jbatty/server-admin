@@ -2,6 +2,8 @@
 
 This runbook covers the local lightweight media automation stack for Jellyfin.
 
+The active host is NUC node `pve-nuc`. From the retired Lenovo workspace, run Proxmox commands through `ssh pve-nuc`.
+
 ## Architecture
 
 - CT `104`: active Jellyfin server at `http://192.168.1.191:8096`
@@ -11,7 +13,7 @@ This runbook covers the local lightweight media automation stack for Jellyfin.
 - CT `104` media path: `/media`
 - CT `106` media path: `/data`
 
-The shared media storage lives on the HDD mounted at `/mnt/proxmox-usb-backup`. This keeps the growing media library off the Proxmox internal laptop drive while preserving stable container paths.
+The shared media storage lives on the HDD mounted at `/mnt/proxmox-usb-backup`. This keeps the growing media library off the Proxmox host's internal NVMe while preserving stable container paths.
 
 ## Paths
 
@@ -78,7 +80,7 @@ Use Jellyseerr as the main request/search UI. Radarr and Sonarr manage movies an
 Use FileBrowser Quantum for LAN-only file browsing. The admin account can manage users and write to the media library because `/data/library` is mounted read-write. The viewer account is non-admin and defaults to media-library read/download access only. Backup sources are mounted read-only into CT `106` and are not default-enabled for standard users:
 
 - `/backups/guest-dumps`: Proxmox guest backup archives from `/mnt/proxmox-usb-backup/dump`
-- `/backups/media-library-current`: latest media-library file-backup snapshot, currently mounted from `/mnt/proxmox-usb-backup/file-backups/srv-media-stack/snapshots/20260512-015501/library`
+- `/backups/media-library-current`: media-library file-backup snapshot currently mounted from `/mnt/proxmox-usb-backup/file-backups/srv-media-stack/snapshots/20260603-015205/library`
 
 Proxmox rejects bind mounts through the `current` symlink, so the media-library backup browse mount uses the resolved snapshot directory. To browse a newer snapshot, update CT `106` `mp2` to the new resolved `current/library` target and restart CT `106`.
 
@@ -184,9 +186,9 @@ Before major changes:
 
 ```bash
 mkdir -p /root/server-admin/backups
-cp /etc/pve/nodes/proxmox/lxc/104.conf /root/server-admin/backups/104.conf.$(date +%Y%m%d-%H%M%S)
-cp /etc/pve/nodes/proxmox/lxc/106.conf /root/server-admin/backups/106.conf.$(date +%Y%m%d-%H%M%S)
-cp /etc/pve/nodes/proxmox/lxc/107.conf /root/server-admin/backups/107.conf.$(date +%Y%m%d-%H%M%S)
+cp /etc/pve/lxc/104.conf /root/server-admin/backups/104.conf.$(date +%Y%m%d-%H%M%S)
+cp /etc/pve/lxc/106.conf /root/server-admin/backups/106.conf.$(date +%Y%m%d-%H%M%S)
+cp /etc/pve/lxc/107.conf /root/server-admin/backups/107.conf.$(date +%Y%m%d-%H%M%S)
 pct exec 104 -- tar -czf /tmp/jellyfin-config-backup.tgz /etc/jellyfin /var/lib/jellyfin
 pct pull 104 /tmp/jellyfin-config-backup.tgz /root/server-admin/backups/jellyfin-104-config.$(date +%Y%m%d-%H%M%S).tgz
 ```

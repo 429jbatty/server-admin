@@ -18,6 +18,7 @@ This file tracks known migration risks and the required mitigation. It is not a 
 | CT `103` is stale | It has the same hostname role as Jellyfin but is not the active service. | Restore only as reference if desired; do not rely on it for active Jellyfin. |
 | FileBrowser backup mount uses resolved snapshot | Proxmox does not hotplug bind mounts through the `current` symlink. | Re-resolve the latest snapshot path before restoring CT `106` backup browse mount. |
 | Monitoring token restoration | CT `108` Proxmox exporter uses a token stored only inside the CT. | Prefer restoring CT `108`; if recreated, rotate/recreate a read-only PVE token and store it only in CT secrets. |
+| Monitoring still targets production host identity | While the NUC remains staged as `192.168.1.185`, CT `108` host metrics at `192.168.1.184` describe the Lenovo rather than the NUC. | Keep this mismatch explicit during staging; verify host and PVE metrics immediately after the separately approved production-identity cutover. |
 
 ## Do Not Touch Without Asking
 

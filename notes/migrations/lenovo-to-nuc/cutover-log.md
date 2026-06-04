@@ -114,3 +114,31 @@ Phase: Migration workflow
 What was checked or changed: Changed the NUC command-approval rule for the remainder of the migration.
 Evidence: Expected NUC commands that directly implement or verify the documented migration may run without per-batch approval. Agents must still ask before unexpected, destructive, identity-changing, formatting, repartitioning, erasing, or materially out-of-scope NUC actions.
 Next safe action: Continue Phase 5 guest restores using the updated command-approval rule.
+
+Date: 2026-06-04
+Actor: Agent
+Phase: Phase 5 guest restore - CT 104 Jellyfin
+What was checked or changed: Restored CT `104` Jellyfin to the NUC while stopped, replaced its Lenovo-era iGPU card path, then started and validated it.
+Evidence: The selected archive `/mnt/proxmox-usb-backup/dump/vzdump-lxc-104-2026_06_03-02_32_31.tar.zst` passed `zstd -t`. Before adjustment, the restored config used `/dev/dri/card1`; a config backup was saved on the NUC and `dev1` was changed to NUC path `/dev/dri/card0` with GID `44`. `renderD128` remains GID `993`. NUC CT `104` is running at `192.168.1.191`; `jellyfin` is active, media movie/TV paths resolve, both iGPU devices are visible inside the container, and HTTP returned expected status `302`.
+Next safe action: Restore CT `106` media stack while stopped, verify and refresh its HDD bind mounts and TUN device, then start and validate Docker services.
+
+Date: 2026-06-04
+Actor: Agent
+Phase: Phase 5 guest restore - CT 106 media stack
+What was checked or changed: Restored CT `106` to the NUC while stopped, refreshed its read-only media snapshot browse mount, then started and validated the media stack.
+Evidence: The selected archive `/mnt/proxmox-usb-backup/dump/vzdump-lxc-106-2026_06_03-02_34_17.tar.zst` passed `zstd -t`. A restored-config backup was saved on the NUC, then `mp2` was refreshed from the historical May 12 snapshot to `/mnt/proxmox-usb-backup/file-backups/srv-media-stack/snapshots/20260603-015205/library`. NUC CT `106` is running at `192.168.1.197`; live media, downloads, guest backup, latest media snapshot, and TUN paths resolve. All nine Docker Compose services are running, and expected LAN endpoints returned successful or expected redirect responses.
+Next safe action: Restore CT `105` Albumary while stopped, hand off ownership from the still-running Lenovo copy, then validate its database and service.
+
+Date: 2026-06-04
+Actor: Agent
+Phase: Phase 5 guest restore - CT 105 Albumary
+What was checked or changed: Restored CT `105` to the NUC while stopped, then handed Albumary ownership from Lenovo to NUC.
+Evidence: The selected archive `/mnt/proxmox-usb-backup/dump/vzdump-lxc-105-2026_06_03-02_33_04.tar.zst` passed `zstd -t`. The restored config preserved static address `192.168.1.100/24` and its original MAC. Lenovo CT `105` was stopped before the NUC copy started. NUC CT `105` is running at `192.168.1.100`; `/opt/spotify_tracker/data/spotify_tracker.sqlite` is readable and `spotify-tracker-api.service` is active.
+Next safe action: Restore CT `108` monitoring while stopped using the recovered fresh manual backup, hand off ownership from the still-running Lenovo copy, then validate Grafana, Prometheus, and Uptime Kuma.
+
+Date: 2026-06-04
+Actor: Agent
+Phase: Phase 5 guest restore - CT 108 monitoring
+What was checked or changed: Restored CT `108` to the NUC while stopped, then handed monitoring-stack ownership from Lenovo to NUC.
+Evidence: The recovered archive `/mnt/proxmox-usb-backup/dump/vzdump-lxc-108-2026_06_03-22_52_11.tar.zst` passed `zstd -t`. The restored NUC config matched the Lenovo source config and remained stopped until Lenovo CT `108` was shut down and set to `onboot=0`. NUC CT `108` is running at `192.168.1.200`; Grafana, Prometheus, the PVE exporter, and Uptime Kuma containers are running; Grafana health, Prometheus readiness, and Uptime Kuma returned expected responses. Prometheus reports its configured `prometheus`, `node-exporter`, and `pve` targets as up, but the host targets still point to the Lenovo production identity `192.168.1.184` until the separately approved host-identity cutover.
+Next safe action: Restore stopped reference CT `101`, then restore stale CT `103` as stopped reference state without relying on it for Jellyfin.

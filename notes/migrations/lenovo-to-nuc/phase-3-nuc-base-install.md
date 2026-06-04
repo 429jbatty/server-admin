@@ -48,13 +48,15 @@ git -C /root/server-admin status --short
 
 ## Storage IDs To Recreate
 
-The migration expects these Proxmox storage IDs:
+The migration expects these Proxmox storage IDs by the end of Phase 4:
 
 ```text
 local      dir storage at /var/lib/vz
 local-lvm  lvmthin storage for VM/LXC disks
 usb-backup dir storage at /mnt/proxmox-usb-backup with is_mountpoint 1
 ```
+
+During Phase 3, verify `local` and `local-lvm`. Defer creating `usb-backup` until Phase 4, after the physical USB HDD has moved to the NUC and its filesystem UUID and mountpoint have been verified.
 
 The `usb-backup` storage must not be active against an unmounted empty directory. Keep `is_mountpoint 1`.
 
@@ -79,6 +81,6 @@ From repo sources:
 - NUC Proxmox UI is reachable.
 - Host network identity is confirmed.
 - Repo exists at `/root/server-admin`.
-- Storage IDs are present, with `usb-backup` guarded by `is_mountpoint 1`.
+- `local` and `local-lvm` are active; `usb-backup` is explicitly deferred to Phase 4 until the HDD is mounted.
 - Host-level service sources are available for installation.
 - No guest restore has started before storage and device readiness are checked.

@@ -86,3 +86,24 @@ Phase: Phase 4 completion
 What was checked or changed: Completed final NUC storage, device, media-path, guest-inventory, and repo verification.
 Evidence: `usb-backup` remains active and guarded by `is_mountpoint 1`; the HDD remains mounted `rw,noatime`. The latest media-stack file snapshot resolves to `/mnt/proxmox-usb-backup/file-backups/srv-media-stack/snapshots/20260603-015205`, and the live `library`, `downloads`, and `config` directories exist. The Seagate HDD, SONOFF coordinator, NUC iGPU, TUN device, and `vmbr0` bridge remain visible. The NUC has no VMs or LXCs yet and its repo is clean at commit `86b1261`. Phase 4 is complete.
 Next safe action: Begin Phase 5 by restoring guests in dependency order while stopped, then stop each still-running Lenovo counterpart before starting and validating it on the NUC.
+
+Date: 2026-06-03
+Actor: Agent
+Phase: Phase 5 guest restore - CT 102 AdGuard
+What was checked or changed: Restored CT `102` to the NUC while stopped, then handed AdGuard service ownership from Lenovo to NUC.
+Evidence: The selected archive `/mnt/proxmox-usb-backup/dump/vzdump-lxc-102-2026_06_03-02_32_06.tar.zst` passed `zstd -t`. Restored CT `102` preserved the original MAC and DHCP configuration. Lenovo CT `102` was shut down and set to `onboot=0` before the NUC copy started. NUC CT `102` is running at `192.168.1.189`; `AdGuardHome` is active and HTTP returned expected status `302`.
+Next safe action: Restore VM `100` Home Assistant to the NUC while stopped, verify its configuration includes the moved SONOFF USB device, then start and validate it without restarting the stopped Lenovo copy.
+
+Date: 2026-06-03
+Actor: Agent
+Phase: Phase 5 guest restore - VM 100 Home Assistant
+What was checked or changed: Restored VM `100` Home Assistant to the NUC while stopped, verified its configuration, then started and validated it.
+Evidence: The selected archive `/mnt/proxmox-usb-backup/dump/vzdump-qemu-100-2026_06_03-02_30_09.vma.zst` passed `zstd -t`. Restored VM `100` preserved its original MAC and `usb0: host=10c4:ea60` SONOFF passthrough. The Lenovo VM was already stopped. NUC VM `100` is running; the guest agent responds, reports IPv4 `192.168.1.187`, and Home Assistant returned HTTP `200` at port `8123`.
+Next safe action: Confirm Zigbee functionality in the Home Assistant UI when convenient, then restore CT `107` Tailscale while stopped and hand off service ownership from the still-running Lenovo copy.
+
+Date: 2026-06-03
+Actor: Agent
+Phase: Phase 5 guest restore - CT 107 Tailscale
+What was checked or changed: Restored CT `107` to the NUC while stopped, then handed Tailscale subnet-router ownership from Lenovo to NUC.
+Evidence: The selected archive `/mnt/proxmox-usb-backup/dump/vzdump-lxc-107-2026_06_03-02_36_21.tar.zst` passed `zstd -t`. Restored CT `107` preserved its original MAC, DHCP configuration, and `/dev/net/tun` passthrough. Lenovo CT `107` was shut down and set to `onboot=0` before the NUC copy started. NUC CT `107` is running at `192.168.1.198`, has `net.ipv4.ip_forward = 1`, and retained Tailscale identity `100.103.90.53`.
+Next safe action: Restore CT `104` Jellyfin while stopped, change its restored Lenovo-era `/dev/dri/card1` passthrough to the NUC `/dev/dri/card0` path, then start and validate Jellyfin and media mounts.

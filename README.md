@@ -43,6 +43,7 @@ Keep `homelab-services.yml` as the machine-readable service catalog. Future serv
 
 - Service inventory source: `homelab-services.yml`
 - Home Assistant package source: `home-assistant/homelab_services_package.yaml`
+- Home Assistant Prometheus export source: `home-assistant/prometheus_package.yaml`
 - Home Assistant dashboard source: `home-assistant/homelab_dashboard.yaml`
 - Proxmox metrics exporter source: `scripts/homelab-metrics-exporter.py`
 - Proxmox metrics exporter service: `systemd/homelab-metrics-exporter.service`
@@ -88,6 +89,7 @@ adguard_auth_header: "Basic BASE64_USERNAME_COLON_PASSWORD"
 - Monitoring Compose source: `monitoring/docker-compose.yml`
 - Prometheus scrape config source: `monitoring/prometheus/prometheus.yml`
 - Grafana dashboard source: `monitoring/grafana/dashboards/homelab-overview.json`
+- Home Assistant Prometheus token example: `monitoring/secrets/home-assistant-prometheus-token.example`
 - Uptime Kuma bootstrap source: `scripts/bootstrap-uptime-kuma.py`
 
 The dedicated monitoring stack runs in CT `108` at `192.168.1.200`. Grafana is the technical monitoring dashboard for server health, trends, storage, VM/LXC visibility, and alert-oriented views. Home Assistant remains the control dashboard for smart-home devices.
@@ -98,5 +100,7 @@ Runtime services are LAN-only:
 - Prometheus: `http://192.168.1.200:9090`
 - Uptime Kuma: `http://192.168.1.200:3001`
 - Host node_exporter: `http://192.168.1.184:9100/metrics`
+- Home Assistant Prometheus export: `http://192.168.1.187:8123/api/prometheus`
 
 Secret-bearing monitoring files live only inside CT `108` under `/opt/monitoring/secrets/`. The repo tracks only `.example` templates.
+The Home Assistant scrape token belongs at `/opt/monitoring/secrets/home-assistant-prometheus-token` and must be a long-lived Home Assistant access token without any `Bearer ` prefix.

@@ -17,23 +17,58 @@
   },
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "graphTooltip": 0,
+  "graphTooltip": 1,
   "id": null,
   "links": [],
   "liveNow": false,
   "panels": [
     {
+      "id": 1,
+      "title": "Host CPU",
+      "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 0,
+        "y": 0
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "100 * (1 - avg by (instance) (rate(node_cpu_seconds_total{job=\"node-exporter\",mode=\"idle\"}[5m])))",
+          "instant": false,
+          "legendFormat": "CPU",
+          "range": true,
+          "refId": "A",
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "max": 100,
-          "min": 0,
+          "decimals": 1,
+          "unit": "percent",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -42,7 +77,75 @@
                 "value": null
               },
               {
-                "color": "orange",
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 2,
+      "title": "Host RAM",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 3,
+        "y": 0
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "100 * (1 - (node_memory_MemAvailable_bytes{job=\"node-exporter\"} / node_memory_MemTotal_bytes{job=\"node-exporter\"}))",
+          "instant": false,
+          "legendFormat": "RAM",
+          "range": true,
+          "refId": "A",
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
                 "value": 70
               },
               {
@@ -50,148 +153,44 @@
                 "value": 90
               }
             ]
-          },
-          "unit": "percent"
+          }
         },
         "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 0,
-        "y": 0
-      },
-      "id": 1,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "targets": [
-        {
-          "expr": "100 * (1 - avg by (instance) (rate(node_cpu_seconds_total{job=\"node-exporter\",mode=\"idle\"}[5m])))",
-          "legendFormat": "CPU",
-          "refId": "A"
-        }
-      ],
-      "title": "Host CPU",
-      "type": "stat"
+      }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 75
-              },
-              {
-                "color": "red",
-                "value": 90
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 4,
-        "y": 0
-      },
-      "id": 2,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "targets": [
-        {
-          "expr": "100 * (1 - (node_memory_MemAvailable_bytes{job=\"node-exporter\"} / node_memory_MemTotal_bytes{job=\"node-exporter\"}))",
-          "legendFormat": "RAM",
-          "refId": "A"
-        }
-      ],
-      "title": "Host RAM",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 4
-              },
-              {
-                "color": "red",
-                "value": 8
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 8,
-        "y": 0
-      },
       "id": 3,
+      "title": "Host Load",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 6,
+        "y": 0
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "node_load5{job=\"node-exporter\"}",
+          "instant": false,
+          "legendFormat": "load5",
+          "range": true,
+          "refId": "A",
+          "format": "time_series"
+        }
+      ],
       "options": {
         "colorMode": "value",
         "graphMode": "area",
-        "justifyMode": "center",
+        "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -202,375 +201,214 @@
         },
         "textMode": "auto"
       },
-      "targets": [
-        {
-          "expr": "node_load5{job=\"node-exporter\"}",
-          "legendFormat": "Load 5m",
-          "refId": "A"
-        }
-      ],
-      "title": "Host Load",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
+          "decimals": 2,
+          "unit": "none",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green",
                 "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 6
+              },
+              {
+                "color": "red",
+                "value": 10
               }
             ]
-          },
-          "unit": "s"
+          }
         },
         "overrides": []
+      }
+    },
+    {
+      "id": 4,
+      "title": "Host Temp",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
       },
       "gridPos": {
-        "h": 5,
-        "w": 4,
+        "h": 4,
+        "w": 3,
+        "x": 9,
+        "y": 0
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "(max(node_hwmon_temp_celsius{job=\"node-exporter\"}) or max(node_thermal_zone_temp{job=\"node-exporter\"}))",
+          "instant": false,
+          "legendFormat": "temp",
+          "range": true,
+          "refId": "A",
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "unit": "celsius",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 5,
+      "title": "Backup HDD",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
         "x": 12,
         "y": 0
       },
-      "id": 4,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
       "targets": [
         {
-          "expr": "node_time_seconds{job=\"node-exporter\"} - node_boot_time_seconds{job=\"node-exporter\"}",
-          "legendFormat": "Uptime",
-          "refId": "A"
-        }
-      ],
-      "title": "Host Uptime",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
           },
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 75
-              },
-              {
-                "color": "red",
-                "value": 90
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 16,
-        "y": 0
-      },
-      "id": 5,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "targets": [
-        {
-          "expr": "100 * (1 - (node_filesystem_avail_bytes{job=\"node-exporter\",mountpoint=\"/\",fstype!~\"tmpfs|fuse.lxcfs|overlay\"} / node_filesystem_size_bytes{job=\"node-exporter\",mountpoint=\"/\",fstype!~\"tmpfs|fuse.lxcfs|overlay\"}))",
-          "legendFormat": "Root",
-          "refId": "A"
-        }
-      ],
-      "title": "Root Disk",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 75
-              },
-              {
-                "color": "red",
-                "value": 90
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 20,
-        "y": 0
-      },
-      "id": 6,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "targets": [
-        {
+          "editorMode": "code",
           "expr": "100 * (1 - (node_filesystem_avail_bytes{job=\"node-exporter\",mountpoint=\"/mnt/proxmox-usb-backup\",fstype!~\"tmpfs|fuse.lxcfs|overlay\"} / node_filesystem_size_bytes{job=\"node-exporter\",mountpoint=\"/mnt/proxmox-usb-backup\",fstype!~\"tmpfs|fuse.lxcfs|overlay\"}))",
-          "legendFormat": "USB Backup",
-          "refId": "A"
+          "instant": false,
+          "legendFormat": "used",
+          "range": true,
+          "refId": "A",
+          "format": "time_series"
         }
       ],
-      "title": "Backup HDD",
-      "type": "stat"
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 75
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
     },
     {
+      "id": 6,
+      "title": "Pipeline",
+      "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 12,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "showPoints": "never",
-            "spanNulls": false
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
       "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 5
-      },
-      "id": 7,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
+        "h": 4,
+        "w": 3,
+        "x": 15,
+        "y": 0
       },
       "targets": [
         {
-          "expr": "100 * (1 - avg by (instance) (rate(node_cpu_seconds_total{job=\"node-exporter\",mode=\"idle\"}[5m])))",
-          "legendFormat": "CPU",
-          "refId": "A"
-        },
-        {
-          "expr": "100 * (1 - (node_memory_MemAvailable_bytes{job=\"node-exporter\"} / node_memory_MemTotal_bytes{job=\"node-exporter\"}))",
-          "legendFormat": "RAM",
-          "refId": "B"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "up{job=~\"prometheus|node-exporter|pve|home-assistant\"}",
+          "instant": true,
+          "legendFormat": "{{job}}",
+          "range": false,
+          "refId": "A",
+          "format": "time_series"
         }
       ],
-      "title": "Host CPU/RAM Trend",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "showPoints": "never",
-            "spanNulls": false
-          },
-          "unit": "Bps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 5
-      },
-      "id": 8,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
         },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "expr": "label_replace(label_replace(label_replace(sum by (device) (rate(node_network_receive_bytes_total{job=\"node-exporter\",device!~\"lo|veth.*|tap.*|fw.*\"}[5m])), \"device\", \"Proxmox Bridge\", \"device\", \"vmbr0\"), \"device\", \"Wired LAN\", \"device\", \"enx00051b93a9d0\"), \"device\", \"WiFi\", \"device\", \"wlp0s20f3\")",
-          "legendFormat": "{{device}} rx",
-          "refId": "A"
-        },
-        {
-          "expr": "label_replace(label_replace(label_replace(sum by (device) (rate(node_network_transmit_bytes_total{job=\"node-exporter\",device!~\"lo|veth.*|tap.*|fw.*\"}[5m])), \"device\", \"Proxmox Bridge\", \"device\", \"vmbr0\"), \"device\", \"Wired LAN\", \"device\", \"enx00051b93a9d0\"), \"device\", \"WiFi\", \"device\", \"wlp0s20f3\")",
-          "legendFormat": "{{device}} tx",
-          "refId": "B"
-        }
-      ],
-      "title": "Host Network",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
+        "textMode": "auto"
       },
       "fieldConfig": {
         "defaults": {
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "showPoints": "never",
-            "spanNulls": false
-          },
-          "unit": "Bps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 5
-      },
-      "id": 9,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "expr": "label_replace(label_replace(sum by (device) (rate(node_disk_read_bytes_total{job=\"node-exporter\",device!~\"loop.*|ram.*|dm-.*\"}[5m])), \"device\", \"Main SSD\", \"device\", \"nvme0n1\"), \"device\", \"Backup HDD\", \"device\", \"sda\")",
-          "legendFormat": "{{device}} read",
-          "refId": "A"
-        },
-        {
-          "expr": "label_replace(label_replace(sum by (device) (rate(node_disk_written_bytes_total{job=\"node-exporter\",device!~\"loop.*|ram.*|dm-.*\"}[5m])), \"device\", \"Main SSD\", \"device\", \"nvme0n1\"), \"device\", \"Backup HDD\", \"device\", \"sda\")",
-          "legendFormat": "{{device}} write",
-          "refId": "B"
-        }
-      ],
-      "title": "Host Disk I/O",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [],
+          "decimals": 0,
+          "unit": "none",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -585,81 +423,588 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Running"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 13
-      },
-      "id": 10,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "targets": [
-        {
-          "expr": "pve_up{id=~\"qemu/100|lxc/102|lxc/104|lxc/105|lxc/106|lxc/107|lxc/108\"} * on(id) group_left(name,type) pve_guest_info",
-          "format": "table",
-          "instant": true,
-          "legendFormat": "{{name}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Important Guests Running",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true,
-              "__name__": true,
-              "id": false,
-              "instance": true,
-              "job": true
-            },
-            "indexByName": {
-              "name": 0,
-              "type": 1,
-              "id": 2,
-              "Value": 3
-            },
-            "renameByName": {
-              "id": "ID",
-              "name": "Name",
-              "type": "Type"
-            }
-          }
-        }
-      ],
-      "type": "table"
+        "overrides": []
+      }
     },
     {
+      "id": 7,
+      "title": "Guests Up",
+      "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 18,
+        "y": 0
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(pve_up{id=~\"qemu/100|lxc/102|lxc/104|lxc/105|lxc/106|lxc/107|lxc/108\"})",
+          "instant": false,
+          "legendFormat": "running",
+          "range": true,
+          "refId": "A",
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "unit": "none",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 6
+              },
+              {
+                "color": "green",
+                "value": 7
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 8,
+      "title": "HA Entities",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 21,
+        "y": 0
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "count(hass_entity_available)",
+          "instant": false,
+          "legendFormat": "exported",
+          "range": true,
+          "refId": "A",
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "unit": "none",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "yellow",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 9,
+      "title": "Host CPU / RAM Trend",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "100 * (1 - avg by (instance) (rate(node_cpu_seconds_total{job=\"node-exporter\",mode=\"idle\"}[5m])))",
+          "instant": false,
+          "legendFormat": "CPU",
+          "range": true,
+          "refId": "A",
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "100 * (1 - (node_memory_MemAvailable_bytes{job=\"node-exporter\"} / node_memory_MemTotal_bytes{job=\"node-exporter\"}))",
+          "instant": false,
+          "legendFormat": "RAM",
+          "range": true,
+          "refId": "B",
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 10,
+      "title": "Host Thermal Sensors",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "node_hwmon_temp_celsius{job=\"node-exporter\"}",
+          "instant": false,
+          "legendFormat": "{{chip}} {{sensor}}",
+          "range": true,
+          "refId": "A",
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "node_thermal_zone_temp{job=\"node-exporter\"}",
+          "instant": false,
+          "legendFormat": "{{zone}}",
+          "range": true,
+          "refId": "B",
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 11,
+      "title": "Host Network",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 12
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "label_replace(label_replace(label_replace(sum by (device) (rate(node_network_receive_bytes_total{job=\"node-exporter\",device!~\"lo|veth.*|tap.*|fw.*\"}[5m])), \"device\", \"Proxmox Bridge RX\", \"device\", \"vmbr0\"), \"device\", \"Wired LAN RX\", \"device\", \"enx00051b93a9d0\"), \"device\", \"WiFi RX\", \"device\", \"wlp0s20f3\")",
+          "instant": false,
+          "legendFormat": "{{device}}",
+          "range": true,
+          "refId": "A",
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "label_replace(label_replace(label_replace(sum by (device) (rate(node_network_transmit_bytes_total{job=\"node-exporter\",device!~\"lo|veth.*|tap.*|fw.*\"}[5m])), \"device\", \"Proxmox Bridge TX\", \"device\", \"vmbr0\"), \"device\", \"Wired LAN TX\", \"device\", \"enx00051b93a9d0\"), \"device\", \"WiFi TX\", \"device\", \"wlp0s20f3\")",
+          "instant": false,
+          "legendFormat": "{{device}}",
+          "range": true,
+          "refId": "B",
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 12,
+      "title": "Host Disk I/O",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 12
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "label_replace(label_replace(sum by (device) (rate(node_disk_read_bytes_total{job=\"node-exporter\",device!~\"loop.*|ram.*|dm-.*\"}[5m])), \"device\", \"Main SSD read\", \"device\", \"nvme0n1\"), \"device\", \"Backup HDD read\", \"device\", \"sda\")",
+          "instant": false,
+          "legendFormat": "{{device}}",
+          "range": true,
+          "refId": "A",
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "label_replace(label_replace(sum by (device) (rate(node_disk_written_bytes_total{job=\"node-exporter\",device!~\"loop.*|ram.*|dm-.*\"}[5m])), \"device\", \"Main SSD write\", \"device\", \"nvme0n1\"), \"device\", \"Backup HDD write\", \"device\", \"sda\")",
+          "instant": false,
+          "legendFormat": "{{device}}",
+          "range": true,
+          "refId": "B",
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 13,
+      "title": "Guest CPU",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 20
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "100 * pve_cpu_usage_ratio{id=~\"qemu/.+|lxc/.+\"} * on(id) group_left(name,type) pve_guest_info{name=~\"$guest\"}",
+          "instant": false,
+          "legendFormat": "{{name}}",
+          "range": true,
+          "refId": "A",
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 14,
+      "title": "Guest RAM",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 20
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "100 * (pve_memory_usage_bytes{id=~\"qemu/.+|lxc/.+\"} / pve_memory_size_bytes{id=~\"qemu/.+|lxc/.+\"}) * on(id) group_left(name,type) pve_guest_info{name=~\"$guest\"}",
+          "instant": false,
+          "legendFormat": "{{name}}",
+          "range": true,
+          "refId": "A",
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 15,
+      "title": "Storage Usage",
+      "type": "table",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 28
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "100 * (pve_disk_usage_bytes{id=~\"storage/.+\"} / pve_disk_size_bytes{id=~\"storage/.+\"}) * on(id) group_left(storage,plugintype) pve_storage_info",
+          "instant": true,
+          "legendFormat": "{{storage}}",
+          "range": false,
+          "refId": "A",
+          "format": "table"
+        }
+      ],
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
       },
       "fieldConfig": {
         "defaults": {
@@ -673,264 +1018,342 @@
           "unit": "percent"
         },
         "overrides": []
+      }
+    },
+    {
+      "id": 16,
+      "title": "Important Guest Status",
+      "type": "table",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 28
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "pve_up{id=~\"qemu/100|lxc/102|lxc/104|lxc/105|lxc/106|lxc/107|lxc/108\"} * on(id) group_left(name,type) pve_guest_info",
+          "instant": true,
+          "legendFormat": "{{name}}",
+          "range": false,
+          "refId": "A",
+          "format": "table"
+        }
+      ],
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 17,
+      "title": "Home Temperature",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 36
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_temperature_c{entity=~\"$ha_entity\"}",
+          "instant": false,
+          "legendFormat": "{{friendly_name}}",
+          "range": true,
+          "refId": "A",
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 18,
+      "title": "Home Humidity",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 36
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_humidity_percent{entity=~\"$ha_entity\"}",
+          "instant": false,
+          "legendFormat": "{{friendly_name}}",
+          "range": true,
+          "refId": "A",
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 19,
+      "title": "Low Batteries",
+      "type": "table",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 44
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sort(hass_battery_percent{entity=~\"$ha_entity\"})",
+          "instant": true,
+          "legendFormat": "{{friendly_name}}",
+          "range": false,
+          "refId": "A",
+          "format": "table"
+        }
+      ],
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 20,
+      "title": "Presence / Security",
+      "type": "state-timeline",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
       },
       "gridPos": {
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 13
-      },
-      "id": 11,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true
+        "y": 44
       },
       "targets": [
         {
-          "expr": "100 * pve_cpu_usage_ratio{id=~\"qemu/.+|lxc/.+\"} * on(id) group_left(name,type) pve_guest_info",
-          "format": "table",
-          "instant": true,
-          "legendFormat": "{{name}}",
-          "refId": "A"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_binary_sensor_state{entity=~\".*(occupancy|motion|door|window).*\"}",
+          "instant": false,
+          "legendFormat": "{{friendly_name}}",
+          "range": true,
+          "refId": "A",
+          "format": "time_series"
         }
       ],
-      "title": "Guest CPU",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true,
-              "__name__": true,
-              "id": true,
-              "instance": true,
-              "job": true
-            },
-            "indexByName": {
-              "name": 0,
-              "type": 1,
-              "Value": 2
-            },
-            "renameByName": {
-              "name": "Name",
-              "type": "Type",
-              "Value": "CPU"
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "mergeValues": true,
+        "showValue": "auto",
+        "alignValue": "left",
+        "rowHeight": 0.9
       },
       "fieldConfig": {
         "defaults": {
           "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 13
-      },
-      "id": 12,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "targets": [
-        {
-          "expr": "100 * (pve_memory_usage_bytes{id=~\"qemu/.+|lxc/.+\"} / pve_memory_size_bytes{id=~\"qemu/.+|lxc/.+\"}) * on(id) group_left(name,type) pve_guest_info",
-          "format": "table",
-          "instant": true,
-          "legendFormat": "{{name}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Guest RAM",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true,
-              "__name__": true,
-              "id": true,
-              "instance": true,
-              "job": true
-            },
-            "indexByName": {
-              "name": 0,
-              "type": 1,
-              "Value": 2
-            },
-            "renameByName": {
-              "name": "Name",
-              "type": "Type",
-              "Value": "RAM"
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 0,
-        "y": 21
-      },
-      "id": 13,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "targets": [
-        {
-          "expr": "100 * (pve_disk_usage_bytes{id=~\"storage/.+\"} / pve_disk_size_bytes{id=~\"storage/.+\"}) * on(id) group_left(storage,plugintype) pve_storage_info",
-          "format": "table",
-          "instant": true,
-          "legendFormat": "{{storage}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Proxmox Storage Usage",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true,
-              "__name__": true,
-              "id": true,
-              "instance": true,
-              "job": true,
-              "node": true
-            },
-            "indexByName": {
-              "storage": 0,
-              "plugintype": 1,
-              "Value": 2
-            },
-            "renameByName": {
-              "plugintype": "Type",
-              "storage": "Storage",
-              "Value": "Used"
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
+            "lineWidth": 1,
+            "fillOpacity": 70,
+            "spanNulls": false
           },
           "mappings": [
             {
               "options": {
                 "0": {
-                  "color": "red",
-                  "index": 0,
-                  "text": "Down"
+                  "text": "off"
                 },
                 "1": {
-                  "color": "green",
-                  "index": 1,
-                  "text": "Up"
+                  "text": "on"
                 }
               },
               "type": "value"
             }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          }
+          ]
         },
         "overrides": []
+      }
+    },
+    {
+      "id": 21,
+      "title": "Chores",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
       },
       "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 21
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 44
       },
-      "id": 14,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_chore_status{entity=~\".*(washer|dryer|litter_box|trash_bins).*\"}",
+          "instant": true,
+          "legendFormat": "{{friendly_name}}",
+          "range": false,
+          "refId": "A",
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_binary_sensor_state{entity=~\".*(overdue|due).*\"}",
+          "instant": true,
+          "legendFormat": "{{friendly_name}}",
+          "range": false,
+          "refId": "B",
+          "format": "time_series"
+        }
+      ],
       "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -940,36 +1363,235 @@
         },
         "textMode": "auto"
       },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "unit": "none",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 22,
+      "title": "Unavailable HA Entities",
+      "type": "table",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 52
+      },
       "targets": [
         {
-          "expr": "up{job=~\"prometheus|node-exporter|pve\"}",
-          "legendFormat": "{{job}}",
-          "refId": "A"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_entity_available == 0",
+          "instant": true,
+          "legendFormat": "{{entity}}",
+          "range": false,
+          "refId": "A",
+          "format": "table"
         }
       ],
-      "title": "Metrics Pipeline Status",
-      "type": "stat"
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 23,
+      "title": "Scrape Health",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 52
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "up{job=~\"prometheus|node-exporter|pve|home-assistant\"}",
+          "instant": false,
+          "legendFormat": "{{job}}",
+          "range": true,
+          "refId": "A",
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "scrape_duration_seconds{job=~\"prometheus|node-exporter|pve|home-assistant\"}",
+          "instant": false,
+          "legendFormat": "{{job}} scrape",
+          "range": true,
+          "refId": "B",
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 3,
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      }
     }
   ],
   "refresh": "30s",
   "schemaVersion": 39,
-  "style": "dark",
   "tags": [
     "homelab",
     "proxmox",
-    "mvp"
+    "home-assistant",
+    "daily-overview"
   ],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": ".*"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values(pve_guest_info, name)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "guest",
+        "options": [],
+        "query": "label_values(pve_guest_info, name)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query",
+        "allValue": ".*"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": ".*"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values(hass_entity_available, entity)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "ha_entity",
+        "options": [],
+        "query": "label_values(hass_entity_available, entity)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query",
+        "allValue": ".*"
+      }
+    ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-24h",
     "to": "now"
   },
-  "timepicker": {},
+  "timepicker": {
+    "refresh_intervals": [
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "1h"
+    ],
+    "time_options": [
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
   "timezone": "browser",
-  "title": "Homelab Overview",
+  "title": "Homelab Daily Overview",
   "uid": "homelab-overview",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

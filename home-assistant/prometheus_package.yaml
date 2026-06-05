@@ -1,0 +1,51 @@
+# Managed from /root/server-admin/home-assistant/prometheus_package.yaml
+# Exposes a focused Home Assistant entity set to Prometheus for Grafana.
+
+prometheus:
+  namespace: hass
+  component_config_glob:
+    sensor.*temperature*:
+      override_metric: temperature_c
+    sensor.*temp*:
+      override_metric: temperature_c
+    sensor.*humidity*:
+      override_metric: humidity_percent
+    sensor.*battery*:
+      override_metric: battery_percent
+    sensor.*battery_level*:
+      override_metric: battery_percent
+    sensor.*washer*:
+      override_metric: chore_status
+    sensor.*dryer*:
+      override_metric: chore_status
+    sensor.*litter_box*:
+      override_metric: chore_status
+    sensor.*trash_bins*:
+      override_metric: chore_status
+  filter:
+    include_entity_globs:
+      - sensor.*temperature*
+      - sensor.*temp*
+      - sensor.*humidity*
+      - sensor.*battery*
+      - sensor.*battery_level*
+      - sensor.*washer*
+      - sensor.*dryer*
+      - sensor.*litter_box*
+      - sensor.*trash_bins*
+      - binary_sensor.*occupancy*
+      - binary_sensor.*motion*
+      - binary_sensor.*door*
+      - binary_sensor.*window*
+      - binary_sensor.*connectivity*
+      - binary_sensor.*problem*
+      - binary_sensor.*overdue*
+      - binary_sensor.*due*
+    include_domains:
+      - light
+      - switch
+      - input_boolean
+    exclude_entity_globs:
+      - sensor.*linkquality*
+      - sensor.*rssi*
+      - sensor.*signal*

@@ -88,12 +88,14 @@ Last updated: 2026-06-04 10:30 CDT
   - Proxmox exporter: internal Docker service `pve-exporter:9221`
 - Host `node_exporter` runs on the Proxmox host at `http://192.168.1.184:9100/metrics`.
 - The Proxmox exporter uses a limited `PVEAuditor` API token stored only in CT `108` at `/opt/monitoring/secrets/pve.yml`.
+- Prometheus scrapes Home Assistant's built-in exporter at `http://192.168.1.187:8123/api/prometheus` using a long-lived Home Assistant token stored only in CT `108` at `/opt/monitoring/secrets/home-assistant-prometheus-token`.
 
 ## Service Ports
 
 | Service | Port | URL | Purpose |
 | --- | ---: | --- | --- |
 | Home Assistant | 8123 | `http://192.168.1.187:8123` | Home automation dashboard |
+| Home Assistant Prometheus | 8123 | `http://192.168.1.187:8123/api/prometheus` | Token-protected Home Assistant sensor metrics for Grafana |
 | Proxmox Metrics Exporter | 9108 | `http://192.168.1.184:9108/metrics/homelab` | LAN-only host/guest resource metrics for Home Assistant |
 | Proxmox node_exporter | 9100 | `http://192.168.1.184:9100/metrics` | LAN-only Prometheus host metrics for Grafana |
 | AdGuard Home | 80 | `http://192.168.1.189` | LAN DNS filtering |
@@ -131,6 +133,7 @@ The repo-level source of truth for the Home Assistant Homelab dashboard is `home
 - The FileBrowser media-library backup mount uses the resolved latest snapshot path because Proxmox does not hotplug bind mounts through the `current` symlink. Refresh this mount after a newer snapshot should be browsed.
 - Outbound VPN Compose routes qBittorrent, Prowlarr, and FlareSolverr through Gluetun.
 - Home Assistant Homelab metrics track HDD total usage plus grouped Media and Backups folder usage.
+- Grafana Home Assistant metrics track the focused Prometheus export set from `home-assistant/prometheus_package.yaml`: comfort sensors, batteries, selected presence/security binary sensors, lights/switches, and chore/status helpers.
 - Add only lawful/public-domain/owned-media sources.
 
 ## Policy

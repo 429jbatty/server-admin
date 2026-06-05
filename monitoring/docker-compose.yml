@@ -11,6 +11,7 @@ services:
       - "9090:9090"
     volumes:
       - /opt/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - /opt/monitoring/secrets/home-assistant-prometheus-token:/etc/prometheus/secrets/home-assistant-prometheus-token:ro
       - prometheus-data:/prometheus
     restart: unless-stopped
 

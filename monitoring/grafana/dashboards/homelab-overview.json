@@ -1260,7 +1260,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "hass_binary_sensor_state{entity=~\".*(occupancy|motion|door|window).*\"}",
+          "expr": "hass_binary_sensor_state{entity=~\".*(occupancy|motion|door|window|presence).*\"}",
           "instant": false,
           "legendFormat": "{{friendly_name}}",
           "range": true,

@@ -247,7 +247,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "(max(node_hwmon_temp_celsius{job=\"node-exporter\"}) or max(node_thermal_zone_temp{job=\"node-exporter\"}))",
+          "expr": "(((max(node_hwmon_temp_celsius{job=\"node-exporter\"}) or max(node_thermal_zone_temp{job=\"node-exporter\"})) * 9 / 5) + 32)",
           "instant": false,
           "legendFormat": "temp",
           "range": true,
@@ -272,7 +272,7 @@
       "fieldConfig": {
         "defaults": {
           "decimals": 1,
-          "unit": "celsius",
+          "unit": "fahrenheit",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -282,11 +282,11 @@
               },
               {
                 "color": "yellow",
-                "value": 70
+                "value": 158
               },
               {
                 "color": "red",
-                "value": 85
+                "value": 185
               }
             ]
           }
@@ -652,7 +652,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "node_hwmon_temp_celsius{job=\"node-exporter\"}",
+          "expr": "(node_hwmon_temp_celsius{job=\"node-exporter\"} * 9 / 5) + 32",
           "instant": false,
           "legendFormat": "{{chip}} {{sensor}}",
           "range": true,
@@ -665,7 +665,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "node_thermal_zone_temp{job=\"node-exporter\"}",
+          "expr": "(node_thermal_zone_temp{job=\"node-exporter\"} * 9 / 5) + 32",
           "instant": false,
           "legendFormat": "{{zone}}",
           "range": true,
@@ -699,7 +699,7 @@
             "showPoints": "never",
             "spanNulls": true
           },
-          "unit": "celsius"
+          "unit": "fahrenheit"
         },
         "overrides": []
       }
@@ -1071,7 +1071,7 @@
     },
     {
       "id": 17,
-      "title": "Home Temperature",
+      "title": "Home Temperature (F)",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -1090,9 +1090,9 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "hass_temperature_c{entity=~\"$ha_entity\"}",
+          "expr": "label_replace(((hass_temperature_c{entity=\"sensor.switchbot_hub_temperature\",entity=~\"$ha_entity\"} * 9 / 5) + 32), \"display_name\", \"Office\", \"entity\", \".*\") or label_replace(((hass_temperature_c{entity=\"sensor.downstairs_temperature\",entity=~\"$ha_entity\"} * 9 / 5) + 32), \"display_name\", \"Downstairs\", \"entity\", \".*\") or label_replace(((hass_temperature_c{entity!=\"sensor.inovelli_dimmer_switch_internal_temperature\",entity!~\"sensor.switchbot_hub_temperature|sensor.downstairs_temperature\",entity=~\"$ha_entity\"} * 9 / 5) + 32), \"display_name\", \"$1\", \"friendly_name\", \"(.*)\")",
           "instant": false,
-          "legendFormat": "{{friendly_name}}",
+          "legendFormat": "{{display_name}}",
           "range": true,
           "refId": "A",
           "format": "time_series"
@@ -1124,7 +1124,7 @@
             "showPoints": "never",
             "spanNulls": true
           },
-          "unit": "celsius"
+          "unit": "fahrenheit"
         },
         "overrides": []
       }
@@ -1260,7 +1260,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "hass_binary_sensor_state{entity=~\".*(occupancy|motion|door|window|presence).*\"}",
+          "expr": "hass_binary_sensor_state{entity=~\".*(occupancy|motion|door|window|presence|fp2|aquara).*\"}",
           "instant": false,
           "legendFormat": "{{friendly_name}}",
           "range": true,

@@ -21,6 +21,11 @@ The active host is NUC node `pve-nuc`. From the retired Lenovo workspace, run Pr
   - Home Assistant's built-in Prometheus exporter is enabled by the repo-backed package `home-assistant/prometheus_package.yaml`.
   - Prometheus scrapes `http://192.168.1.187:8123/api/prometheus` as job `home-assistant`.
   - The scrape uses a long-lived Home Assistant token stored only in CT `108` at `/opt/monitoring/secrets/home-assistant-prometheus-token`.
+- Albumary website monitoring:
+  - `albumary-cloudflare-exporter` exposes Cloudflare HTTP traffic and Web Analytics/RUM metrics for `app.albumary.net`.
+  - `blackbox-exporter` probes `https://app.albumary.net` for reachability, latency, HTTP status, and TLS expiry.
+  - The Albumary dashboard source is `monitoring/grafana/dashboards/albumary-website.json`.
+  - Runtime Cloudflare credentials live only in CT `108` at `/opt/monitoring/secrets/albumary-cloudflare.env`.
 
 Grafana is for technical monitoring, trends, VM/LXC visibility, and alert-oriented views. Home Assistant remains the control dashboard for smart-home devices and high-level service health.
 
@@ -45,6 +50,7 @@ Secret-bearing files live only inside CT `108`:
 /opt/monitoring/secrets/pve.yml
 /opt/monitoring/secrets/uptime-kuma.env
 /opt/monitoring/secrets/home-assistant-prometheus-token
+/opt/monitoring/secrets/albumary-cloudflare.env
 ```
 
 The repo tracks only `.example` files for secrets. Do not commit token values or generated passwords.
@@ -68,6 +74,14 @@ Use Uptime Kuma for simple HTTP uptime checks for:
 - Grafana
 - Prometheus
 - Proxmox UI
+
+Open Grafana and use the `Homelab / Albumary Website` dashboard to answer:
+
+- Is `https://app.albumary.net` reachable?
+- What is the current Cloudflare HTTP status mix?
+- Are page views, visitors, requests, or transfer changing?
+- Which paths are receiving the most HTTP requests or Web Analytics page views?
+- How long remains before the public TLS certificate expires?
 
 ## Management Commands
 
@@ -142,6 +156,18 @@ hass_entity_available
 hass_temperature_c
 hass_humidity_percent
 hass_battery_percent
+```
+
+Albumary website targets should show `albumary-cloudflare-exporter` and `blackbox-albumary` as up. Useful PromQL smoke tests:
+
+```text
+albumary_cloudflare_requests_24h
+albumary_cloudflare_page_views_24h
+albumary_cloudflare_visitors_24h
+albumary_cloudflare_status_responses_24h
+albumary_cloudflare_top_path_requests_24h
+probe_success{instance="https://app.albumary.net"}
+probe_ssl_earliest_cert_expiry
 ```
 
 ## Expansion Notes

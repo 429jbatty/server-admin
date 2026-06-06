@@ -25,6 +25,28 @@ services:
       - /opt/monitoring/secrets/pve.yml:/etc/prometheus/pve.yml:ro
     restart: unless-stopped
 
+  blackbox-exporter:
+    image: prom/blackbox-exporter:latest
+    container_name: blackbox-exporter
+    command:
+      - --config.file=/etc/blackbox_exporter/config.yml
+    volumes:
+      - /opt/monitoring/prometheus/blackbox.yml:/etc/blackbox_exporter/config.yml:ro
+    restart: unless-stopped
+
+  albumary-cloudflare-exporter:
+    image: python:3.12-slim
+    container_name: albumary-cloudflare-exporter
+    env_file:
+      - path: /opt/monitoring/secrets/albumary-cloudflare.env
+        required: true
+    command:
+      - python
+      - /opt/albumary-cloudflare-exporter.py
+    volumes:
+      - /opt/monitoring/scripts/albumary-cloudflare-exporter.py:/opt/albumary-cloudflare-exporter.py:ro
+    restart: unless-stopped
+
   grafana:
     image: grafana/grafana-oss:latest
     container_name: grafana

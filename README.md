@@ -57,7 +57,7 @@ Keep `homelab-services.yml` as the machine-readable service catalog. Future serv
 
 The dashboard is installed in Home Assistant as a YAML Lovelace dashboard named `Homelab`. Health checks are intentionally lightweight: HTTP reachability for web services and ping reachability for the Tailscale subnet router. Resource metrics come from a LAN-only Proxmox host exporter at `http://192.168.1.184:9108/metrics/homelab`; it publishes CPU, memory, disk, status, uptime, and media-stack Docker container utilization only.
 
-Albumary Cloudflare metrics are fetched by `home-assistant/cloudflare_albumary_metrics.py`, installed in Home Assistant as `/config/scripts/cloudflare_albumary_metrics.py`. The dashboard uses Cloudflare Web Analytics/RUM for `Page views` and `Visitors`, and keeps HTTP Traffic metrics for requests, transfer, status codes, and lightweight reachability context. Store the real values only in Home Assistant `secrets.yaml`:
+Albumary website analytics now live in Grafana. Home Assistant keeps only the simple Albumary public-site reachability sensor. The Cloudflare token and zone ID should be copied from Home Assistant secrets into CT `108` at `/opt/monitoring/secrets/albumary-cloudflare.env`; never store the real values in Git. Home Assistant uses these secret names:
 
 Albumary currently runs in CT `105` from `/opt/spotify_tracker`, with its SQLite database at `/opt/spotify_tracker/data/spotify_tracker.sqlite`. The daily `albumary-sqlite-backup.timer` creates a database-only backup under `/mnt/proxmox-usb-backup/albumary-sqlite/` before the full Proxmox guest backup.
 
@@ -88,7 +88,11 @@ adguard_auth_header: "Basic BASE64_USERNAME_COLON_PASSWORD"
 - Monitoring runbook: `notes/monitoring-runbook.md`
 - Monitoring Compose source: `monitoring/docker-compose.yml`
 - Prometheus scrape config source: `monitoring/prometheus/prometheus.yml`
+- Blackbox exporter config source: `monitoring/prometheus/blackbox.yml`
 - Grafana dashboard source: `monitoring/grafana/dashboards/homelab-overview.json`
+- Albumary website dashboard source: `monitoring/grafana/dashboards/albumary-website.json`
+- Albumary Cloudflare exporter source: `monitoring/scripts/albumary-cloudflare-exporter.py`
+- Albumary Cloudflare env example: `monitoring/secrets/albumary-cloudflare.env.example`
 - Home Assistant Prometheus token example: `monitoring/secrets/home-assistant-prometheus-token.example`
 - Uptime Kuma bootstrap source: `scripts/bootstrap-uptime-kuma.py`
 
@@ -101,6 +105,9 @@ Runtime services are LAN-only:
 - Uptime Kuma: `http://192.168.1.200:3001`
 - Host node_exporter: `http://192.168.1.184:9100/metrics`
 - Home Assistant Prometheus export: `http://192.168.1.187:8123/api/prometheus`
+- Albumary Cloudflare exporter: internal Docker service `albumary-cloudflare-exporter:9210`
+- Blackbox exporter: internal Docker service `blackbox-exporter:9115`
 
 Secret-bearing monitoring files live only inside CT `108` under `/opt/monitoring/secrets/`. The repo tracks only `.example` templates.
 The Home Assistant scrape token belongs at `/opt/monitoring/secrets/home-assistant-prometheus-token` and must be a long-lived Home Assistant access token without any `Bearer ` prefix.
+The Albumary Cloudflare env file belongs at `/opt/monitoring/secrets/albumary-cloudflare.env` and may reuse the existing Home Assistant Cloudflare token and zone ID.

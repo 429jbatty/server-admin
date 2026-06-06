@@ -89,6 +89,7 @@ Last updated: 2026-06-04 10:30 CDT
 - Host `node_exporter` runs on the Proxmox host at `http://192.168.1.184:9100/metrics`.
 - The Proxmox exporter uses a limited `PVEAuditor` API token stored only in CT `108` at `/opt/monitoring/secrets/pve.yml`.
 - Prometheus scrapes Home Assistant's built-in exporter at `http://192.168.1.187:8123/api/prometheus` using a long-lived Home Assistant token stored only in CT `108` at `/opt/monitoring/secrets/home-assistant-prometheus-token`.
+- Prometheus scrapes internal Albumary website monitoring targets in CT `108`: `albumary-cloudflare-exporter:9210` for Cloudflare analytics and `blackbox-exporter:9115` for public HTTPS probing.
 
 ## Service Ports
 
@@ -110,6 +111,8 @@ Last updated: 2026-06-04 10:30 CDT
 | Grafana | 3000 | `http://192.168.1.200:3000` | Technical monitoring dashboard |
 | Prometheus | 9090 | `http://192.168.1.200:9090` | Metrics collection and query engine |
 | Uptime Kuma | 3001 | `http://192.168.1.200:3001` | Service uptime monitors |
+| Albumary Cloudflare Exporter | 9210 | Internal Docker service only | Cloudflare HTTP and Web Analytics metrics for Grafana |
+| Blackbox Exporter | 9115 | Internal Docker service only | Public HTTPS probe metrics for Grafana |
 
 After outbound VPN activation, Gluetun publishes the qBittorrent and Prowlarr Web UIs because both containers share Gluetun's network namespace. FlareSolverr also shares Gluetun's network namespace for Prowlarr-only indexer challenge handling, but it does not publish a LAN port. Radarr, Sonarr, Jellyseerr, Bazarr, and CT `104` Jellyfin keep their normal Docker/LAN network path.
 

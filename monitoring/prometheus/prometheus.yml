@@ -47,3 +47,30 @@ scrape_configs:
           - 192.168.1.187:8123
         labels:
           host: homeassistant
+
+  - job_name: albumary-cloudflare-exporter
+    scrape_interval: 60s
+    static_configs:
+      - targets:
+          - albumary-cloudflare-exporter:9210
+        labels:
+          hostname: app.albumary.net
+
+  - job_name: blackbox-albumary
+    scrape_interval: 60s
+    metrics_path: /probe
+    params:
+      module:
+        - http_2xx
+    static_configs:
+      - targets:
+          - https://app.albumary.net
+    relabel_configs:
+      - source_labels:
+          - __address__
+        target_label: __param_target
+      - source_labels:
+          - __param_target
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115

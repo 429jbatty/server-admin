@@ -1,6 +1,6 @@
 # Proxmox Media Inventory
 
-Last updated: 2026-06-04 10:30 CDT
+Last updated: 2026-06-07 17:18 CDT
 
 ## Host
 
@@ -19,6 +19,11 @@ Last updated: 2026-06-04 10:30 CDT
     - `/mnt/proxmox-usb-backup/dump`
     - `/mnt/proxmox-usb-backup/file-backups`
     - `/mnt/proxmox-usb-backup/host-config`
+- Resilience:
+  - Proxmox `watchdog-mux` is active.
+  - `/etc/default/pve-ha-manager` selects `WATCHDOG_MODULE=iTCO_wdt` so the
+    Intel hardware watchdog is preferred on next startup.
+  - Proxmox HA has no managed resources on this single-node host.
 
 ## Guests
 
@@ -31,8 +36,20 @@ Last updated: 2026-06-04 10:30 CDT
 | 104 | LXC | `jellyfin` | running | Active Jellyfin server |
 | 105 | LXC | `CT105` | running | Debian, static IP `192.168.1.100/24` |
 | 106 | LXC | `media-stack` | running | Docker Compose media automation stack, IP `192.168.1.197` |
-| 107 | LXC | `remote-access` | running | Tailscale subnet-router target, IP `192.168.1.198`; awaiting account auth/route approval |
+| 107 | LXC | `remote-access` | running | Tailscale subnet-router target, IP `192.168.1.198`; authenticated, verify route approval from a remote client when troubleshooting |
 | 108 | LXC | `monitoring` | running | Grafana, Prometheus, Uptime Kuma, and Proxmox exporter, IP `192.168.1.200` |
+
+Startup order for active guests:
+
+| Order | Guest | Delay After Start | Purpose |
+| ---: | --- | ---: | --- |
+| 10 | CT `102` AdGuard Home | 20s | Bring LAN DNS filtering up first. |
+| 20 | VM `100` Home Assistant | 30s | Start core automation after DNS. |
+| 30 | CT `104` Jellyfin | 20s | Start media serving after core services. |
+| 40 | CT `105` Albumary | 15s | Start the app/database service. |
+| 50 | CT `107` Tailscale subnet router | 15s | Restore private remote access. |
+| 60 | CT `106` media stack | 45s | Give network and USB-backed media mounts time to settle. |
+| 90 | CT `108` monitoring | 20s | Start observability last so it sees recovered services. |
 
 ## Active Jellyfin
 

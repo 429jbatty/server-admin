@@ -111,3 +111,22 @@ Runtime services are LAN-only:
 Secret-bearing monitoring files live only inside CT `108` under `/opt/monitoring/secrets/`. The repo tracks only `.example` templates.
 The Home Assistant scrape token belongs at `/opt/monitoring/secrets/home-assistant-prometheus-token` and must be a long-lived Home Assistant access token without any `Bearer ` prefix.
 The Albumary Cloudflare env file belongs at `/opt/monitoring/secrets/albumary-cloudflare.env` and may reuse the existing Home Assistant Cloudflare token and zone ID.
+
+## Resilience And Auto-Recovery
+
+The active single-node recovery model is layered:
+
+- Proxmox starts VM `100` and CTs `102`, `104`, `105`, `106`, `107`, and `108`
+  automatically after host boot.
+- Startup ordering is explicit: AdGuard first, Home Assistant/Jellyfin/Albumary
+  and remote access next, media stack after those, and monitoring last.
+- Docker Compose services in CT `106` and CT `108` use `restart:
+  unless-stopped` for app-level process recovery.
+- Proxmox `watchdog-mux` is configured in `/etc/default/pve-ha-manager` to load
+  the Intel hardware watchdog module `iTCO_wdt` on next startup. Do not install
+  or enable a separate watchdog daemon without a new plan; `watchdog-mux` should
+  own `/dev/watchdog`.
+
+This is not multi-node HA. A watchdog-triggered reboot can recover from host
+hangs, but disk failure, broken guest config, corrupt data, or dead hardware
+still requires the backup and restore process in `notes/homelab-backup-runbook.md`.

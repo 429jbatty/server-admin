@@ -45,6 +45,12 @@ This file tracks future work for the Proxmox home server. Keep operational detai
 - Start a Jellyfin playback session and confirm hardware transcoding when applicable.
 - Confirm a remote Tailscale client can reach a LAN service through CT `107`.
 - Confirm LAN clients are actively using AdGuard Home for DNS.
+- During a planned maintenance window, reboot `pve-nuc` once to validate the
+  resilience startup sequence:
+  - VM `100` and CTs `102`, `104`, `105`, `106`, `107`, and `108` return to
+    running state.
+  - `/mnt/proxmox-usb-backup` is mounted before CTs `104` and `106` rely on it.
+  - Proxmox `watchdog-mux` loads `iTCO_wdt` instead of falling back to `softdog`.
 - After an appropriate confidence period, decide whether to power off, retain, or repurpose the retired Lenovo source at `192.168.1.186`.
 
 ## Proxmox Backup Server

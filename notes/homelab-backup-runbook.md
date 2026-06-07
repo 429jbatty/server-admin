@@ -1,6 +1,6 @@
 # Homelab Backup Runbook
 
-Last updated: 2026-06-04 10:30 CDT
+Last updated: 2026-06-07 17:18 CDT
 
 The active host is NUC node `pve-nuc`. From the retired Lenovo workspace, run active-host commands through `ssh pve-nuc`.
 
@@ -119,3 +119,27 @@ vzdump --all 1 --storage usb-backup --mode snapshot --compress zstd --prune-back
 - Restore Albumary's database by decompressing a selected `albumary-sqlite.*.sqlite.gz` backup, stopping `spotify-tracker-api.service` in CT `105`, replacing `/opt/spotify_tracker/data/spotify_tracker.sqlite`, fixing ownership to `jacob:jacob`, then starting the service again.
 - Recreate the USB mount and `usb-backup` storage before relying on scheduled backups after a host rebuild.
 - Do not restore `/etc/pve/priv` material onto a different trust boundary without understanding the security impact.
+
+## Resilience Rollback Notes
+
+Timestamped pre-change config backups for the June 7, 2026 resilience update
+were saved on `pve-nuc` under `/root/server-admin/backups/`:
+
+- `100.conf.20260607-171541.pre-resilience`
+- `102.conf.20260607-171541.pre-resilience`
+- `104.conf.20260607-171541.pre-resilience`
+- `105.conf.20260607-171541.pre-resilience`
+- `106.conf.20260607-171541.pre-resilience`
+- `107.conf.20260607-171541.pre-resilience`
+- `108.conf.20260607-171541.pre-resilience`
+- `pve-ha-manager.default.20260607-171541.pre-resilience`
+
+To roll back startup ordering, compare one of those guest config backups with the
+live config under `/etc/pve/qemu-server/` or `/etc/pve/lxc/`, then revert only
+the `startup:` line or use `qm set`/`pct set` with the previous startup value.
+
+To roll back hardware watchdog selection, restore the previous
+`/etc/default/pve-ha-manager` content or comment out `WATCHDOG_MODULE=iTCO_wdt`.
+Do not stop or restart `watchdog-mux` casually; Proxmox uses it for fencing and
+the service can reset the host if mishandled. Prefer validating watchdog changes
+during a planned reboot window.

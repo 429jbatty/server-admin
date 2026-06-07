@@ -15,6 +15,10 @@ The active host is NUC node `pve-nuc`. From the retired Lenovo workspace, run Pr
 
 The shared media storage lives on the HDD mounted at `/mnt/proxmox-usb-backup`. This keeps the growing media library off the Proxmox host's internal NVMe while preserving stable container paths.
 
+CT `106` has `onboot: 1` with Proxmox startup order `60` and a `45s` post-start
+delay. Its Compose services use `restart: unless-stopped`, so Docker restarts
+the media apps after container or Docker daemon recovery.
+
 ## Paths
 
 Host:

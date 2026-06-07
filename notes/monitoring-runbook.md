@@ -29,6 +29,10 @@ The active host is NUC node `pve-nuc`. From the retired Lenovo workspace, run Pr
 
 Grafana is for technical monitoring, trends, VM/LXC visibility, and alert-oriented views. Home Assistant remains the control dashboard for smart-home devices and high-level service health.
 
+CT `108` has `onboot: 1` with Proxmox startup order `90` and a `20s` post-start
+delay so monitoring starts after core services. Its Compose services use
+`restart: unless-stopped` for app-level process recovery.
+
 ## Paths
 
 Inside CT `108`:

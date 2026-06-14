@@ -1,0 +1,19 @@
+# Optional overrides for /etc/default/homelab-health-watchdog.
+# This file contains no secrets.
+
+# Reboot after this many consecutive failed timer runs.
+FAILURE_THRESHOLD=3
+
+# Keep this at 0 for normal operation. Set to 1 before test-failing the script.
+DRY_RUN=0
+
+# Local services that must be active for the host health check to pass.
+CRITICAL_SERVICES="pve-cluster pvedaemon pveproxy pvestatd pvescheduler pve-guests watchdog-mux ssh"
+
+# Gateway probing is disabled by default so router/switch downtime does not
+# cause host reboot loops. Enable only if that is the desired recovery policy.
+CHECK_GATEWAY=0
+GATEWAY=192.168.1.1
+
+# Advanced: override for test environments.
+REBOOT_COMMAND="systemctl reboot"

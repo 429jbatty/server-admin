@@ -24,6 +24,11 @@ Last updated: 2026-06-14 11:12 CDT
   - `/etc/default/pve-ha-manager` selects `WATCHDOG_MODULE=wdat_wdt` so the
     ACPI hardware watchdog exposes `/dev/watchdog`.
   - Proxmox HA has no managed resources on this single-node host.
+  - `homelab-health-watchdog.timer` runs a local health-check script every
+    5 minutes. It does not open `/dev/watchdog`; it records consecutive
+    failures under `/var/lib/homelab-health-watchdog/`, writes pre-reboot
+    diagnostics under `/var/log/homelab-health-watchdog/`, and requests a
+    systemd reboot after 3 consecutive failed checks.
 
 ## Guests
 

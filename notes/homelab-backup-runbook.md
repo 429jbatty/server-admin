@@ -76,13 +76,16 @@ pvesh get /cluster/backup --output-format yaml
 systemctl list-timers homelab-host-backup.timer
 systemctl list-timers homelab-file-backup.timer
 systemctl list-timers albumary-sqlite-backup.timer
+systemctl list-timers homelab-health-watchdog.timer
 systemctl status homelab-host-backup.service
 systemctl status homelab-file-backup.service
 systemctl status albumary-sqlite-backup.service
+systemctl status homelab-health-watchdog.service
 ls -lh /mnt/proxmox-usb-backup/dump
 ls -lh /mnt/proxmox-usb-backup/host-config
 ls -lh /mnt/proxmox-usb-backup/file-backups/srv-media-stack
 ls -lh /mnt/proxmox-usb-backup/albumary-sqlite
+ls -lh /var/log/homelab-health-watchdog
 ```
 
 ## Manual Backup Commands
@@ -143,3 +146,25 @@ To roll back hardware watchdog selection, restore the previous
 Do not stop or restart `watchdog-mux` casually; Proxmox uses it for fencing and
 the service can reset the host if mishandled. Prefer validating watchdog changes
 during a planned reboot window.
+
+The local `homelab-health-watchdog.timer` is separate from Proxmox
+`watchdog-mux`. It does not use `/dev/watchdog`; it checks local Proxmox health
+every 5 minutes and calls `systemctl reboot` only after 3 consecutive failures.
+Before disabling it for troubleshooting, capture its state:
+
+```bash
+systemctl list-timers homelab-health-watchdog.timer
+systemctl status homelab-health-watchdog.service
+cat /var/lib/homelab-health-watchdog/consecutive-failures
+ls -lh /var/log/homelab-health-watchdog
+```
+
+To test the script without allowing a reboot:
+
+```bash
+DRY_RUN=1 /usr/local/sbin/homelab-health-watchdog
+```
+
+Pre-reboot diagnostics stored under `/var/log/homelab-health-watchdog/` may
+contain sensitive host operational details from journals and process listings.
+Keep them local and do not copy them into Git.

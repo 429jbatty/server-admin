@@ -1,0 +1,9 @@
+[Unit]
+Description=Homelab local health watchdog
+After=network-online.target pve-cluster.service pvedaemon.service pveproxy.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=-/etc/default/homelab-health-watchdog
+ExecStart=/usr/local/sbin/homelab-health-watchdog

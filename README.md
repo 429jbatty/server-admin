@@ -54,6 +54,8 @@ Keep `homelab-services.yml` as the machine-readable service catalog. Future serv
 - File backup timer source: `systemd/homelab-file-backup.timer`
 - Albumary SQLite backup script source: `scripts/albumary-sqlite-backup.sh`
 - Albumary SQLite backup timer source: `systemd/albumary-sqlite-backup.timer`
+- Local health watchdog script source: `scripts/homelab-health-watchdog.sh`
+- Local health watchdog timer source: `systemd/homelab-health-watchdog.timer`
 
 The dashboard is installed in Home Assistant as a YAML Lovelace dashboard named `Homelab`. Health checks are intentionally lightweight: HTTP reachability for web services and ping reachability for the Tailscale subnet router. Resource metrics come from a LAN-only Proxmox host exporter at `http://192.168.1.184:9108/metrics/homelab`; it publishes CPU, memory, disk, status, uptime, and media-stack Docker container utilization only.
 
@@ -126,6 +128,32 @@ The active single-node recovery model is layered:
   the ACPI hardware watchdog module `wdat_wdt` on startup. Do not install
   or enable a separate watchdog daemon without a new plan; `watchdog-mux` should
   own `/dev/watchdog`.
+- `homelab-health-watchdog.timer` is a separate local health-check timer, not a
+  Linux watchdog daemon. It runs `/usr/local/sbin/homelab-health-watchdog` every
+  5 minutes after boot, checks critical local Proxmox services and commands,
+  tracks consecutive failures in `/var/lib/homelab-health-watchdog/`, saves
+  diagnostic bundles under `/var/log/homelab-health-watchdog/`, and reboots only
+  after 3 consecutive failed runs.
+
+Install or update the local health watchdog on `pve-nuc` from this repo with:
+
+```bash
+install -m 0755 scripts/homelab-health-watchdog.sh /usr/local/sbin/homelab-health-watchdog
+install -m 0644 systemd/homelab-health-watchdog.service /etc/systemd/system/homelab-health-watchdog.service
+install -m 0644 systemd/homelab-health-watchdog.timer /etc/systemd/system/homelab-health-watchdog.timer
+systemctl daemon-reload
+systemctl enable --now homelab-health-watchdog.timer
+```
+
+Optional non-secret runtime overrides belong in
+`/etc/default/homelab-health-watchdog`; use
+`systemd/homelab-health-watchdog.default.example` as the template. To verify
+without risking a reboot, run:
+
+```bash
+DRY_RUN=1 /usr/local/sbin/homelab-health-watchdog
+systemctl list-timers homelab-health-watchdog.timer
+```
 
 This is not multi-node HA. A watchdog-triggered reboot can recover from host
 hangs, but disk failure, broken guest config, corrupt data, or dead hardware

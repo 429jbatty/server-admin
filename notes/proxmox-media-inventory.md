@@ -1,6 +1,6 @@
 # Proxmox Media Inventory
 
-Last updated: 2026-06-07 17:18 CDT
+Last updated: 2026-06-14 11:12 CDT
 
 ## Host
 
@@ -21,8 +21,8 @@ Last updated: 2026-06-07 17:18 CDT
     - `/mnt/proxmox-usb-backup/host-config`
 - Resilience:
   - Proxmox `watchdog-mux` is active.
-  - `/etc/default/pve-ha-manager` selects `WATCHDOG_MODULE=iTCO_wdt` so the
-    Intel hardware watchdog is preferred on next startup.
+  - `/etc/default/pve-ha-manager` selects `WATCHDOG_MODULE=wdat_wdt` so the
+    ACPI hardware watchdog exposes `/dev/watchdog`.
   - Proxmox HA has no managed resources on this single-node host.
 
 ## Guests
@@ -60,7 +60,7 @@ Startup order for active guests:
 - Service: `jellyfin.service`, enabled and active at inspection time
 - Hardware devices configured:
   - `/dev/dri/renderD128`
-  - `/dev/dri/card0`
+  - `/dev/dri/card1`
 - Root disk: 16 GiB on `local-lvm`
 - Existing Jellyfin data was small at inspection time, about 1 MiB under `/var/lib/jellyfin`.
 

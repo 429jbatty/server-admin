@@ -50,7 +50,7 @@ This file tracks future work for the Proxmox home server. Keep operational detai
   - VM `100` and CTs `102`, `104`, `105`, `106`, `107`, and `108` return to
     running state.
   - `/mnt/proxmox-usb-backup` is mounted before CTs `104` and `106` rely on it.
-  - Proxmox `watchdog-mux` loads `iTCO_wdt` instead of falling back to `softdog`.
+  - Proxmox `watchdog-mux` loads `wdat_wdt` instead of falling back to `softdog`.
 - After an appropriate confidence period, decide whether to power off, retain, or repurpose the retired Lenovo source at `192.168.1.186`.
 
 ## Proxmox Backup Server

@@ -246,6 +246,10 @@ When moving from the current HDD to a larger disk or NAS:
 ## Troubleshooting
 
 - If Jellyfin cannot see media, verify CT `104` has `/media/library/movies` and `/media/library/tv`.
+- If CT `104` Jellyfin fails to start after a host reboot with a missing
+  `/dev/dri/card*` passthrough, compare `pct config 104` with live host
+  `/dev/dri`; the render node should remain `/dev/dri/renderD128`, while the
+  card node can enumerate as `/dev/dri/card1` when `simpledrm` takes `card0`.
 - If Radarr/Sonarr cannot import downloads, verify CT `106` has `/data/downloads` and `/data/library`.
 - If FileBrowser cannot see backups, verify CT `106` has `/backups/guest-dumps` and `/backups/media-library-current`; both should be read-only.
 - If qBittorrent login fails, check its container logs for the temporary password, then set a permanent password in the UI.

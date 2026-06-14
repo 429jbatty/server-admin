@@ -123,7 +123,7 @@ The active single-node recovery model is layered:
 - Docker Compose services in CT `106` and CT `108` use `restart:
   unless-stopped` for app-level process recovery.
 - Proxmox `watchdog-mux` is configured in `/etc/default/pve-ha-manager` to load
-  the Intel hardware watchdog module `iTCO_wdt` on next startup. Do not install
+  the ACPI hardware watchdog module `wdat_wdt` on startup. Do not install
   or enable a separate watchdog daemon without a new plan; `watchdog-mux` should
   own `/dev/watchdog`.
 

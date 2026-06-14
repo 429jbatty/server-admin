@@ -24,7 +24,7 @@ Use this skill for work on the active Intel NUC Proxmox host rather than the ret
 - Last verified: Proxmox VE `9.2.3`, Debian 13, kernel `7.0.6-2-pve`
 - Last verified storage: active `local`, `local-lvm`, and guarded `usb-backup`
 - Last verified guests: VM `100` and CTs `101` through `108`; CTs `101` and `103` stopped, all others running
-- Last verified devices: USB backup HDD, SONOFF coordinator, `/dev/dri/card0`, `/dev/dri/renderD128`, and `/dev/net/tun`
+- Last verified devices: USB backup HDD, SONOFF coordinator, `/dev/dri/card1`, `/dev/dri/renderD128`, and `/dev/net/tun`
 
 These are orientation facts, not current truth. Reverify before acting.
 
@@ -80,7 +80,9 @@ ssh pve-nuc ls -la /dev/net/tun
 - Do not format, repartition, initialize, or erase the USB HDD.
 - Before adding `usb-backup`, verify the HDD by filesystem UUID and mount it at `/mnt/proxmox-usb-backup`.
 - Configure `usb-backup` with `is_mountpoint 1`; never point it at an unmounted directory.
-- Reverify NUC device paths instead of copying Lenovo paths. In particular, the NUC iGPU was observed as `card0`, while Lenovo-era docs may mention `card1`.
+- Reverify NUC device paths instead of copying stale paths. The NUC iGPU render
+  node should remain `/dev/dri/renderD128`, while the card node can enumerate as
+  `/dev/dri/card1` when `simpledrm` takes `card0`.
 - Verify the SONOFF Zigbee coordinator by USB ID `10c4:ea60` before starting Home Assistant.
 - Verify `/dev/net/tun` before starting CT `106` or CT `107`.
 - Restore and validate guests in the order documented in `phase-5-guest-restore.md`.

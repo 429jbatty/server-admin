@@ -1,6 +1,6 @@
 # Homelab Backup Runbook
 
-Last updated: 2026-06-07 17:18 CDT
+Last updated: 2026-06-14 11:12 CDT
 
 The active host is NUC node `pve-nuc`. From the retired Lenovo workspace, run active-host commands through `ssh pve-nuc`.
 
@@ -139,7 +139,7 @@ live config under `/etc/pve/qemu-server/` or `/etc/pve/lxc/`, then revert only
 the `startup:` line or use `qm set`/`pct set` with the previous startup value.
 
 To roll back hardware watchdog selection, restore the previous
-`/etc/default/pve-ha-manager` content or comment out `WATCHDOG_MODULE=iTCO_wdt`.
+`/etc/default/pve-ha-manager` content or comment out `WATCHDOG_MODULE=wdat_wdt`.
 Do not stop or restart `watchdog-mux` casually; Proxmox uses it for fencing and
 the service can reset the host if mishandled. Prefer validating watchdog changes
 during a planned reboot window.

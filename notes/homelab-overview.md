@@ -1,6 +1,6 @@
 # Homelab Overview
 
-Last verified: 2026-06-07 17:18 CDT
+Last verified: 2026-06-14 11:12 CDT
 
 This repo is the canonical documentation home for the Proxmox home server. Use it as the first stop for understanding what exists, what should be running, and which files need updates when the server changes.
 
@@ -25,7 +25,7 @@ Live state observed during the last verification:
 - Active guests have `onboot: 1` with explicit startup ordering for reboot
   recovery: CT `102`, VM `100`, CT `104`, CT `105`, CT `107`, CT `106`, then
   CT `108`.
-- Proxmox `watchdog-mux` is active and configured to load `iTCO_wdt` from
+- Proxmox `watchdog-mux` is active and configured to load `wdat_wdt` from
   `/etc/default/pve-ha-manager` on next startup. Current HA resource list is
   empty; this host is not configured for multi-node HA failover.
 

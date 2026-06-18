@@ -1,0 +1,4 @@
+interface:
+  display_name: "Homelab Postmortem"
+  short_description: "Investigate Proxmox homelab incidents safely."
+  default_prompt: "Conduct a read-only post-mortem of a homelab outage or healthcheck incident."

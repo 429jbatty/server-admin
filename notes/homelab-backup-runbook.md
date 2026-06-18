@@ -148,8 +148,11 @@ the service can reset the host if mishandled. Prefer validating watchdog changes
 during a planned reboot window.
 
 The local `homelab-health-watchdog.timer` is separate from Proxmox
-`watchdog-mux`. It does not use `/dev/watchdog`; it checks local Proxmox health
-every 5 minutes and calls `systemctl reboot` only after 3 consecutive failures.
+`watchdog-mux`. It does not use `/dev/watchdog`; it checks local Proxmox health,
+gateway reachability, outbound HTTPS reachability, and recent `e1000e` NIC-hang
+kernel logs every 5 minutes. On the second consecutive network-related failure
+it saves diagnostics and bounces `nic0`; after 3 consecutive failures it saves
+diagnostics and calls `systemctl reboot`.
 Before disabling it for troubleshooting, capture its state:
 
 ```bash

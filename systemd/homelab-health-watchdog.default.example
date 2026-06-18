@@ -10,10 +10,22 @@ DRY_RUN=0
 # Local services that must be active for the host health check to pass.
 CRITICAL_SERVICES="pve-cluster pvedaemon pveproxy pvestatd pvescheduler pve-guests watchdog-mux ssh"
 
-# Gateway probing is disabled by default so router/switch downtime does not
-# cause host reboot loops. Enable only if that is the desired recovery policy.
-CHECK_GATEWAY=0
-GATEWAY=192.168.1.1
+# Network checks are enabled by default because this host has previously stayed
+# locally healthy while its wired NIC stopped passing traffic.
+CHECK_GATEWAY=1
+GATEWAY=192.168.1.254
+CHECK_OUTBOUND=1
+OUTBOUND_URL="https://cloudflare.com/cdn-cgi/trace"
+CHECK_KERNEL_NIC_HANG=1
+KERNEL_NIC_HANG_LOOKBACK="-10min"
+
+# Try one conservative wired-NIC recovery on the second consecutive
+# network-related failure before the third failure triggers a reboot.
+NETWORK_INTERFACE=nic0
+ENABLE_NIC_RECOVERY=1
+NIC_RECOVERY_FAILURE_COUNT=2
+NIC_RECOVERY_DOWN_SECONDS=5
+NIC_RECOVERY_SETTLE_SECONDS=20
 
 # Advanced: override for test environments.
 REBOOT_COMMAND="systemctl reboot"

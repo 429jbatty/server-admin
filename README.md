@@ -130,9 +130,12 @@ The active single-node recovery model is layered:
   own `/dev/watchdog`.
 - `homelab-health-watchdog.timer` is a separate local health-check timer, not a
   Linux watchdog daemon. It runs `/usr/local/sbin/homelab-health-watchdog` every
-  5 minutes after boot, checks critical local Proxmox services and commands,
-  tracks consecutive failures in `/var/lib/homelab-health-watchdog/`, saves
-  diagnostic bundles under `/var/log/homelab-health-watchdog/`, and reboots only
+  5 minutes after boot, checks critical local Proxmox services, Proxmox commands,
+  LAN gateway reachability, outbound HTTPS reachability, and recent `e1000e`
+  hardware-hang kernel logs for `nic0`. It tracks consecutive failures in
+  `/var/lib/homelab-health-watchdog/`, saves diagnostic bundles under
+  `/var/log/homelab-health-watchdog/`, tries one conservative `nic0` link
+  recovery on the second consecutive network-related failure, and reboots only
   after 3 consecutive failed runs.
 
 Install or update the local health watchdog on `pve-nuc` from this repo with:
@@ -147,8 +150,9 @@ systemctl enable --now homelab-health-watchdog.timer
 
 Optional non-secret runtime overrides belong in
 `/etc/default/homelab-health-watchdog`; use
-`systemd/homelab-health-watchdog.default.example` as the template. To verify
-without risking a reboot, run:
+`systemd/homelab-health-watchdog.default.example` as the template. The default
+network checks use gateway `192.168.1.254` and `nic0`. To verify without
+risking a reboot or link bounce, run:
 
 ```bash
 DRY_RUN=1 /usr/local/sbin/homelab-health-watchdog

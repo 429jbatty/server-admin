@@ -56,6 +56,7 @@ Keep `homelab-services.yml` as the machine-readable service catalog. Future serv
 - Albumary SQLite backup timer source: `systemd/albumary-sqlite-backup.timer`
 - Local health watchdog script source: `scripts/homelab-health-watchdog.sh`
 - Local health watchdog timer source: `systemd/homelab-health-watchdog.timer`
+- CPU powersave governor source: `systemd/homelab-cpu-powersave.service`
 
 The dashboard is installed in Home Assistant as a YAML Lovelace dashboard named `Homelab`. Health checks are intentionally lightweight: HTTP reachability for web services and ping reachability for the Tailscale subnet router. Resource metrics come from a LAN-only Proxmox host exporter at `http://192.168.1.184:9108/metrics/homelab`; it publishes CPU, memory, disk, status, uptime, and media-stack Docker container utilization only.
 
@@ -162,3 +163,25 @@ systemctl list-timers homelab-health-watchdog.timer
 This is not multi-node HA. A watchdog-triggered reboot can recover from host
 hangs, but disk failure, broken guest config, corrupt data, or dead hardware
 still requires the backup and restore process in `notes/homelab-backup-runbook.md`.
+
+## Host Power Policy
+
+The active NUC uses `homelab-cpu-powersave.service` to apply the Intel pstate
+`powersave` CPU governor at boot. The service is intentionally small and
+non-secret; it writes `powersave` to each
+`/sys/devices/system/cpu/cpu*/cpufreq/scaling_governor` file and does not disable
+turbo boost.
+
+Install or update it on `pve-nuc` from this repo with:
+
+```bash
+install -m 0644 systemd/homelab-cpu-powersave.service /etc/systemd/system/homelab-cpu-powersave.service
+systemctl daemon-reload
+systemctl enable --now homelab-cpu-powersave.service
+```
+
+Verify with:
+
+```bash
+grep -H . /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+```

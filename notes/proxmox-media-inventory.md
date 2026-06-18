@@ -30,6 +30,9 @@ Last updated: 2026-06-14 11:12 CDT
     diagnostics under `/var/log/homelab-health-watchdog/`, tries one `nic0`
     link recovery on the second consecutive network-related failure, and
     requests a systemd reboot after 3 consecutive failed checks.
+- Power policy:
+  - `homelab-cpu-powersave.service` applies the Intel pstate `powersave`
+    governor at boot to reduce idle heat. Turbo boost remains enabled.
 
 ## Guests
 

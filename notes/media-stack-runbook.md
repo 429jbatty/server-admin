@@ -96,6 +96,12 @@ When away from home, connect the client device to Tailscale and use the same LAN
 
 - Radarr root folder: `/data/library/movies`
 - Sonarr root folder: `/data/library/tv`
+- Sonarr manages the U.S. `Jeopardy!` series (`TVDB 77075`) as a `Daily`
+  series. Jellyseerr/TMDB labels broadcast season 35 as season `35`, while
+  Sonarr/TheTVDB catalogs those episodes under calendar-year seasons. Season 35
+  maps to Sonarr episodes dated `2018-09-10` through `2019-07-26`: 2018
+  episodes 151-231 and 2019 episodes 1-149. Manage future Jeopardy requests
+  directly in Sonarr when this season-number mismatch applies.
 - Radarr and Sonarr both have qBittorrent configured as a download client.
 - qBittorrent has no global download or upload speed limits. CT `106` retains its
   existing 2-core and 2 GiB RAM resource limits.
@@ -251,6 +257,11 @@ When moving from the current HDD to a larger disk or NAS:
   `/dev/dri`; the render node should remain `/dev/dri/renderD128`, while the
   card node can enumerate as `/dev/dri/card1` when `simpledrm` takes `card0`.
 - If Radarr/Sonarr cannot import downloads, verify CT `106` has `/data/downloads` and `/data/library`.
+- If Jellyseerr accepts a Jeopardy season request but Sonarr monitors no
+  episodes, compare Jellyseerr's broadcast-season number with Sonarr's
+  calendar-year seasons. Keep the series type set to `Daily`, then monitor the
+  intended air-date range directly in Sonarr; standard-series parsing rejects
+  date-named releases such as `Jeopardy.YYYY.MM.DD`.
 - If FileBrowser cannot see backups, verify CT `106` has `/backups/guest-dumps` and `/backups/media-library-current`; both should be read-only.
 - If qBittorrent login fails, check its container logs for the temporary password, then set a permanent password in the UI.
 - If qBittorrent has no internet after VPN activation, check Gluetun first: `pct exec 106 -- bash -lc 'cd /opt/media-stack && docker compose logs --tail=200 gluetun'`.

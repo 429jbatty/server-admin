@@ -17,6 +17,10 @@ Use this skill for changes to the Proxmox media automation setup in `/root/serve
 - CT `106` sees shared media at `/data`.
 - qBittorrent has no global download or upload speed limits; CT `106` retains
   its 2-core and 2 GiB RAM resource limits.
+- Sonarr manages U.S. `Jeopardy!` (`TVDB 77075`) as a `Daily` series. Its
+  TheTVDB metadata uses calendar-year seasons, which do not align with
+  Jellyseerr/TMDB broadcast-season requests; manage affected Jeopardy air-date
+  ranges directly in Sonarr.
 - Repo docs live under `notes/`.
 
 ## Safety Rules

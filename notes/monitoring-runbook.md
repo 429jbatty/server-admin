@@ -103,6 +103,19 @@ Open Grafana and use the `Homelab / Albumary Website` dashboard to answer:
 - Which paths are receiving the most HTTP requests or Web Analytics page views?
 - How long remains before the public TLS certificate expires?
 
+The dashboard includes a visible reading guide and a description on every
+panel. Cloudflare traffic values are rolling 24-hour totals refreshed about
+every five minutes, not traffic generated in each Grafana chart interval.
+Page views and visitors come from browser Web Analytics; HTTP requests and
+transfer also include assets, APIs, bots, and error responses. Informational
+traffic stats use neutral blue. The 4xx and 5xx summary panels show percentages
+of total rolling requests so error volume has useful context.
+
+The blackbox probe accepts `HTTP/1.1` and the exporter's response label
+`HTTP/2.0`. `Site Up` means the latest one-minute HTTPS probe returned HTTP 200;
+Prometheus target health and Cloudflare exporter health describe the monitoring
+pipeline instead of website availability.
+
 ## Management Commands
 
 Validate every repo-backed Grafana dashboard before deployment:

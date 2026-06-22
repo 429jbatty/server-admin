@@ -36,6 +36,27 @@
   "liveNow": false,
   "panels": [
     {
+      "id": 19,
+      "title": "How to read this dashboard",
+      "type": "text",
+      "description": "Quick guide to the Albumary website metrics.",
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "**Availability** is the independent 60-second HTTPS probe. **Blue values are informational**, not warnings. Cloudflare traffic figures are **rolling 24-hour totals** refreshed about every five minutes, so each chart point summarizes the 24 hours before that point. Page views/visitors come from browser Web Analytics; HTTP requests/transfer include pages, assets, APIs, and bots. Hover the **info icon** beside any panel title for its exact meaning."
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "pluginVersion": "13.0.1"
+    },
+    {
       "id": 1,
       "title": "Site Up",
       "type": "stat",
@@ -47,7 +68,7 @@
         "h": 4,
         "w": 3,
         "x": 0,
-        "y": 0
+        "y": 4
       },
       "targets": [
         {
@@ -65,8 +86,8 @@
         }
       ],
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
+        "colorMode": "background",
+        "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
@@ -94,14 +115,31 @@
                 "value": 1
               }
             ]
-          }
+          },
+          "noValue": "NO DATA",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "DOWN",
+                  "color": "red"
+                },
+                "1": {
+                  "text": "UP",
+                  "color": "green"
+                }
+              }
+            }
+          ]
         },
         "overrides": []
-      }
+      },
+      "description": "Independent HTTPS probe from CT 108. UP means app.albumary.net returned HTTP 200 on the latest 60-second check."
     },
     {
       "id": 2,
-      "title": "Latency",
+      "title": "Probe Latency",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -111,7 +149,7 @@
         "h": 4,
         "w": 3,
         "x": 3,
-        "y": 0
+        "y": 4
       },
       "targets": [
         {
@@ -165,11 +203,12 @@
           }
         },
         "overrides": []
-      }
+      },
+      "description": "Total time for the latest external HTTPS probe from CT 108, including DNS, connection, TLS, and response processing."
     },
     {
       "id": 3,
-      "title": "TLS Days",
+      "title": "TLS Days Left",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -179,7 +218,7 @@
         "h": 4,
         "w": 3,
         "x": 6,
-        "y": 0
+        "y": 4
       },
       "targets": [
         {
@@ -233,11 +272,12 @@
           }
         },
         "overrides": []
-      }
+      },
+      "description": "Days until the earliest certificate in the HTTPS chain expires. Green is 30+ days; yellow is 14-29 days; red is under 14 days."
     },
     {
       "id": 4,
-      "title": "Page Views",
+      "title": "Page Views (24h)",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -247,7 +287,7 @@
         "h": 4,
         "w": 3,
         "x": 9,
-        "y": 0
+        "y": 4
       },
       "targets": [
         {
@@ -281,14 +321,19 @@
       "fieldConfig": {
         "defaults": {
           "decimals": 0,
-          "unit": "none"
+          "unit": "none",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
         },
         "overrides": []
-      }
+      },
+      "description": "Cloudflare Web Analytics browser page-load events during the rolling 24-hour window. Privacy blocking can make this lower than HTTP requests."
     },
     {
       "id": 5,
-      "title": "Visitors",
+      "title": "Visitors (24h)",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -298,7 +343,7 @@
         "h": 4,
         "w": 3,
         "x": 12,
-        "y": 0
+        "y": 4
       },
       "targets": [
         {
@@ -332,14 +377,19 @@
       "fieldConfig": {
         "defaults": {
           "decimals": 0,
-          "unit": "none"
+          "unit": "none",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
         },
         "overrides": []
-      }
+      },
+      "description": "Cloudflare Web Analytics visitor/visit estimate for the rolling 24-hour window; it is not a precise authenticated-user count."
     },
     {
       "id": 6,
-      "title": "Requests",
+      "title": "HTTP Requests (24h)",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -349,7 +399,7 @@
         "h": 4,
         "w": 3,
         "x": 15,
-        "y": 0
+        "y": 4
       },
       "targets": [
         {
@@ -383,14 +433,19 @@
       "fieldConfig": {
         "defaults": {
           "decimals": 0,
-          "unit": "none"
+          "unit": "none",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
         },
         "overrides": []
-      }
+      },
+      "description": "All Cloudflare edge requests for app.albumary.net in the rolling 24-hour window, including pages, assets, APIs, bots, and error responses."
     },
     {
       "id": 7,
-      "title": "Transfer",
+      "title": "Transfer (24h)",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -400,7 +455,7 @@
         "h": 4,
         "w": 3,
         "x": 18,
-        "y": 0
+        "y": 4
       },
       "targets": [
         {
@@ -434,14 +489,19 @@
       "fieldConfig": {
         "defaults": {
           "decimals": 1,
-          "unit": "bytes"
+          "unit": "bytes",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
         },
         "overrides": []
-      }
+      },
+      "description": "Total response bytes Cloudflare served for app.albumary.net during the rolling 24-hour window."
     },
     {
       "id": 8,
-      "title": "5xx",
+      "title": "5xx Rate (24h)",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -451,7 +511,7 @@
         "h": 4,
         "w": 3,
         "x": 21,
-        "y": 0
+        "y": 4
       },
       "targets": [
         {
@@ -460,7 +520,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "albumary_cloudflare_status_responses_24h{status_class=\"5xx\"}",
+          "expr": "100 * albumary_cloudflare_status_responses_24h{status_class=\"5xx\"} / ignoring(status_class) clamp_min(albumary_cloudflare_requests_24h, 1)",
           "instant": true,
           "legendFormat": "",
           "range": false,
@@ -484,8 +544,8 @@
       },
       "fieldConfig": {
         "defaults": {
-          "decimals": 0,
-          "unit": "none",
+          "decimals": 2,
+          "unit": "percent",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -494,18 +554,23 @@
                 "value": null
               },
               {
+                "color": "yellow",
+                "value": 0.5
+              },
+              {
                 "color": "red",
-                "value": 1
+                "value": 2
               }
             ]
           }
         },
         "overrides": []
-      }
+      },
+      "description": "Percentage of rolling 24-hour Cloudflare requests that returned server-side 5xx responses. Green is under 0.5%; yellow is 0.5-2%; red is 2% or more."
     },
     {
       "id": 9,
-      "title": "Traffic",
+      "title": "Traffic (Rolling 24h)",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -515,7 +580,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 4
+        "y": 8
       },
       "targets": [
         {
@@ -586,11 +651,12 @@
           }
         },
         "overrides": []
-      }
+      },
+      "description": "History of rolling 24-hour totals. Each point is the preceding 24 hours at that moment, not traffic generated in that chart interval."
     },
     {
       "id": 10,
-      "title": "HTTP Status Classes",
+      "title": "HTTP Status Mix (Rolling 24h)",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -600,7 +666,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 4
+        "y": 8
       },
       "targets": [
         {
@@ -645,11 +711,12 @@
           }
         },
         "overrides": []
-      }
+      },
+      "description": "Rolling response counts grouped by status class: 2xx success, 3xx redirect, 4xx client/bot errors, and 5xx server errors."
     },
     {
       "id": 11,
-      "title": "Transfer",
+      "title": "Transfer (Rolling 24h)",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -659,7 +726,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 12
+        "y": 16
       },
       "targets": [
         {
@@ -705,11 +772,12 @@
           }
         },
         "overrides": []
-      }
+      },
+      "description": "History of rolling 24-hour response-byte totals. Rising means the latest 24 hours served more data than the prior comparison point."
     },
     {
       "id": 12,
-      "title": "Probe Latency",
+      "title": "Probe Latency History",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -719,7 +787,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 12
+        "y": 16
       },
       "targets": [
         {
@@ -765,11 +833,12 @@
           }
         },
         "overrides": []
-      }
+      },
+      "description": "End-to-end HTTPS probe duration sampled every 60 seconds from CT 108. Use this to spot sustained slowness rather than one brief spike."
     },
     {
       "id": 13,
-      "title": "Top Web Analytics Paths",
+      "title": "Top Web Analytics Paths (24h)",
       "type": "table",
       "datasource": {
         "type": "prometheus",
@@ -779,7 +848,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 20
+        "y": 24
       },
       "targets": [
         {
@@ -828,11 +897,12 @@
           }
         },
         "overrides": []
-      }
+      },
+      "description": "Top browser-observed page paths from Cloudflare Web Analytics/RUM, ranked by page views and showing its visitor estimate."
     },
     {
       "id": 14,
-      "title": "Top HTTP Paths",
+      "title": "Top HTTP Paths (24h)",
       "type": "table",
       "datasource": {
         "type": "prometheus",
@@ -842,7 +912,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 20
+        "y": 24
       },
       "targets": [
         {
@@ -891,11 +961,12 @@
           }
         },
         "overrides": []
-      }
+      },
+      "description": "Top Cloudflare edge request paths, including pages, assets, APIs, bots, and errors, with request counts and response bytes."
     },
     {
       "id": 15,
-      "title": "Exporter Up",
+      "title": "Cloudflare Exporter",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -905,7 +976,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 29
+        "y": 33
       },
       "targets": [
         {
@@ -923,8 +994,8 @@
         }
       ],
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
+        "colorMode": "background",
+        "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
@@ -952,14 +1023,31 @@
                 "value": 1
               }
             ]
-          }
+          },
+          "noValue": "NO DATA",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "FAILED",
+                  "color": "red"
+                },
+                "1": {
+                  "text": "HEALTHY",
+                  "color": "green"
+                }
+              }
+            }
+          ]
         },
         "overrides": []
-      }
+      },
+      "description": "Whether the custom exporter most recently collected Cloudflare API and Web Analytics data successfully. This is data-pipeline health, not website uptime."
     },
     {
       "id": 16,
-      "title": "Last Cloudflare Poll",
+      "title": "Cloudflare Data Age",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -969,7 +1057,7 @@
         "h": 4,
         "w": 4,
         "x": 4,
-        "y": 29
+        "y": 33
       },
       "targets": [
         {
@@ -1023,11 +1111,12 @@
           }
         },
         "overrides": []
-      }
+      },
+      "description": "Seconds since the exporter last completed a successful Cloudflare collection. Green is under 15 minutes; red begins at 30 minutes."
     },
     {
       "id": 17,
-      "title": "4xx",
+      "title": "4xx Rate (24h)",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -1037,7 +1126,7 @@
         "h": 4,
         "w": 4,
         "x": 8,
-        "y": 29
+        "y": 33
       },
       "targets": [
         {
@@ -1046,7 +1135,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "albumary_cloudflare_status_responses_24h{status_class=\"4xx\"}",
+          "expr": "100 * albumary_cloudflare_status_responses_24h{status_class=\"4xx\"} / ignoring(status_class) clamp_min(albumary_cloudflare_requests_24h, 1)",
           "instant": true,
           "legendFormat": "",
           "range": false,
@@ -1070,8 +1159,8 @@
       },
       "fieldConfig": {
         "defaults": {
-          "decimals": 0,
-          "unit": "none",
+          "decimals": 2,
+          "unit": "percent",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1081,17 +1170,22 @@
               },
               {
                 "color": "yellow",
-                "value": 1
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 20
               }
             ]
           }
         },
         "overrides": []
-      }
+      },
+      "description": "Percentage of rolling 24-hour requests returning client-side 4xx responses. Bots and missing URLs can raise this without making the site unavailable."
     },
     {
       "id": 18,
-      "title": "Target Health",
+      "title": "Prometheus Target Health",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -1101,7 +1195,7 @@
         "h": 4,
         "w": 12,
         "x": 12,
-        "y": 29
+        "y": 33
       },
       "targets": [
         {
@@ -1115,19 +1209,6 @@
           "legendFormat": "{{job}}",
           "range": true,
           "refId": "A",
-          "format": "time_series"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "scrape_duration_seconds{job=~\"albumary-cloudflare-exporter|blackbox-albumary\"}",
-          "instant": false,
-          "legendFormat": "{{job}} scrape",
-          "range": true,
-          "refId": "B",
           "format": "time_series"
         }
       ],
@@ -1149,7 +1230,7 @@
       "fieldConfig": {
         "defaults": {
           "decimals": 3,
-          "unit": "s",
+          "unit": "none",
           "custom": {
             "drawStyle": "line",
             "lineInterpolation": "smooth",
@@ -1157,10 +1238,13 @@
             "fillOpacity": 12,
             "showPoints": "never",
             "spanNulls": true
-          }
+          },
+          "min": 0,
+          "max": 1
         },
         "overrides": []
-      }
+      },
+      "description": "Whether Prometheus can scrape the Cloudflare exporter and blackbox exporter (1 = reachable, 0 = scrape failed). This does not indicate website uptime."
     }
   ],
   "refresh": "1m",
@@ -1197,6 +1281,6 @@
   "timezone": "browser",
   "title": "Albumary Website",
   "uid": "albumary-website",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

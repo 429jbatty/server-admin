@@ -95,6 +95,9 @@ adguard_auth_header: "Basic BASE64_USERNAME_COLON_PASSWORD"
 - Grafana home dashboard source: `monitoring/grafana/dashboards/home-overview.json`
 - Grafana server dashboard source: `monitoring/grafana/dashboards/server-infrastructure.json`
 - Albumary website dashboard source: `monitoring/grafana/dashboards/albumary-website.json`
+- Grafana operations skill: `skills/homelab-grafana/SKILL.md`
+- Grafana dashboard validator: `skills/homelab-grafana/scripts/check-dashboards.py`
+- Grafana dashboard deploy helper: `skills/homelab-grafana/scripts/deploy-dashboards.sh`
 - Albumary Cloudflare exporter source: `monitoring/scripts/albumary-cloudflare-exporter.py`
 - Albumary Cloudflare env example: `monitoring/secrets/albumary-cloudflare.env.example`
 - Home Assistant Prometheus token example: `monitoring/secrets/home-assistant-prometheus-token.example`
@@ -115,6 +118,8 @@ Runtime services are LAN-only:
 Secret-bearing monitoring files live only inside CT `108` under `/opt/monitoring/secrets/`. The repo tracks only `.example` templates.
 The Home Assistant scrape token belongs at `/opt/monitoring/secrets/home-assistant-prometheus-token` and must be a long-lived Home Assistant access token without any `Bearer ` prefix.
 The Albumary Cloudflare env file belongs at `/opt/monitoring/secrets/albumary-cloudflare.env` and may reuse the existing Home Assistant Cloudflare token and zone ID.
+The Grafana deployment helper sources Grafana credentials only inside CT `108`
+for API verification; it does not copy or print them.
 
 ## Resilience And Auto-Recovery
 

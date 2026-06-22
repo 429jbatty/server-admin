@@ -1,0 +1,4 @@
+interface:
+  display_name: "Homelab Grafana"
+  short_description: "Operate and update the homelab Grafana dashboards"
+  default_prompt: "Use $homelab-grafana to safely inspect or update my Grafana dashboards."

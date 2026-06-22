@@ -105,6 +105,26 @@ Open Grafana and use the `Homelab / Albumary Website` dashboard to answer:
 
 ## Management Commands
 
+Validate every repo-backed Grafana dashboard before deployment:
+
+```bash
+python3 skills/homelab-grafana/scripts/check-dashboards.py
+```
+
+For dashboard-JSON-only changes, use the repo helper to validate, back up the
+runtime file, deploy through `pve-nuc`, restart Grafana, inspect provisioning,
+and verify the dashboard UID through the Grafana API:
+
+```bash
+skills/homelab-grafana/scripts/deploy-dashboards.sh \
+  monitoring/grafana/dashboards/home-overview.json
+```
+
+The helper reads Grafana credentials only inside CT `108` from
+`/opt/monitoring/secrets/grafana.env` and does not print them. Use the full
+manual workflow below when Compose, provisioning, Prometheus, datasources, or
+secrets also change.
+
 ```bash
 pct exec 108 -- bash -lc 'cd /opt/monitoring && docker compose ps'
 pct exec 108 -- bash -lc 'cd /opt/monitoring && docker compose logs --tail=100'

@@ -29,6 +29,17 @@ The active host is NUC node `pve-nuc`. From the retired Lenovo workspace, run Pr
 
 Grafana is for technical monitoring, trends, VM/LXC visibility, and alert-oriented views. Home Assistant remains the control dashboard for smart-home devices and high-level service health.
 
+The Grafana `Homelab` folder keeps home metrics and server infrastructure on
+separate dashboards:
+
+- `Home Overview`: Home Assistant comfort, battery, presence, security, chore,
+  and entity-availability metrics.
+- `Server Infrastructure`: Proxmox host, storage, VM/LXC, and monitoring
+  pipeline metrics.
+
+Each dashboard includes a link to the other and keeps the current time range
+when switching.
+
 CT `108` has `onboot: 1` with Proxmox startup order `90` and a `20s` post-start
 delay so monitoring starts after core services. Its Compose services use
 `restart: unless-stopped` for app-level process recovery.
@@ -61,13 +72,18 @@ The repo tracks only `.example` files for secrets. Do not commit token values or
 
 ## Daily Operations
 
-Open Grafana and use the `Homelab / Homelab Overview` dashboard to answer:
+Open Grafana and use `Homelab / Server Infrastructure` to answer:
 
 - Is the Proxmox host overloaded?
 - Is RAM, root disk, or backup HDD usage trending up?
 - Are important VMs/LXCs running?
-- Are Home Assistant comfort, battery, presence, and chore/status sensors behaving normally?
 - Is the metrics pipeline healthy?
+
+Use `Homelab / Home Overview` to answer:
+
+- Are Home Assistant comfort and humidity sensors behaving normally?
+- Which batteries are low or entities unavailable?
+- Are presence, security, and chore/status sensors behaving normally?
 
 Use Uptime Kuma for simple HTTP uptime checks for:
 

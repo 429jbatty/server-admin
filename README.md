@@ -92,7 +92,8 @@ adguard_auth_header: "Basic BASE64_USERNAME_COLON_PASSWORD"
 - Monitoring Compose source: `monitoring/docker-compose.yml`
 - Prometheus scrape config source: `monitoring/prometheus/prometheus.yml`
 - Blackbox exporter config source: `monitoring/prometheus/blackbox.yml`
-- Grafana dashboard source: `monitoring/grafana/dashboards/homelab-overview.json`
+- Grafana home dashboard source: `monitoring/grafana/dashboards/home-overview.json`
+- Grafana server dashboard source: `monitoring/grafana/dashboards/server-infrastructure.json`
 - Albumary website dashboard source: `monitoring/grafana/dashboards/albumary-website.json`
 - Albumary Cloudflare exporter source: `monitoring/scripts/albumary-cloudflare-exporter.py`
 - Albumary Cloudflare env example: `monitoring/secrets/albumary-cloudflare.env.example`

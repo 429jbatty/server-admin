@@ -19,7 +19,20 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Home Overview",
+      "tooltip": "Open smart-home metrics",
+      "type": "link",
+      "url": "/d/home-overview"
+    }
+  ],
   "liveNow": false,
   "panels": [
     {
@@ -487,70 +500,6 @@
               {
                 "color": "green",
                 "value": 7
-              }
-            ]
-          }
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 8,
-      "title": "HA Entities",
-      "type": "stat",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 3,
-        "x": 21,
-        "y": 0
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "count(hass_entity_available)",
-          "instant": false,
-          "legendFormat": "exported",
-          "range": true,
-          "refId": "A",
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 0,
-          "unit": "none",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "yellow",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
               }
             ]
           }
@@ -1070,372 +1019,6 @@
       }
     },
     {
-      "id": 17,
-      "title": "Home Temperature (F)",
-      "type": "timeseries",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 36
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "label_replace(((hass_temperature_c{entity=\"sensor.switchbot_hub_temperature\",entity=~\"$ha_entity\"} * 9 / 5) + 32), \"display_name\", \"Office\", \"entity\", \".*\") or label_replace(((hass_temperature_c{entity=\"sensor.downstairs_temperature\",entity=~\"$ha_entity\"} * 9 / 5) + 32), \"display_name\", \"Downstairs\", \"entity\", \".*\") or label_replace(((hass_temperature_c{entity!=\"sensor.inovelli_dimmer_switch_internal_temperature\",entity!~\"sensor.switchbot_hub_temperature|sensor.downstairs_temperature\",entity=~\"$ha_entity\"} * 9 / 5) + 32), \"display_name\", \"$1\", \"friendly_name\", \"(.*)\")",
-          "instant": false,
-          "legendFormat": "{{display_name}}",
-          "range": true,
-          "refId": "A",
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 1,
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
-            "fillOpacity": 12,
-            "showPoints": "never",
-            "spanNulls": true
-          },
-          "unit": "fahrenheit"
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 18,
-      "title": "Home Humidity",
-      "type": "timeseries",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 36
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "hass_humidity_percent{entity=~\"$ha_entity\"}",
-          "instant": false,
-          "legendFormat": "{{friendly_name}}",
-          "range": true,
-          "refId": "A",
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 1,
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
-            "fillOpacity": 12,
-            "showPoints": "never",
-            "spanNulls": true
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 19,
-      "title": "Low Batteries",
-      "type": "table",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 44
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "sort(hass_battery_percent{entity=~\"$ha_entity\"})",
-          "instant": true,
-          "legendFormat": "{{friendly_name}}",
-          "range": false,
-          "refId": "A",
-          "format": "table"
-        }
-      ],
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "show": false
-        },
-        "showHeader": true
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 20,
-      "title": "Presence / Security",
-      "type": "timeseries",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 44
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "hass_binary_sensor_state{entity=~\".*(occupancy|motion|door|window|presence|fp2|aquara).*\"}",
-          "instant": false,
-          "legendFormat": "{{friendly_name}}",
-          "range": true,
-          "refId": "A",
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "stepAfter",
-            "lineWidth": 2,
-            "fillOpacity": 20,
-            "showPoints": "never",
-            "spanNulls": false
-          },
-          "mappings": [
-            {
-              "options": {
-                "0": {
-                  "text": "off"
-                },
-                "1": {
-                  "text": "on"
-                }
-              },
-              "type": "value"
-            }
-          ]
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 21,
-      "title": "Chores",
-      "type": "stat",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 44
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "hass_chore_status{entity=~\".*(washer|dryer|litter_box|trash_bins).*\"}",
-          "instant": true,
-          "legendFormat": "{{friendly_name}}",
-          "range": false,
-          "refId": "A",
-          "format": "time_series"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "hass_binary_sensor_state{entity=~\".*(overdue|due).*\"}",
-          "instant": true,
-          "legendFormat": "{{friendly_name}}",
-          "range": false,
-          "refId": "B",
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 1,
-          "unit": "none",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 1
-              }
-            ]
-          }
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 22,
-      "title": "Unavailable HA Entities",
-      "type": "table",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 52
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "hass_entity_available == 0",
-          "instant": true,
-          "legendFormat": "{{entity}}",
-          "range": false,
-          "refId": "A",
-          "format": "table"
-        }
-      ],
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "show": false
-        },
-        "showHeader": true
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          }
-        },
-        "overrides": []
-      }
-    },
-    {
       "id": 23,
       "title": "Scrape Health",
       "type": "timeseries",
@@ -1445,9 +1028,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 52
+        "w": 24,
+        "x": 0,
+        "y": 36
       },
       "targets": [
         {
@@ -1514,8 +1097,7 @@
   "tags": [
     "homelab",
     "proxmox",
-    "home-assistant",
-    "daily-overview"
+    "server-infrastructure"
   ],
   "templating": {
     "list": [
@@ -1536,30 +1118,6 @@
         "name": "guest",
         "options": [],
         "query": "label_values(pve_guest_info, name)",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "type": "query",
-        "allValue": ".*"
-      },
-      {
-        "current": {
-          "selected": true,
-          "text": "All",
-          "value": ".*"
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "prometheus"
-        },
-        "definition": "label_values(hass_entity_available, entity)",
-        "hide": 0,
-        "includeAll": true,
-        "multi": true,
-        "name": "ha_entity",
-        "options": [],
-        "query": "label_values(hass_entity_available, entity)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -1592,8 +1150,9 @@
     ]
   },
   "timezone": "browser",
-  "title": "Homelab Daily Overview",
-  "uid": "homelab-overview",
-  "version": 2,
-  "weekStart": ""
+  "title": "Server Infrastructure",
+  "uid": "server-infrastructure",
+  "version": 1,
+  "weekStart": "",
+  "description": "Proxmox host, storage, guest, and monitoring pipeline health."
 }

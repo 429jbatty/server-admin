@@ -115,6 +115,9 @@ Startup order for active guests:
 - Host `node_exporter` runs on the Proxmox host at `http://192.168.1.184:9100/metrics`.
 - The Proxmox exporter uses a limited `PVEAuditor` API token stored only in CT `108` at `/opt/monitoring/secrets/pve.yml`.
 - Prometheus scrapes Home Assistant's built-in exporter at `http://192.168.1.187:8123/api/prometheus` using a long-lived Home Assistant token stored only in CT `108` at `/opt/monitoring/secrets/home-assistant-prometheus-token`.
+- Grafana provisions separate `Home Overview` and `Server Infrastructure`
+  dashboards in its `Homelab` folder so smart-home metrics are not mixed with
+  Proxmox and server-health panels.
 - Prometheus scrapes internal Albumary website monitoring targets in CT `108`: `albumary-cloudflare-exporter:9210` for Cloudflare analytics and `blackbox-exporter:9115` for public HTTPS probing.
 
 ## Service Ports

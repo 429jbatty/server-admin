@@ -71,3 +71,9 @@ Grafana is the technical monitoring dashboard and lives outside the Home Assista
 Never commit real API keys, passwords, VPN credentials, Tailscale auth keys, provider credentials, app databases, or Proxmox private keys. This repo should document what secrets exist and where they belong, but not their values.
 
 Use `notes/media-stack-credentials.md` and relevant `.example` files as pointer documentation.
+
+## Albumary logs
+
+- CT `109` hosts a separate native Grafana/Loki stack at `192.168.1.201`.
+- CT `105` forwards the Albumary API and worker journals using Alloy.
+- See `notes/albumary-observability-runbook.md` and the Albumary repository's `deploy/observability/README.md`.

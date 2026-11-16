@@ -171,3 +171,11 @@ The repo-level source of truth for the Home Assistant Homelab dashboard is `home
 ## Policy
 
 This stack is documented and configured for lawful/public-domain/owned-media workflows. Do not commit indexer, VPN, provider, or application API secrets to this repository.
+
+## Albumary observability: CT 109
+
+- Hostname: `albumary-observability`; LAN `192.168.1.201`.
+- Unprivileged Debian 12 LXC, nesting enabled, 2 cores, 1536 MiB RAM, 512 MiB swap, 20 GiB root disk on `local-lvm`.
+- On boot: enabled, startup order 85, 10 second delay.
+- Grafana: port 3000 (LAN and login); Loki: port 3100 (client IP allowlist). Both run natively with nginx.
+- See `notes/albumary-observability-runbook.md`.

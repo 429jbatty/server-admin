@@ -26,6 +26,10 @@ The active host is NUC node `pve-nuc`. From the retired Lenovo workspace, run Pr
   - `blackbox-exporter` probes `https://app.albumary.net` for reachability, latency, HTTP status, and TLS expiry.
   - The Albumary dashboard source is `monitoring/grafana/dashboards/albumary-website.json`.
   - Runtime Cloudflare credentials live only in CT `108` at `/opt/monitoring/secrets/albumary-cloudflare.env`.
+- Albumary log monitoring:
+  - Grafana provisions `Albumary Loki` (UID `albumary-loki`) through CT `109`'s nginx-protected Loki endpoint.
+  - The Albumary repository owns `albumary-operations.json` and deploys it atomically to CT `108`'s `/opt/monitoring/grafana/albumary-dashboards/` directory.
+  - CT `109` accepts Loki queries from CT `108` (`192.168.1.200`); Alloy on CT `105` continues to write the Albumary journals.
 
 Grafana is for technical monitoring, trends, VM/LXC visibility, and alert-oriented views. Home Assistant remains the control dashboard for smart-home devices and high-level service health.
 
@@ -54,6 +58,7 @@ Inside CT `108`:
   prometheus/prometheus.yml
   grafana/provisioning/
   grafana/dashboards/
+  grafana/albumary-dashboards/
   secrets/
 ```
 
@@ -115,6 +120,10 @@ The blackbox probe accepts `HTTP/1.1` and the exporter's response label
 `HTTP/2.0`. `Site Up` means the latest one-minute HTTPS probe returned HTTP 200;
 Prometheus target health and Cloudflare exporter health describe the monitoring
 pipeline instead of website availability.
+
+Open Grafana and use `Albumary / Albumary Operations` to explore the Albumary
+API and worker journals. The dashboard JSON is owned by the Albumary repository;
+do not edit its CT-local copy or copy it into this repository.
 
 ## Management Commands
 

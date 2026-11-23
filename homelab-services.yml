@@ -179,7 +179,7 @@ services:
     check_url: http://192.168.1.200:3000/api/health
     dashboard: false
     health_check: http
-    description: Technical monitoring dashboard for host health, trends, storage, and VM/LXC visibility.
+    description: Technical monitoring dashboard for homelab metrics and Albumary website and log dashboards.
 
   - id: prometheus
     name: Prometheus
@@ -207,19 +207,6 @@ services:
     health_check: http
     description: LAN-only service uptime monitor for core homelab services and the public Albumary route.
 
-  - id: albumary_logs_grafana
-    name: Albumary Logs Grafana
-    category: Monitoring
-    owner: CT 109
-    host: albumary-observability
-    ip: 192.168.1.201
-    port: 3000
-    url: http://192.168.1.201:3000
-    check_url: http://192.168.1.201:3000/api/health
-    dashboard: false
-    health_check: http
-    description: LAN-only authenticated Grafana for Albumary log exploration.
-
   - id: albumary_loki
     name: Albumary Loki
     category: Monitoring
@@ -231,4 +218,4 @@ services:
     check_url:
     dashboard: false
     health_check: none
-    description: Loki log storage restricted to the Albumary host and authorized development clients.
+    description: Loki log storage restricted to Albumary, the central Grafana host, and authorized development clients.

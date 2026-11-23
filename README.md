@@ -99,6 +99,8 @@ adguard_auth_header: "Basic BASE64_USERNAME_COLON_PASSWORD"
 - Grafana dashboard validator: `skills/homelab-grafana/scripts/check-dashboards.py`
 - Grafana dashboard deploy helper: `skills/homelab-grafana/scripts/deploy-dashboards.sh`
 - Albumary Cloudflare exporter source: `monitoring/scripts/albumary-cloudflare-exporter.py`
+- Albumary Loki datasource source: `monitoring/grafana/provisioning/datasources/albumary-loki.yml`
+- Albumary dashboard provider source: `monitoring/grafana/provisioning/dashboards/albumary.yml`
 - Albumary Cloudflare env example: `monitoring/secrets/albumary-cloudflare.env.example`
 - Home Assistant Prometheus token example: `monitoring/secrets/home-assistant-prometheus-token.example`
 - Uptime Kuma bootstrap source: `scripts/bootstrap-uptime-kuma.py`
@@ -114,6 +116,13 @@ Runtime services are LAN-only:
 - Home Assistant Prometheus export: `http://192.168.1.187:8123/api/prometheus`
 - Albumary Cloudflare exporter: internal Docker service `albumary-cloudflare-exporter:9210`
 - Blackbox exporter: internal Docker service `blackbox-exporter:9115`
+- Albumary Loki: CT `109` at `http://192.168.1.201:3100`, queried only by the CT `108` Grafana datasource.
+
+The Albumary repository owns the `albumary-operations` Grafana JSON dashboard.
+Its deploy script writes only to CT `108`'s dedicated
+`/opt/monitoring/grafana/albumary-dashboards/` directory; the directory is
+mounted read-only into Grafana and provisioned in the `Albumary` folder. Keep
+the `albumary-loki` datasource UID stable.
 
 Secret-bearing monitoring files live only inside CT `108` under `/opt/monitoring/secrets/`. The repo tracks only `.example` templates.
 The Home Assistant scrape token belongs at `/opt/monitoring/secrets/home-assistant-prometheus-token` and must be a long-lived Home Assistant access token without any `Bearer ` prefix.

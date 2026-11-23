@@ -74,6 +74,7 @@ Use `notes/media-stack-credentials.md` and relevant `.example` files as pointer 
 
 ## Albumary logs
 
-- CT `109` hosts a separate native Grafana/Loki stack at `192.168.1.201`.
+- CT `109` hosts Loki at `192.168.1.201`; CT `108` Grafana provides the single
+  dashboard UI and queries Loki with the `albumary-loki` datasource.
 - CT `105` forwards the Albumary API and worker journals using Alloy.
 - See `notes/albumary-observability-runbook.md` and the Albumary repository's `deploy/observability/README.md`.

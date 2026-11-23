@@ -65,6 +65,7 @@ services:
       - grafana-data:/var/lib/grafana
       - /opt/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
       - /opt/monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - /opt/monitoring/grafana/albumary-dashboards:/var/lib/grafana/albumary-dashboards:ro
     restart: unless-stopped
     depends_on:
       - prometheus
